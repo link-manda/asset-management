@@ -22,9 +22,7 @@ class AssetFactory extends Factory
             'name' => $this->faker->randomElement(['Laptop', 'Monitor', 'Printer', 'Meja', 'Kursi', 'Kamera']) . ' ' . $this->faker->lastName(),
             'category_id' => \App\Models\Category::inRandomOrder()->first()?->id,
             'uom_id' => \App\Models\UnitOfMeasurement::inRandomOrder()->first()?->id,
-            'purchase_date' => $this->faker->date(),
             'price' => $this->faker->randomFloat(2, 500000, 15000000), // Unit Price
-            'status' => $this->faker->randomElement(['Available', 'Deployed', 'Maintenance', 'Broken']),
             'notes' => $this->faker->sentence(),
         ];
     }
@@ -35,15 +33,20 @@ class AssetFactory extends Factory
     public function configure()
     {
         return $this->afterCreating(function (Asset $asset) {
-            // Create 1-3 random stock distributions for each asset
-            $locations = \App\Models\Location::inRandomOrder()->take(rand(1, 3))->get();
+            // Create 1-10 physical items for each asset
+            $count = rand(1, 10);
+            $locations = \App\Models\Location::all();
             
-            foreach ($locations as $location) {
-                \App\Models\AssetStock::create([
-                    'asset_id' => $asset->id,
-                    'location_id' => $location->id,
-                    'quantity' => rand(1, 20),
-                    'status' => $asset->status,
+            for ($i = 1; $i <= $count; $i++) {
+                \App\Models\AssetItem::create([
+                    'asset_id'      => $asset->id,
+                    'item_code'     => 'SN-' . strtoupper(bin2hex(random_bytes(4))),
+                    'serial_number' => 'SER-' . strtoupper(bin2hex(random_bytes(4))),
+                    'location_id'   => $locations->random()->id,
+                    'condition'     => $this->faker->randomElement(['Good', 'Fair', 'Poor']),
+                    'status'        => 'Available',
+                    'purchase_date' => now()->subDays(rand(30, 365)),
+                    'purchase_price' => $asset->price,
                 ]);
             }
         });

@@ -37,7 +37,7 @@
                 </li>
 
                 @php
-                    $isAssetActive = request()->is('assets*', 'maintenances*', 'assignments*');
+                    $isAssetActive = request()->is('assets*', 'maintenances*', 'assignments*', 'disposals*');
                 @endphp
                 <li class="menu-item hs-accordion {{ $isAssetActive ? 'active' : '' }}">
                     <a class="hs-accordion-toggle menu-link {{ $isAssetActive ? 'active' : '' }}" href="javascript:void(0)">
@@ -64,6 +64,11 @@
                         <li class="menu-item">
                             <a class="menu-link {{ request()->routeIs('maintenances.index') ? 'active' : '' }}" href="{{ route('maintenances.index') }}">
                                 <span class="menu-text"> Maintenance Aset </span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('disposals.index') ? 'active' : '' }}" href="{{ route('disposals.index') }}">
+                                <span class="menu-text"> Penghapusan (Disposal) </span>
                             </a>
                         </li>
                     </ul>

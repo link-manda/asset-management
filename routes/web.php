@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\UnitOfMeasurementController;
+use App\Http\Controllers\AssetDisposalController;
 
 use App\Http\Controllers\Auth\LoginController;
 
@@ -28,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['get', 'post'], '/assets-bulk-print', [AssetController::class, 'bulkPrint'])->name('assets.bulk-print');
     Route::get('/assets/{asset}/print', [AssetController::class, 'printLabel'])->name('assets.print');
     Route::resource('assets', AssetController::class);
+    Route::resource('disposals', AssetDisposalController::class)->only(['index', 'store']);
     Route::delete('assets/images/{image}', [\App\Http\Controllers\AssetImageController::class, 'destroy'])->name('assets.images.destroy');
 
     // Asset Maintenance
@@ -35,9 +37,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Asset Assignments
     Route::get('/assignments', [AssetAssignmentController::class, 'index'])->name('assignments.index');
-    Route::get('/assets/{asset}/checkout', [AssetAssignmentController::class, 'create'])->name('assets.checkout.create');
-    Route::post('/assets/{asset}/checkout', [AssetAssignmentController::class, 'checkoutStore'])->name('assets.checkout');
-    Route::post('/assets/{asset}/checkin', [AssetAssignmentController::class, 'checkinStore'])->name('assets.checkin');
+    Route::get('/items/{item}/checkout', [AssetAssignmentController::class, 'create'])->name('items.checkout.create');
+    Route::post('/items/{item}/checkout', [AssetAssignmentController::class, 'checkoutStore'])->name('items.checkout');
+    Route::post('/items/{item}/checkin', [AssetAssignmentController::class, 'checkinStore'])->name('items.checkin');
 
     // Master Data
     Route::resource('categories', CategoryController::class);

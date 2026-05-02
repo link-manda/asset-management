@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
+use App\Models\AssetItem;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,17 +15,17 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // 1. Total statistik dasar
-        $totalAssets = Asset::count();
-        $totalValue = Asset::sum('price');
+        // 1. Total statistik dasar (Berdasarkan Unit Fisik)
+        $totalItems = AssetItem::count();
+        $totalValue = AssetItem::sum('purchase_price');
 
-        // 2. Distribusi Status
-        $statusCounts = Asset::select('status', DB::raw('count(*) as total'))
+        // 2. Distribusi Status (Berdasarkan Unit Fisik)
+        $statusCounts = AssetItem::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')
             ->get()
             ->pluck('total', 'status');
 
-        $allStatuses = ['Available', 'Deployed', 'Maintenance', 'Broken', 'Lost'];
+        $allStatuses = ['Available', 'Deployed', 'Maintenance', 'Broken', 'Lost', 'Disposed'];
         $stats = [];
         foreach ($allStatuses as $status) {
             $stats[$status] = $statusCounts[$status] ?? 0;
@@ -32,14 +33,15 @@ class DashboardController extends Controller
 
         // 3. Data Grafik: Nilai Aset per Kategori (Doughnut)
         $categoryData = Asset::join('categories', 'assets.category_id', '=', 'categories.id')
-            ->select('categories.name', DB::raw('SUM(assets.price) as total_value'))
+            ->leftJoin('asset_items', 'assets.id', '=', 'asset_items.asset_id')
+            ->select('categories.name', DB::raw('SUM(asset_items.purchase_price) as total_value'))
             ->groupBy('categories.name')
             ->get();
 
         // 4. Data Grafik: Tren Akuisisi Aset 6 Bulan Terakhir (Line)
-        $monthlyTrend = Asset::select(
+        $monthlyTrend = AssetItem::select(
                 DB::raw("DATE_FORMAT(purchase_date, '%Y-%m') as month"),
-                DB::raw('SUM(price) as total_value')
+                DB::raw('SUM(purchase_price) as total_value')
             )
             ->whereNotNull('purchase_date')
             ->where('purchase_date', '>=', now()->subMonths(6))
@@ -48,7 +50,7 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard.index', [
-            'totalAssets' => $totalAssets,
+            'totalAssets' => $totalItems,
             'totalValue'  => $totalValue,
             'stats'       => $stats,
             'categoryLabels' => $categoryData->pluck('name'),

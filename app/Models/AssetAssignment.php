@@ -11,7 +11,7 @@ class AssetAssignment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'asset_id',
+        'asset_item_id',
         'assigned_to',
         'assigned_date',
         'return_date',
@@ -20,11 +20,19 @@ class AssetAssignment extends Model
     ];
 
     /**
-     * Get the asset that is assigned.
+     * Get the specific physical item that is assigned.
      */
-    public function asset(): BelongsTo
+    public function item(): BelongsTo
     {
-        return $this->belongsTo(Asset::class);
+        return $this->belongsTo(AssetItem::class, 'asset_item_id');
+    }
+
+    /**
+     * Get the master asset through the item.
+     */
+    public function asset()
+    {
+        return $this->item->asset();
     }
 
     /**

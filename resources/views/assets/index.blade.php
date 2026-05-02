@@ -76,18 +76,26 @@
                                             </td>
                                             <td class="px-3.5 py-2.5 whitespace-nowrap">
                                                 @php
-                                                    $statusClasses = [
-                                                        'Available' => 'bg-success/15 text-success',
-                                                        'Deployed' => 'bg-primary/15 text-primary',
-                                                        'Maintenance' => 'bg-warning/15 text-warning',
-                                                        'Broken' => 'bg-danger/15 text-danger',
-                                                        'Lost' => 'bg-default-100 text-default-500',
-                                                    ];
-                                                    $class = $statusClasses[$asset->status] ?? 'bg-default-100 text-default-500';
+                                                    $itemStatuses = $asset->items->groupBy('status')->map->count();
                                                 @endphp
-                                                <span class="inline-flex items-center gap-x-1.5 py-0.5 px-2.5 rounded text-xs font-medium {{ $class }}">
-                                                    {{ $asset->status }}
-                                                </span>
+                                                <div class="flex flex-wrap gap-1">
+                                                    @foreach($itemStatuses as $status => $count)
+                                                        @php
+                                                            $statusClasses = [
+                                                                'Available' => 'bg-success/15 text-success',
+                                                                'Deployed' => 'bg-primary/15 text-primary',
+                                                                'Maintenance' => 'bg-warning/15 text-warning',
+                                                                'Broken' => 'bg-danger/15 text-danger',
+                                                                'Lost' => 'bg-default-100 text-default-500',
+                                                                'Disposed' => 'bg-danger/20 text-danger-600',
+                                                            ];
+                                                            $class = $statusClasses[$status] ?? 'bg-default-100 text-default-500';
+                                                        @endphp
+                                                        <span class="inline-flex items-center py-0.5 px-2 rounded text-[10px] font-medium {{ $class }}">
+                                                            {{ $count }} {{ $status }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
                                             </td>
                                             <td class="px-3.5 py-2.5">
                                                 <div class="hs-dropdown relative inline-flex">

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Asset extends Model
 {
@@ -18,10 +18,7 @@ class Asset extends Model
         'name',
         'category_id',
         'uom_id',
-        'location_id',
-        'purchase_date',
         'price',
-        'status',
         'notes',
     ];
 
@@ -45,31 +42,22 @@ class Asset extends Model
         return $this->belongsTo(UnitOfMeasurement::class, 'uom_id');
     }
 
-    public function stocks(): HasMany
+    public function items(): HasMany
     {
-        return $this->hasMany(AssetStock::class);
+        return $this->hasMany(AssetItem::class);
     }
 
     public function getTotalQuantityAttribute()
     {
-        return $this->stocks()->sum('quantity');
+        return $this->items()->count();
     }
 
     /**
      * Calculate total asset value based on price per unit * total quantity.
-     * Price is treated as UNIT PRICE.
      */
     public function getTotalValueAttribute()
     {
         return ($this->price ?? 0) * $this->total_quantity;
-    }
-
-    /**
-     * Get the stock record with the highest quantity (Main Location).
-     */
-    public function getPrimaryStockAttribute()
-    {
-        return $this->stocks()->orderByDesc('quantity')->first();
     }
 
     /**
@@ -81,32 +69,19 @@ class Asset extends Model
     }
 
     /**
-     * Get the location that owns the asset.
+     * Get the assignments for all items of this asset.
      */
-    public function location(): BelongsTo
+    public function assignments(): HasManyThrough
     {
-        return $this->belongsTo(Location::class);
+        return $this->hasManyThrough(AssetAssignment::class, AssetItem::class);
     }
 
     /**
-     * Get the assignments for the asset.
+     * Get the maintenance history for all items of this asset.
      */
-    public function assignments(): HasMany
+    public function maintenances(): HasManyThrough
     {
-        return $this->hasMany(AssetAssignment::class);
-    }
-
-    /**
-     * Get the current active assignment.
-     */
-    public function currentAssignment(): HasOne
-    {
-        return $this->hasOne(AssetAssignment::class)->whereNull('return_date');
-    }
-
-    public function maintenances(): HasMany
-    {
-        return $this->hasMany(AssetMaintenance::class);
+        return $this->hasManyThrough(AssetMaintenance::class, AssetItem::class);
     }
 
     public function images(): HasMany

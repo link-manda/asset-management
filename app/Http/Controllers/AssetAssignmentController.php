@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Asset;
+use App\Models\AssetItem;
 use App\Models\AssetAssignment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,21 +15,23 @@ class AssetAssignmentController extends Controller
      */
     public function index()
     {
-        $assignments = AssetAssignment::with(['asset', 'user'])->latest()->paginate(10);
+        $assignments = AssetAssignment::with(['item.asset', 'user'])->latest()->paginate(10);
         return view('assignments.index', compact('assignments'));
     }
 
-    public function create(Asset $asset)
+    /**
+     * create: Form checkout untuk unit spesifik.
+     */
+    public function create(AssetItem $item)
     {
-        $users = \App\Models\User::all();
-        return view('assets.checkout', compact('asset', 'users'));
+        $users = User::all();
+        return view('assets.checkout', compact('item', 'users'));
     }
 
     /**
-     * checkoutStore: Gunakan DB::transaction. Simpan data ke asset_assignments 
-     * lalu update status di tabel assets jadi 'Deployed'.
+     * checkoutStore: Proses peminjaman unit fisik.
      */
-    public function checkoutStore(Request $request, Asset $asset)
+    public function checkoutStore(Request $request, AssetItem $item)
     {
         $request->validate([
             'assigned_to' => 'required|exists:users,id',
@@ -36,33 +39,37 @@ class AssetAssignmentController extends Controller
             'condition_on_checkout' => 'required|string',
         ]);
 
-        DB::transaction(function () use ($request, $asset) {
+        if ($item->status !== 'Available') {
+            return back()->with('error', 'Unit ini sedang tidak tersedia untuk dipinjam.');
+        }
+
+        DB::transaction(function () use ($request, $item) {
             AssetAssignment::create([
-                'asset_id' => $asset->id,
+                'asset_item_id' => $item->id,
                 'assigned_to' => $request->assigned_to,
                 'assigned_date' => $request->assigned_date,
                 'condition_on_checkout' => $request->condition_on_checkout,
             ]);
             
-            $asset->update(['status' => 'Deployed']);
+            $item->update(['status' => 'Deployed']);
         });
 
-        return redirect()->back()->with('success', 'Asset berhasil di-checkout.');
+        return redirect()->route('assets.show', $item->asset_id)
+            ->with('success', 'Unit ' . $item->item_code . ' berhasil di-checkout.');
     }
 
     /**
-     * checkinStore: Gunakan DB::transaction. Update return_date di asset_assignments, 
-     * lalu kembalikan status assets jadi 'Available'.
+     * checkinStore: Proses pengembalian unit fisik.
      */
-    public function checkinStore(Request $request, Asset $asset)
+    public function checkinStore(Request $request, AssetItem $item)
     {
         $request->validate([
             'return_date' => 'required|date',
             'condition_on_return' => 'required|string',
         ]);
 
-        DB::transaction(function () use ($request, $asset) {
-            $assignment = $asset->currentAssignment;
+        DB::transaction(function () use ($request, $item) {
+            $assignment = $item->currentAssignment;
             
             if ($assignment) {
                 $assignment->update([
@@ -71,9 +78,9 @@ class AssetAssignmentController extends Controller
                 ]);
             }
             
-            $asset->update(['status' => 'Available']);
+            $item->update(['status' => 'Available']);
         });
 
-        return redirect()->back()->with('success', 'Asset berhasil di-checkin.');
+        return redirect()->back()->with('success', 'Unit ' . $item->item_code . ' berhasil di-checkin.');
     }
 }
