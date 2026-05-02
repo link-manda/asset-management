@@ -32,9 +32,20 @@
 
                         <div>
                             <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="default_useful_life_months">Umur Ekonomis Default (Bulan)</label>
-                            <input class="form-input w-full @error('default_useful_life_months') border-danger @enderror" id="default_useful_life_months" name="default_useful_life_months" type="number" placeholder="Misal: 48 (untuk 4 tahun)" value="{{ old('default_useful_life_months') }}" />
-                            <p class="text-xs text-default-500 mt-1">Umur ekonomis ini akan otomatis terisi saat menambah unit fisik baru dalam kategori ini.</p>
+                            <input class="form-input w-full @error('default_useful_life_months') border-danger @enderror" id="default_useful_life_months" name="default_useful_life_months" type="number" placeholder="Misal: 48" value="{{ old('default_useful_life_months') }}" />
                             @error('default_useful_life_months')
+                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="default_residual_percentage">Default Persentase Nilai Sisa (%)</label>
+                            <div class="relative">
+                                <input class="form-input w-full @error('default_residual_percentage') border-danger @enderror" id="default_residual_percentage" name="default_residual_percentage" type="number" step="0.01" placeholder="Misal: 10" value="{{ old('default_residual_percentage', 0) }}" />
+                                <span class="absolute inset-y-0 end-0 flex items-center pe-3 text-default-500">%</span>
+                            </div>
+                            <p class="text-xs text-default-500 mt-1">Digunakan untuk menghitung estimasi nilai rongsok di akhir umur ekonomis.</p>
+                            @error('default_residual_percentage')
                                 <p class="text-danger text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>

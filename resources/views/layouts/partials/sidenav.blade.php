@@ -119,6 +119,17 @@
                 </li>
 
                 <li class="menu-title">
+                    <span>Laporan</span>
+                </li>
+
+                <li class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('reports.depreciation') ? 'active' : '' }}" href="{{ route('reports.depreciation') }}">
+                        <span class="menu-icon"><i data-lucide="line-chart"></i></span>
+                        <div class="menu-text">Laporan Penyusutan</div>
+                    </a>
+                </li>
+
+                <li class="menu-title">
                     <span>Sistem</span>
                 </li>
 

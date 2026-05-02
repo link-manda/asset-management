@@ -111,7 +111,7 @@
                                             </select>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <input type="number" name="items[0][residual_value]" class="form-input form-input-sm" placeholder="0" value="0">
+                                            <input type="number" name="items[0][residual_value]" class="form-input form-input-sm residual-value-input" placeholder="0" value="0">
                                         </td>
                                         <td class="px-4 py-3">
                                             <input type="number" name="items[0][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="0">
@@ -187,28 +187,42 @@
         const categorySelect = document.getElementById('category_id');
         let rowIndex = 1;
 
-        // Data category for default useful life
+        // Data category for default useful life and residual percentage
         const categoryDefaults = {
             @foreach($categories as $category)
-                "{{ $category->id }}": "{{ $category->default_useful_life_months ?? 0 }}",
+                "{{ $category->id }}": {
+                    "useful_life": "{{ $category->default_useful_life_months ?? 0 }}",
+                    "residual_percent": "{{ $category->default_residual_percentage ?? 0 }}"
+                },
             @endforeach
         };
 
-        function getDefaultUsefulLife() {
+        const priceInput = document.getElementsByName('price')[0];
+
+        function getCategoryData() {
             const catId = categorySelect.value;
-            return categoryDefaults[catId] || 0;
+            return categoryDefaults[catId] || { useful_life: 0, residual_percent: 0 };
         }
 
-        // Update existing useful life inputs when category changes
-        categorySelect.addEventListener('change', function() {
-            const defaultLife = getDefaultUsefulLife();
+        function updateAllItemsDefaults() {
+            const catData = getCategoryData();
+            const price = parseFloat(priceInput.value) || 0;
+            const residualValue = Math.round(price * (catData.residual_percent / 100));
+
             document.querySelectorAll('.useful-life-input').forEach(input => {
-                input.value = defaultLife;
+                input.value = catData.useful_life;
             });
-        });
+            document.querySelectorAll('.residual-value-input').forEach(input => {
+                input.value = residualValue;
+            });
+        }
+
+        // Update when category or price changes
+        categorySelect.addEventListener('change', updateAllItemsDefaults);
+        priceInput.addEventListener('input', updateAllItemsDefaults);
 
         // Function to create a new row
-        function createRow(index, defaultUsefulLife = 0) {
+        function createRow(index, defaultUsefulLife = 0, defaultResidualValue = 0) {
             const tr = document.createElement('tr');
             tr.className = 'item-row';
             tr.innerHTML = `
@@ -233,7 +247,7 @@
                     </select>
                 </td>
                 <td class="px-4 py-3">
-                    <input type="number" name="items[${index}][residual_value]" class="form-input form-input-sm" placeholder="0" value="0">
+                    <input type="number" name="items[${index}][residual_value]" class="form-input form-input-sm residual-value-input" placeholder="0" value="${defaultResidualValue}">
                 </td>
                 <td class="px-4 py-3">
                     <input type="number" name="items[${index}][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="${defaultUsefulLife}">
@@ -250,9 +264,12 @@
         // Generate Rows
         btnGenerate.addEventListener('click', function () {
             const qty = parseInt(genQtyInput.value);
-            const defaultLife = getDefaultUsefulLife();
+            const catData = getCategoryData();
+            const price = parseFloat(priceInput.value) || 0;
+            const residualValue = Math.round(price * (catData.residual_percent / 100));
+
             for (let i = 0; i < qty; i++) {
-                itemsBody.appendChild(createRow(rowIndex, defaultLife));
+                itemsBody.appendChild(createRow(rowIndex, catData.useful_life, residualValue));
                 rowIndex++;
             }
             lucide.createIcons();

@@ -55,6 +55,10 @@ Route::middleware(['auth'])->group(function () {
     // User Management
     Route::resource('users', UserController::class);
     Route::get('/settings', fn() => redirect()->route('dashboard'))->name('settings.index');
+
+    // Reports
+    Route::get('/reports/depreciation', [\App\Http\Controllers\DepreciationReportController::class, 'index'])->name('reports.depreciation');
+    Route::get('/reports/depreciation/export', [\App\Http\Controllers\DepreciationReportController::class, 'export'])->name('reports.depreciation.export');
 });
 
 // Fallback untuk route template Tailwick agar tidak error

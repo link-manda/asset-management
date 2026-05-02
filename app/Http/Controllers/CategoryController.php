@@ -33,6 +33,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string|max:500',
             'default_useful_life_months' => 'nullable|integer|min:1',
+            'default_residual_percentage' => 'nullable|numeric|min:0|max:100',
         ]);
 
         Category::create($validated);
@@ -67,6 +68,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:500',
             'default_useful_life_months' => 'nullable|integer|min:1',
+            'default_residual_percentage' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $category->update($validated);
