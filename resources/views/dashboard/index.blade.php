@@ -14,14 +14,14 @@
                         <i class="size-6" data-lucide="package"></i>
                     </div>
                     <div class="grow">
-                        <h6 class="mb-1 text-default-800 font-semibold">Total Aset</h6>
-                        <p class="text-default-500 text-sm">{{ $totalAssets }} Item</p>
+                        <h6 class="mb-1 text-default-800 font-semibold text-xs uppercase tracking-wider">Total Unit Fisik</h6>
+                        <p class="text-default-800 text-xl font-bold">{{ number_format($totalAssets) }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Total Value --}}
+        {{-- Total Initial Value --}}
         <div class="card">
             <div class="card-body">
                 <div class="flex items-center gap-4">
@@ -29,14 +29,29 @@
                         <i class="size-6" data-lucide="circle-dollar-sign"></i>
                     </div>
                     <div class="grow">
-                        <h6 class="mb-1 text-default-800 font-semibold">Nilai Aset</h6>
-                        <p class="text-default-500 text-sm">Rp {{ number_format($totalValue, 0, ',', '.') }}</p>
+                        <h6 class="mb-1 text-default-800 font-semibold text-xs uppercase tracking-wider">Nilai Perolehan</h6>
+                        <p class="text-default-800 text-xl font-bold">Rp {{ number_format($totalValue, 0, ',', '.') }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Deployed --}}
+        {{-- Total Book Value --}}
+        <div class="card border-primary/20 border-2 shadow-primary/5">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <div class="btn bg-primary/20 text-primary size-12">
+                        <i class="size-6" data-lucide="trending-down"></i>
+                    </div>
+                    <div class="grow">
+                        <h6 class="mb-1 text-primary font-bold text-xs uppercase tracking-wider">Nilai Buku Saat Ini</h6>
+                        <p class="text-primary text-xl font-bold">Rp {{ number_format($totalBookValue, 0, ',', '.') }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Active Deployments --}}
         <div class="card">
             <div class="card-body">
                 <div class="flex items-center gap-4">
@@ -44,23 +59,8 @@
                         <i class="size-6" data-lucide="user-check"></i>
                     </div>
                     <div class="grow">
-                        <h6 class="mb-1 text-default-800 font-semibold">Aset Terpakai</h6>
-                        <p class="text-default-500 text-sm">{{ $stats['Deployed'] }} Item</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Maintenance --}}
-        <div class="card">
-            <div class="card-body">
-                <div class="flex items-center gap-4">
-                    <div class="btn bg-warning/10 text-warning size-12">
-                        <i class="size-6" data-lucide="wrench"></i>
-                    </div>
-                    <div class="grow">
-                        <h6 class="mb-1 text-default-800 font-semibold">Maintenance</h6>
-                        <p class="text-default-500 text-sm">{{ $stats['Maintenance'] }} Item</p>
+                        <h6 class="mb-1 text-default-800 font-semibold text-xs uppercase tracking-wider">Unit Deployed</h6>
+                        <p class="text-default-800 text-xl font-bold">{{ number_format($stats['Deployed']) }}</p>
                     </div>
                 </div>
             </div>

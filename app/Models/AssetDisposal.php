@@ -30,4 +30,13 @@ class AssetDisposal extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    /**
+     * Calculate Gain/Loss on Disposal.
+     */
+    public function getGainLossAttribute()
+    {
+        $bookValueAtDisposal = $this->item->calculateValueAt($this->disposal_date);
+        return ($this->selling_price ?? 0) - $bookValueAtDisposal;
+    }
 }

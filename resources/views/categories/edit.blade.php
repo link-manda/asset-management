@@ -25,8 +25,17 @@
 
                         <div>
                             <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="description">Deskripsi</label>
-                            <textarea class="form-input w-full @error('description') border-danger @enderror" id="description" name="description" rows="5">{{ old('description', $category->description) }}</textarea>
+                            <textarea class="form-input w-full @error('description') border-danger @enderror" id="description" name="description" rows="3">{{ old('description', $category->description) }}</textarea>
                             @error('description')
+                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="default_useful_life_months">Umur Ekonomis Default (Bulan)</label>
+                            <input class="form-input w-full @error('default_useful_life_months') border-danger @enderror" id="default_useful_life_months" name="default_useful_life_months" type="number" placeholder="Misal: 48 (untuk 4 tahun)" value="{{ old('default_useful_life_months', $category->default_useful_life_months) }}" />
+                            <p class="text-xs text-default-500 mt-1">Gunakan angka dalam hitungan bulan (Contoh: 60 untuk 5 tahun).</p>
+                            @error('default_useful_life_months')
                                 <p class="text-danger text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>

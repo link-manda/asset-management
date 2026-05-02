@@ -51,6 +51,8 @@ class AssetController extends Controller
             'items.*.serial_number' => 'nullable|string',
             'items.*.location_id'   => 'required|exists:locations,id',
             'items.*.condition'     => 'required|string',
+            'items.*.residual_value'=> 'nullable|numeric|min:0',
+            'items.*.useful_life_months' => 'nullable|integer|min:1',
             'images'        => 'nullable|array|max:4',
             'images.*'      => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -76,7 +78,6 @@ class AssetController extends Controller
             // 3. Create Physical Items
             foreach ($validated['items'] as $index => $itemData) {
                 // Generate Item Code (Barcode)
-                // Pattern: ASSETCODE-001
                 $sequence = str_pad($index + 1, 3, '0', STR_PAD_LEFT);
                 $itemCode = $asset->asset_code . '-' . $sequence;
 
@@ -89,6 +90,8 @@ class AssetController extends Controller
                     'condition'     => $itemData['condition'],
                     'purchase_date' => $validated['purchase_date'],
                     'purchase_price'=> $validated['price'],
+                    'residual_value' => $itemData['residual_value'] ?? 0,
+                    'useful_life_months' => $itemData['useful_life_months'] ?? 0,
                 ]);
             }
 

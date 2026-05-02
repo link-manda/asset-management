@@ -18,6 +18,7 @@ class DashboardController extends Controller
         // 1. Total statistik dasar (Berdasarkan Unit Fisik)
         $totalItems = AssetItem::count();
         $totalValue = AssetItem::sum('purchase_price');
+        $totalBookValue = AssetItem::all()->sum('current_value');
 
         // 2. Distribusi Status (Berdasarkan Unit Fisik)
         $statusCounts = AssetItem::select('status', DB::raw('count(*) as total'))
@@ -50,13 +51,14 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard.index', [
-            'totalAssets' => $totalItems,
-            'totalValue'  => $totalValue,
-            'stats'       => $stats,
+            'totalAssets'    => $totalItems,
+            'totalValue'     => $totalValue,
+            'totalBookValue' => $totalBookValue,
+            'stats'          => $stats,
             'categoryLabels' => $categoryData->pluck('name'),
             'categoryValues' => $categoryData->pluck('total_value'),
-            'trendLabels' => $monthlyTrend->pluck('month'),
-            'trendValues' => $monthlyTrend->pluck('total_value'),
+            'trendLabels'    => $monthlyTrend->pluck('month'),
+            'trendValues'    => $monthlyTrend->pluck('total_value'),
         ]);
     }
 }

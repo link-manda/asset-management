@@ -82,6 +82,8 @@
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Serial Number</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Lokasi</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Kondisi</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Nilai Sisa</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Umur (Bln)</th>
                                         <th class="px-4 py-2 text-center text-xs font-bold text-default-600 uppercase w-10"></th>
                                     </tr>
                                 </thead>
@@ -107,6 +109,12 @@
                                                 <option value="New">New</option>
                                                 <option value="Fair">Fair</option>
                                             </select>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <input type="number" name="items[0][residual_value]" class="form-input form-input-sm" placeholder="0" value="0">
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <input type="number" name="items[0][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="0">
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <button type="button" class="text-danger hover:text-danger-700 remove-row">
@@ -176,10 +184,31 @@
         const itemsBody = document.getElementById('items-body');
         const btnGenerate = document.getElementById('btn-generate');
         const genQtyInput = document.getElementById('gen-qty');
+        const categorySelect = document.getElementById('category_id');
         let rowIndex = 1;
 
+        // Data category for default useful life
+        const categoryDefaults = {
+            @foreach($categories as $category)
+                "{{ $category->id }}": "{{ $category->default_useful_life_months ?? 0 }}",
+            @endforeach
+        };
+
+        function getDefaultUsefulLife() {
+            const catId = categorySelect.value;
+            return categoryDefaults[catId] || 0;
+        }
+
+        // Update existing useful life inputs when category changes
+        categorySelect.addEventListener('change', function() {
+            const defaultLife = getDefaultUsefulLife();
+            document.querySelectorAll('.useful-life-input').forEach(input => {
+                input.value = defaultLife;
+            });
+        });
+
         // Function to create a new row
-        function createRow(index) {
+        function createRow(index, defaultUsefulLife = 0) {
             const tr = document.createElement('tr');
             tr.className = 'item-row';
             tr.innerHTML = `
@@ -203,6 +232,12 @@
                         <option value="Fair">Fair</option>
                     </select>
                 </td>
+                <td class="px-4 py-3">
+                    <input type="number" name="items[${index}][residual_value]" class="form-input form-input-sm" placeholder="0" value="0">
+                </td>
+                <td class="px-4 py-3">
+                    <input type="number" name="items[${index}][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="${defaultUsefulLife}">
+                </td>
                 <td class="px-4 py-3 text-center">
                     <button type="button" class="text-danger hover:text-danger-700 remove-row">
                         <i data-lucide="x" class="size-4"></i>
@@ -215,8 +250,9 @@
         // Generate Rows
         btnGenerate.addEventListener('click', function () {
             const qty = parseInt(genQtyInput.value);
+            const defaultLife = getDefaultUsefulLife();
             for (let i = 0; i < qty; i++) {
-                itemsBody.appendChild(createRow(rowIndex));
+                itemsBody.appendChild(createRow(rowIndex, defaultLife));
                 rowIndex++;
             }
             lucide.createIcons();

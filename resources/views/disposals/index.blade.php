@@ -69,7 +69,8 @@
                                     <th class="px-4 py-3 font-medium">Tanggal</th>
                                     <th class="px-4 py-3 font-medium">Aset / Barcode</th>
                                     <th class="px-4 py-3 font-medium">Alasan</th>
-                                    <th class="px-4 py-3 font-medium">Harga Jual</th>
+                                    <th class="px-4 py-3 font-medium text-end">Harga Jual</th>
+                                    <th class="px-4 py-3 font-medium text-end">Gain/Loss</th>
                                     <th class="px-4 py-3 font-medium">Oleh</th>
                                 </tr>
                             </thead>
@@ -90,9 +91,22 @@
                                                 {{ $disposal->reason }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-4 text-sm">
+                                        <td class="px-4 py-4 text-sm text-end font-medium">
                                             @if($disposal->selling_price)
                                                 Rp {{ number_format($disposal->selling_price, 0, ',', '.') }}
+                                            @else
+                                                <span class="text-default-400">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-end">
+                                            @if($disposal->reason === 'Sold')
+                                                @if($disposal->gain_loss > 0)
+                                                    <span class="text-success font-bold">+Rp {{ number_format($disposal->gain_loss, 0, ',', '.') }}</span>
+                                                @elseif($disposal->gain_loss < 0)
+                                                    <span class="text-danger font-bold">-Rp {{ number_format(abs($disposal->gain_loss), 0, ',', '.') }}</span>
+                                                @else
+                                                    <span class="text-default-400">Break-even</span>
+                                                @endif
                                             @else
                                                 <span class="text-default-400">-</span>
                                             @endif

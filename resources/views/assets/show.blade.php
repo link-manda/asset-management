@@ -382,6 +382,29 @@
                                 <option value="Fair">Cukup (Fair)</option>
                             </select>
                         </div>
+                        <div class="pt-2 border-t border-default-100 mt-2">
+                            <p class="text-xs font-bold text-default-600 mb-2 uppercase">Informasi Finansial (Opsional)</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-default-500 mb-1">Tanggal Beli</label>
+                                    <input type="date" name="purchase_date" class="form-input text-sm" value="{{ date('Y-m-d') }}">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-default-500 mb-1">Harga Satuan (Rp)</label>
+                                    <input type="number" name="purchase_price" class="form-input text-sm" value="{{ $asset->price }}">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-default-500 mb-1">Nilai Sisa (Rp)</label>
+                                    <input type="number" name="residual_value" class="form-input text-sm" value="0">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-default-500 mb-1">Umur Ekonomis (Bln)</label>
+                                    <input type="number" name="useful_life_months" class="form-input text-sm" value="{{ $asset->category->default_useful_life_months ?? 0 }}">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex justify-end items-center gap-2 py-3 px-4 border-t border-default-200">
                         <button type="button" class="btn border-default-200 text-default-600" data-hs-overlay="#modal-add-item">Batal</button>

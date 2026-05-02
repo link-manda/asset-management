@@ -79,6 +79,44 @@
                         </div>
                     </div>
                 </div>
+                <div class="card mt-6">
+                <div class="card-header flex justify-between items-center">
+                    <h6 class="card-title">Financial / Depreciation</h6>
+                    <i class="size-4 text-primary" data-lucide="trending-down"></i>
+                </div>
+                <div class="card-body">
+                    <div class="mb-5">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-default-500">Current Book Value</span>
+                            <span class="font-bold text-primary">Rp {{ number_format($item->current_value, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="w-full bg-default-100 rounded-full h-1.5">
+                            <div class="bg-primary h-1.5 rounded-full" style="width: {{ 100 - $item->depreciation_percentage }}%"></div>
+                        </div>
+                        <p class="text-[10px] text-default-400 mt-1 italic">* Berdasarkan metode penyusutan garis lurus.</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-default-500">Harga Perolehan</span>
+                            <span class="font-medium text-default-800">Rp {{ number_format($item->purchase_price, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-default-500">Nilai Sisa (Residual)</span>
+                            <span class="font-medium text-default-800">Rp {{ number_format($item->residual_value, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-default-500">Umur Ekonomis</span>
+                            <span class="font-medium text-default-800">{{ $item->useful_life_months }} Bulan</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-default-500">Umur Terpakai</span>
+                            <span class="font-medium {{ $item->depreciation_percentage >= 100 ? 'text-danger' : 'text-default-800' }}">
+                                {{ $item->purchase_date->diffInMonths(now()) }} Bulan
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

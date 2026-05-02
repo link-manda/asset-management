@@ -90,6 +90,10 @@ class AssetItemController extends Controller
             'location_id' => 'required|exists:locations,id',
             'quantity' => 'required|integer|min:1|max:50',
             'condition' => 'required|string',
+            'purchase_date' => 'nullable|date',
+            'purchase_price' => 'nullable|numeric|min:0',
+            'residual_value' => 'nullable|numeric|min:0',
+            'useful_life_months' => 'nullable|integer|min:1',
         ]);
 
         $asset = \App\Models\Asset::find($validated['asset_id']);
@@ -117,8 +121,10 @@ class AssetItemController extends Controller
                     'location_id' => $validated['location_id'],
                     'status' => 'Available',
                     'condition' => $validated['condition'],
-                    'purchase_date' => now(),
-                    'purchase_price' => $asset->price,
+                    'purchase_date' => $validated['purchase_date'] ?? now(),
+                    'purchase_price' => $validated['purchase_price'] ?? $asset->price,
+                    'residual_value' => $validated['residual_value'] ?? 0,
+                    'useful_life_months' => $validated['useful_life_months'] ?? ($asset->category->default_useful_life_months ?? 0),
                 ]);
             }
         });
