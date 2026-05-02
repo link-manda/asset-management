@@ -61,8 +61,39 @@ class AssetItemController extends Controller
      */
     public function show(AssetItem $item)
     {
-        $item->load(['asset.category', 'location', 'assignments.user', 'maintenances']);
-        return view('inventory.show', compact('item'));
+        $item->load(['asset.images', 'asset.category', 'location', 'assignments.user', 'maintenances']);
+        
+        $schedule = [];
+        if ($item->purchase_price && $item->useful_life_months && $item->purchase_date) {
+            $purchasePrice = (float) $item->purchase_price;
+            $residualValue = (float) ($item->residual_value ?? 0);
+            $usefulLife = (int) $item->useful_life_months;
+            
+            $depreciationPerMonth = ($purchasePrice - $residualValue) / $usefulLife;
+            $currentBookValue = $purchasePrice;
+            $accumulated = 0;
+            $startDate = \Carbon\Carbon::parse($item->purchase_date);
+
+            for ($i = 1; $i <= $usefulLife; $i++) {
+                $periodDate = $startDate->copy()->addMonths($i);
+                $monthYear = $periodDate->translatedFormat('F Y');
+                
+                $accumulated += $depreciationPerMonth;
+                $beginningValue = $currentBookValue;
+                $currentBookValue -= $depreciationPerMonth;
+
+                $schedule[] = [
+                    'period' => $i,
+                    'month_year' => $monthYear,
+                    'beginning_value' => $beginningValue,
+                    'depreciation_expense' => $depreciationPerMonth,
+                    'accumulated_depreciation' => $accumulated,
+                    'ending_book_value' => max($currentBookValue, $residualValue),
+                ];
+            }
+        }
+
+        return view('inventory.show', compact('item', 'schedule'));
     }
 
     /**

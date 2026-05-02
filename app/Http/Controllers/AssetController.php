@@ -96,15 +96,7 @@ class AssetController extends Controller
             }
 
             // 4. Handle Images
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $path = $image->store('assets/images', 'public');
-                    \App\Models\AssetImage::create([
-                        'asset_id' => $asset->id,
-                        'image_path' => $path,
-                    ]);
-                }
-            }
+            $this->handleImageUploads($request, $asset);
 
             return redirect()->route('assets.index')
                 ->with('success', 'Master Asset dan ' . count($validated['items']) . ' Unit Fisik berhasil didaftarkan.');
@@ -116,7 +108,7 @@ class AssetController extends Controller
      */
     public function show(Asset $asset)
     {
-        $asset->load(['category', 'uom', 'items.location', 'items.currentAssignment.user', 'assignments.user', 'maintenances']);
+        $asset->load(['category', 'uom', 'images', 'items.location', 'items.currentAssignment.user', 'assignments.user', 'maintenances']);
         $users = User::all();
         $locations = Location::all();
         return view('assets.show', compact('asset', 'users', 'locations'));
@@ -144,12 +136,33 @@ class AssetController extends Controller
             'price'         => 'required|numeric|min:0',
             'notes'         => 'nullable|string',
             'asset_code'    => 'required|string|unique:assets,asset_code,' . $asset->id,
+            'images'        => 'nullable|array|max:4',
+            'images.*'      => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $asset->update($validated);
 
-        return redirect()->route('assets.index')
+        // Handle Images
+        $this->handleImageUploads($request, $asset);
+
+        return redirect()->route('assets.show', $asset)
             ->with('success', 'Data Master Asset berhasil diperbarui.');
+    }
+
+    /**
+     * handleImageUploads: Helper to process image uploads for store/update.
+     */
+    private function handleImageUploads(Request $request, Asset $asset)
+    {
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('assets/images', 'public');
+                \App\Models\AssetImage::create([
+                    'asset_id' => $asset->id,
+                    'image_path' => $path,
+                ]);
+            }
+        }
     }
 
     /**

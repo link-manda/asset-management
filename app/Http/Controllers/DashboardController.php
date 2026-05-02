@@ -33,10 +33,10 @@ class DashboardController extends Controller
         }
 
         // 3. Data Grafik: Nilai Aset per Kategori (Doughnut)
-        $categoryData = Asset::join('categories', 'assets.category_id', '=', 'categories.id')
+        $categoryData = Category::leftJoin('assets', 'categories.id', '=', 'assets.category_id')
             ->leftJoin('asset_items', 'assets.id', '=', 'asset_items.asset_id')
-            ->select('categories.name', DB::raw('SUM(asset_items.purchase_price) as total_value'))
-            ->groupBy('categories.name')
+            ->select('categories.name', DB::raw('SUM(COALESCE(asset_items.purchase_price, 0)) as total_value'))
+            ->groupBy('categories.id', 'categories.name')
             ->get();
 
         // 4. Data Grafik: Tren Akuisisi Aset 6 Bulan Terakhir (Line)

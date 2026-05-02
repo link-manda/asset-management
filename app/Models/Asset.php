@@ -92,4 +92,10 @@ class Asset extends Model
     {
         return $this->hasMany(AssetImage::class);
     }
+
+    public function getPrimaryImageUrlAttribute(): string
+    {
+        $image = $this->images()->where('is_primary', true)->first() ?? $this->images()->first();
+        return $image ? $image->url : 'https://placehold.co/400x400?text=No+Image';
+    }
 }

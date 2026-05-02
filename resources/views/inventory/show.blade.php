@@ -5,150 +5,45 @@
 @section('content')
     @include('layouts.partials/page-title', ['subtitle' => 'Inventory', 'title' => 'Item Specification'])
 
-    <div class="grid lg:grid-cols-3 grid-cols-1 gap-6">
-        {{-- Left: Item Info --}}
-        <div class="lg:col-span-1">
+    <div class="grid lg:grid-cols-4 grid-cols-1 gap-6">
+        {{-- Left: Item Identity & Quick Info --}}
+        <div class="lg:col-span-1 space-y-6">
             <div class="card">
-                <div class="card-body text-center">
-                    <div class="size-24 bg-primary/10 text-primary rounded-xl flex items-center justify-center mx-auto mb-4">
-                        <i class="size-12" data-lucide="package"></i>
-                    </div>
-                    <h4 class="text-xl font-bold text-default-800 mb-1">{{ $item->item_code }}</h4>
-                    <p class="text-default-500 text-sm mb-4">SN: {{ $item->serial_number ?? 'N/A' }}</p>
-                    
-                    @php
-                        $sClasses = [
-                            'Available' => 'bg-success/15 text-success',
-                            'Deployed' => 'bg-primary/15 text-primary',
-                            'Maintenance' => 'bg-warning/15 text-warning',
-                            'Broken' => 'bg-danger/15 text-danger',
-                            'Disposed' => 'bg-danger text-white',
-                        ];
-                        $class = $sClasses[$item->status] ?? 'bg-default-100 text-default-500';
-                    @endphp
-                    <span class="inline-flex py-1 px-3 rounded-full text-xs font-bold uppercase {{ $class }} mb-6">
-                        {{ $item->status }}
-                    </span>
-
-                    <div class="grid grid-cols-1 gap-2">
-                        <form action="{{ route('inventory.bulk-print') }}" method="POST" target="_blank">
-                            @csrf
-                            <input type="hidden" name="ids[]" value="{{ $item->id }}">
-                            <button type="submit" class="btn bg-primary text-white w-full">
-                                <i class="size-4 me-2" data-lucide="printer"></i> Cetak Label
-                            </button>
-                        </form>
-                        <a href="{{ route('inventory.index') }}" class="btn border-default-200 text-default-600 w-full">Kembali</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mt-6">
-                <div class="card-header">
-                    <h6 class="card-title">Lokasi & Kondisi</h6>
-                </div>
                 <div class="card-body">
-                    <div class="space-y-4">
-                        <div class="flex items-start gap-3">
-                            <div class="size-8 bg-secondary/10 text-secondary rounded flex items-center justify-center shrink-0">
-                                <i class="size-4" data-lucide="map-pin"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-default-400 font-medium">Lokasi Saat Ini</p>
-                                <p class="text-sm text-default-800 font-bold">{{ $item->location?->name ?? 'Belum Ditentukan' }}</p>
-                                <p class="text-[10px] text-default-500">{{ $item->location?->address }}</p>
-                            </div>
+                    <div class="flex flex-col items-center text-center">
+                        <div class="size-20 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-4">
+                            <i class="size-10" data-lucide="package"></i>
                         </div>
-                        <div class="flex items-start gap-3">
-                            <div class="size-8 bg-info/10 text-info rounded flex items-center justify-center shrink-0">
-                                <i class="size-4" data-lucide="activity"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-default-400 font-medium">Kondisi Terakhir</p>
-                                <p class="text-sm text-default-800 font-bold">{{ $item->condition }}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3">
-                            <div class="size-8 bg-success/10 text-success rounded flex items-center justify-center shrink-0">
-                                <i class="size-4" data-lucide="calendar"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs text-default-400 font-medium">Tanggal Perolehan</p>
-                                <p class="text-sm text-default-800 font-bold">{{ \Carbon\Carbon::parse($item->purchase_date)->format('d F Y') }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card mt-6">
-                <div class="card-header flex justify-between items-center">
-                    <h6 class="card-title">Financial / Depreciation</h6>
-                    <i class="size-4 text-primary" data-lucide="trending-down"></i>
-                </div>
-                <div class="card-body">
-                    <div class="mb-5">
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="text-default-500">Current Book Value</span>
-                            <span class="font-bold text-primary">Rp {{ number_format($item->current_value, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="w-full bg-default-100 rounded-full h-1.5">
-                            <div class="bg-primary h-1.5 rounded-full" style="width: {{ 100 - $item->depreciation_percentage }}%"></div>
-                        </div>
-                        <p class="text-[10px] text-default-400 mt-1 italic">* Berdasarkan metode penyusutan garis lurus.</p>
-                    </div>
+                        <h4 class="text-lg font-bold text-default-800 mb-1">{{ $item->item_code }}</h4>
+                        <p class="text-default-500 text-xs mb-4">SN: {{ $item->serial_number ?? 'N/A' }}</p>
+                        
+                        @php
+                            $sClasses = [
+                                'Available' => 'bg-success/15 text-success',
+                                'Deployed' => 'bg-primary/15 text-primary',
+                                'Maintenance' => 'bg-warning/15 text-warning',
+                                'Broken' => 'bg-danger/15 text-danger',
+                                'Disposed' => 'bg-danger text-white',
+                            ];
+                            $class = $sClasses[$item->status] ?? 'bg-default-100 text-default-500';
+                        @endphp
+                        <span class="inline-flex py-1 px-3 rounded-full text-[10px] font-bold uppercase {{ $class }} mb-6">
+                            {{ $item->status }}
+                        </span>
 
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-default-500">Harga Perolehan</span>
-                            <span class="font-medium text-default-800">Rp {{ number_format($item->purchase_price, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-default-500">Nilai Sisa (Residual)</span>
-                            <span class="font-medium text-default-800">Rp {{ number_format($item->residual_value, 0, ',', '.') }}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-default-500">Umur Ekonomis</span>
-                            <span class="font-medium text-default-800">{{ $item->useful_life_months }} Bulan</span>
-                        </div>
-                        <div class="flex justify-between items-center text-sm">
-                            <span class="text-default-500">Umur Terpakai</span>
-                            <span class="font-medium {{ $item->depreciation_percentage >= 100 ? 'text-danger' : 'text-default-800' }}">
-                                {{ $item->purchase_date->diffInMonths(now()) }} Bulan
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Right: Master Info & History --}}
-        <div class="lg:col-span-2">
-            <div class="card mb-6">
-                <div class="card-header flex justify-between items-center">
-                    <h6 class="card-title">Profil Katalog (Master Asset)</h6>
-                    <a href="{{ route('assets.show', $item->asset_id) }}" class="text-primary text-sm font-bold hover:underline">Lihat Katalog <i class="size-3 inline" data-lucide="external-link"></i></a>
-                </div>
-                <div class="card-body">
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <div class="size-24 bg-default-100 rounded-lg flex items-center justify-center shrink-0">
-                            @if($item->asset?->images?->count() > 0)
-                                <img src="{{ asset('storage/' . $item->asset->images->first()->image_path) }}" class="size-full object-cover rounded-lg">
-                            @else
-                                <i class="size-10 text-default-400" data-lucide="image"></i>
+                        <div class="w-full space-y-2">
+                            <form action="{{ route('inventory.bulk-print') }}" method="POST" target="_blank">
+                                @csrf
+                                <input type="hidden" name="ids[]" value="{{ $item->id }}">
+                                <button type="submit" class="btn btn-sm bg-primary text-white w-full flex items-center justify-center gap-2">
+                                    <i class="size-4" data-lucide="printer"></i> Cetak Label
+                                </button>
+                            </form>
+                            @if($item->status == 'Available')
+                                <a href="{{ route('items.checkout.create', $item) }}" class="btn btn-sm bg-info text-white w-full flex items-center justify-center gap-2">
+                                    <i class="size-4" data-lucide="send"></i> Checkout Unit
+                                </a>
                             @endif
-                        </div>
-                        <div class="grow">
-                            <h5 class="text-lg font-bold text-default-800 mb-1">{{ $item->asset?->name }}</h5>
-                            <p class="text-primary font-mono text-sm mb-3">Master Code: {{ $item->asset?->asset_code }}</p>
-                            <div class="flex flex-wrap gap-4 text-sm">
-                                <div class="flex items-center gap-1.5 text-default-600">
-                                    <span class="font-medium">Kategori:</span>
-                                    <span class="bg-default-100 px-2 py-0.5 rounded">{{ $item->asset?->category?->name ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex items-center gap-1.5 text-default-600">
-                                    <span class="font-medium">Harga Master:</span>
-                                    <span>Rp {{ number_format($item->asset?->price, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -156,50 +51,249 @@
 
             <div class="card">
                 <div class="card-header border-b border-default-200">
-                    <div class="flex items-center justify-between">
-                        <h6 class="card-title">Riwayat Penugasan Unit</h6>
-                        @if($item->status == 'Available')
-                            <a href="{{ route('items.checkout.create', $item) }}" class="btn btn-sm bg-primary text-white">Checkout Unit Ini</a>
-                        @endif
+                    <h6 class="card-title text-sm">Status & Lokasi</h6>
+                </div>
+                <div class="card-body p-4 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <div class="size-8 bg-secondary/10 text-secondary rounded-lg flex items-center justify-center shrink-0">
+                            <i class="size-4" data-lucide="map-pin"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="text-[10px] text-default-400 font-medium uppercase tracking-wider">Lokasi</p>
+                            <p class="text-sm text-default-800 font-bold truncate">{{ $item->location?->name ?? 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="size-8 bg-info/10 text-info rounded-lg flex items-center justify-center shrink-0">
+                            <i class="size-4" data-lucide="activity"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-default-400 font-medium uppercase tracking-wider">Kondisi</p>
+                            <p class="text-sm text-default-800 font-bold">{{ $item->condition }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="size-8 bg-success/10 text-success rounded-lg flex items-center justify-center shrink-0">
+                            <i class="size-4" data-lucide="calendar"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-default-400 font-medium uppercase tracking-wider">Perolehan</p>
+                            <p class="text-sm text-default-800 font-bold">{{ \Carbon\Carbon::parse($item->purchase_date)->format('d M Y') }}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-default-200 text-sm">
-                            <thead class="bg-default-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-start">Peminjam</th>
-                                    <th class="px-4 py-3 text-start">Tgl Keluar</th>
-                                    <th class="px-4 py-3 text-start">Tgl Kembali</th>
-                                    <th class="px-4 py-3 text-start">Kondisi Keluar</th>
-                                    <th class="px-4 py-3 text-start">Kondisi Masuk</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-default-200">
-                                @forelse($item->assignments as $history)
+            </div>
+            
+            <div class="card bg-default-900 text-white overflow-hidden relative">
+                <div class="card-body p-4 z-10 relative">
+                    <div class="flex justify-between items-center mb-4">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-default-400">QR Identification</p>
+                        <i class="size-4 text-primary" data-lucide="qr-code"></i>
+                    </div>
+                    <div class="bg-white p-2 rounded-lg inline-block mb-3">
+                        {{-- Placeholder for QR --}}
+                        <div class="size-20 bg-default-100 flex items-center justify-center">
+                            <i class="size-8 text-default-400" data-lucide="scan-barcode"></i>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-default-400 italic">Scan to verify asset authenticity and history.</p>
+                </div>
+                <div class="absolute -bottom-4 -right-4 size-24 bg-primary/20 rounded-full blur-2xl"></div>
+            </div>
+        </div>
+
+        {{-- Right: Comprehensive Data --}}
+        <div class="lg:col-span-3 space-y-6">
+            {{-- Financial & Master Summary --}}
+            <div class="grid md:grid-cols-2 grid-cols-1 gap-6">
+                {{-- Master Profile Card --}}
+                <div class="card overflow-hidden">
+                    <div class="card-header border-b border-default-200 flex justify-between items-center bg-default-50/50">
+                        <h6 class="card-title text-sm">Profil Katalog</h6>
+                        <a href="{{ route('assets.show', $item->asset_id) }}" class="text-primary text-[10px] font-bold hover:underline flex items-center gap-1">DETAIL KATALOG <i class="size-3" data-lucide="arrow-right"></i></a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-32 w-full aspect-square md:aspect-auto bg-default-100 flex items-center justify-center shrink-0 overflow-hidden border-e border-default-200 relative group">
+                                @if($item->asset?->images?->count() > 0)
+                                    <img src="{{ $item->asset->images->first()->url }}" class="size-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-zoom-in" onclick="zoomImage('{{ $item->asset->images->first()->url }}')">
+                                    <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                        <i class="size-6 text-white" data-lucide="maximize-2"></i>
+                                    </div>
+                                @else
+                                    <i class="size-10 text-default-300" data-lucide="image"></i>
+                                @endif
+                            </div>
+                            <div class="grow p-4 min-w-0">
+                                <h5 class="text-base font-bold text-default-800 mb-0.5 truncate">{{ $item->asset?->name }}</h5>
+                                <p class="text-primary font-mono text-[11px] mb-3">{{ $item->asset?->asset_code }}</p>
+                                <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                                    <div>
+                                        <p class="text-[10px] text-default-400 uppercase font-bold tracking-tighter">Kategori</p>
+                                        <p class="text-xs font-bold text-default-700 truncate">{{ $item->asset?->category?->name }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-default-400 uppercase font-bold tracking-tighter">Satuan</p>
+                                        <p class="text-xs font-bold text-default-700">{{ $item->asset?->uom?->name ?? 'Unit' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-default-400 uppercase font-bold tracking-tighter">Harga Master</p>
+                                        <p class="text-xs font-bold text-default-700">Rp {{ number_format($item->asset?->price, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-default-400 uppercase font-bold tracking-tighter">Brand/Merk</p>
+                                        <p class="text-xs font-bold text-default-700">{{ $item->asset?->brand ?? '-' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Financial Quick Stats --}}
+                <div class="card">
+                    <div class="card-header border-b border-default-200">
+                        <h6 class="card-title text-sm">Ringkasan Finansial</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-primary/5 p-3 rounded-xl border border-primary/10">
+                                <p class="text-[10px] text-primary font-bold uppercase mb-1">Nilai Buku</p>
+                                <p class="text-lg font-bold text-default-900">Rp {{ number_format($item->current_value, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="bg-default-50 p-3 rounded-xl border border-default-200">
+                                <p class="text-[10px] text-default-500 font-bold uppercase mb-1">Depresiasi</p>
+                                <p class="text-lg font-bold text-danger">{{ number_format($item->depreciation_percentage, 1) }}%</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between text-[11px]">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-default-500">Umur Terpakai:</span>
+                                <span class="font-bold text-default-800">{{ round($item->purchase_date->diffInMonths(now()), 1) }} Bulan</span>
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-default-500">Sisa Umur:</span>
+                                <span class="font-bold text-success">{{ max(0, $item->useful_life_months - round($item->purchase_date->diffInMonths(now()), 1)) }} Bulan</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Activity & Simulation Tabs/Grid --}}
+            <div class="grid lg:grid-cols-5 grid-cols-1 gap-6">
+                {{-- Riwayat Assignment (2/5) --}}
+                <div class="lg:col-span-2 card">
+                    <div class="card-header border-b border-default-200 flex justify-between items-center">
+                        <h6 class="card-title text-sm">Riwayat Penugasan</h6>
+                        <i class="size-4 text-default-400" data-lucide="history"></i>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-default-200 text-[11px]">
+                                <thead class="bg-default-50">
                                     <tr>
-                                        <td class="px-4 py-3 font-medium text-default-800">{{ $history->user->name }}</td>
-                                        <td class="px-4 py-3">{{ \Carbon\Carbon::parse($history->assigned_date)->format('d/m/Y') }}</td>
-                                        <td class="px-4 py-3">
-                                            @if($history->return_date)
-                                                {{ \Carbon\Carbon::parse($history->return_date)->format('d/m/Y') }}
-                                            @else
-                                                <span class="text-primary font-bold">ACTIVE</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-4 py-3 text-default-500">{{ $history->condition_on_checkout }}</td>
-                                        <td class="px-4 py-3 text-default-500">{{ $history->condition_on_return ?? '-' }}</td>
+                                        <th class="px-4 py-2 text-start font-bold">User</th>
+                                        <th class="px-4 py-2 text-start font-bold">Periode</th>
+                                        <th class="px-4 py-2 text-center font-bold">Status</th>
                                     </tr>
-                                @empty
+                                </thead>
+                                <tbody class="divide-y divide-default-200">
+                                    @forelse($item->assignments as $history)
+                                        <tr class="hover:bg-default-50 transition-all">
+                                            <td class="px-4 py-3">
+                                                <div class="font-bold text-default-800">{{ $history->user->name }}</div>
+                                            </td>
+                                            <td class="px-4 py-3 text-default-600">
+                                                {{ \Carbon\Carbon::parse($history->assigned_date)->format('d/m/y') }} - 
+                                                {{ $history->return_date ? \Carbon\Carbon::parse($history->return_date)->format('d/m/y') : 'Now' }}
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                @if(!$history->return_date)
+                                                    <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px] font-bold">ACTIVE</span>
+                                                @else
+                                                    <span class="text-default-400"><i class="size-3" data-lucide="check-circle"></i></span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-4 py-8 text-center text-default-400 italic">No assignment history.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Simulation Table (3/5) --}}
+                <div class="lg:col-span-3 card">
+                    <div class="card-header border-b border-default-200 flex justify-between items-center">
+                        <h6 class="card-title text-sm">Simulasi Penyusutan (Straight-Line)</h6>
+                        <div class="flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded">
+                            <i class="size-3" data-lucide="trending-down"></i> PROYEKSI
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="overflow-x-auto max-h-[350px]" data-simplebar>
+                            <table class="min-w-full divide-y divide-default-200 text-[11px]">
+                                <thead class="bg-default-50 sticky top-0 z-10">
                                     <tr>
-                                        <td colspan="5" class="px-4 py-8 text-center text-default-400 italic">Belum ada riwayat penugasan untuk unit ini.</td>
+                                        <th class="px-4 py-2 text-start font-bold">Bulan</th>
+                                        <th class="px-4 py-2 text-end font-bold">Nilai Awal</th>
+                                        <th class="px-4 py-2 text-end font-bold">Penyusutan</th>
+                                        <th class="px-4 py-2 text-end font-bold">Nilai Buku</th>
                                     </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="divide-y divide-default-200">
+                                    @forelse($schedule as $row)
+                                        @php $isCurrent = $row['month_year'] == now()->translatedFormat('F Y'); @endphp
+                                        <tr class="{{ $isCurrent ? 'bg-primary/5 font-bold' : '' }} hover:bg-default-50 transition-all">
+                                            <td class="px-4 py-2 whitespace-nowrap">
+                                                @if($isCurrent)
+                                                    <span class="size-2 bg-primary rounded-full inline-block me-1 animate-pulse"></span>
+                                                @endif
+                                                {{ $row['month_year'] }}
+                                            </td>
+                                            <td class="px-4 py-2 text-end text-default-500">Rp {{ number_format($row['beginning_value'], 0, ',', '.') }}</td>
+                                            <td class="px-4 py-2 text-end text-danger">-Rp {{ number_format($row['depreciation_expense'], 0, ',', '.') }}</td>
+                                            <td class="px-4 py-2 text-end font-bold {{ $isCurrent ? 'text-primary' : 'text-default-800' }}">Rp {{ number_format($row['ending_book_value'], 0, ',', '.') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="px-4 py-8 text-center text-default-400 italic">Financial data incomplete.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-default-50 py-2">
+                        <p class="text-[10px] text-default-500 italic text-center">Data simulasi ini bersifat informatif dan tidak menggantikan pencatatan akuntansi resmi.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @push('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function zoomImage(url) {
+            Swal.fire({
+                imageUrl: url,
+                imageAlt: 'Asset Image',
+                showCloseButton: true,
+                showConfirmButton: false,
+                width: 'auto',
+                padding: '0',
+                background: 'transparent',
+                customClass: {
+                    image: 'rounded-lg shadow-2xl border-4 border-white'
+                }
+            });
+        }
+    </script>
+    @endpush
 @endsection
