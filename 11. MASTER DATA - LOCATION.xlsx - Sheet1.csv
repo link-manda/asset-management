@@ -1,0 +1,66 @@
+,LOCATION,,,
+,,,,
+,Company Name: ,,,
+,Notes : Tanda * wajib diisi,,,
+,Location Name*,Location Description,Sub Location Name,Sub-Sub Location Name
+6,Main Lobby,,Check-out Lounge,
+,,,Arrival Lobby,
+,,,Late Check-out Lobby,
+,,,Lobby Parking,
+,,,Reception,
+5,Back Of House,,BOH Office,Sales Office
+,,,,Engineering Office
+,,,,Finance Office
+,,,,GM Office
+,,,,Director of Room Office
+,,,,Reservation Office
+,,,,Food & Beverage Office
+,,,,Security Office
+,,,,Housekeeping Office
+,,,,IT Office
+,,,,SPA office
+,,,,Purchasing Office
+,,,,FO Office
+,,,Locker,Male Changing Room
+,,,,Female Changing Room
+,,,,Outsourcing Locker
+,,,Collage Area,Collage Area - Service
+,,,,Collage Area - Dishwashing
+,,,,Collage Area - Preparation
+,,,,Collage Area - Kitchen
+,,,Uniform Room,
+,,,Banquet,
+,,,Ballroom,
+,,,Ballroom Corridor,
+,,,Laundry,
+,,,Loading Dock,
+,,,Main Kitchen,Sanitising Room
+,,,,Trolley Wash
+,,,,Sanitising Room
+,,,,Receiving Area
+,,,,General Chiller/Freezer
+,,,,Beverage Storage
+,,,,Meat Preparation
+,,,,Fish Preparation
+,,,,Vegetable Preparation
+,,,,BBQ Room
+,,,,Stewarding Area
+,,,,Hot Kitchen
+,,,,Pastry & Bakery Area
+,,,,Potwash
+,,,,Diary Storage
+,,,,Cold Kitchen
+,,,Genset Room,
+,,,Panel Room,
+4,SPA,,Hammam,
+,,,Vichy,
+,,,Dry Relaxation,
+,,,Wet Relaxation,
+,,,Treatment Room,
+,,,Changing Room - Male,
+,,,Changing Room - Female,
+,,,Gym Area,
+,,,Salon Area,
+,,,Boutique Retail,
+,,,Reception Area,
+,,,Corridors Area,

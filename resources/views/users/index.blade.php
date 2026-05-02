@@ -1,0 +1,121 @@
+@extends('layouts.app')
+
+@section('title', 'Manajemen Pengguna')
+
+@section('content')
+    @include('layouts.partials/page-title', ['subtitle' => 'Sistem', 'title' => 'Daftar Pengguna'])
+
+    <div class="grid grid-cols-1 gap-5 mb-5">
+        <div class="card">
+            <div class="card-header flex justify-between items-center">
+                <div class="flex gap-3 items-center">
+                    <div class="relative">
+                        <input class="ps-11 form-input form-input-sm w-64" placeholder="Cari pengguna..." type="text" />
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+                            <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('users.create') }}" class="btn btn-sm bg-primary text-white">
+                        <i class="size-4 me-1" data-lucide="user-plus"></i> Tambah User
+                    </a>
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <div class="overflow-x-auto">
+                    <div class="min-w-full inline-block align-middle">
+                        <div class="overflow-hidden">
+                            <table class="min-w-full divide-y divide-default-200">
+                                <thead class="bg-default-100">
+                                    <tr class="text-xs font-semibold text-default-600 uppercase">
+                                        <th class="px-4 py-3 text-start">Pengguna</th>
+                                        <th class="px-4 py-3 text-start">Org. Structure</th>
+                                        <th class="px-4 py-3 text-start">Email</th>
+                                        <th class="px-4 py-3 text-start">Role</th>
+                                        <th class="px-4 py-3 text-start">Tgl Bergabung</th>
+                                        <th class="px-4 py-3 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-default-200">
+                                    @foreach ($users as $user)
+                                        <tr class="text-default-800 hover:bg-default-50 transition-all">
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="flex items-center gap-3">
+                                                    @php
+                                                        $colors = ['bg-primary/10 text-primary', 'bg-success/10 text-success', 'bg-info/10 text-info', 'bg-warning/10 text-warning', 'bg-danger/10 text-danger'];
+                                                        $colorClass = $colors[$user->id % count($colors)];
+                                                    @endphp
+                                                    <div class="size-10 {{ $colorClass }} rounded-full flex items-center justify-center font-bold text-sm uppercase">
+                                                        {{ substr($user->name, 0, 2) }}
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="text-sm font-bold text-default-800">{{ $user->name }}</h6>
+                                                        <p class="text-[10px] text-default-500 font-medium">ID: #USR-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-default-600">
+                                                {{ $user->email }}
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div>
+                                                    <p class="text-xs font-bold text-default-800">{{ $user->department?->division?->name ?? '-' }}</p>
+                                                    <p class="text-[10px] text-default-500">{{ $user->department?->name ?? '-' }}</p>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                @php
+                                                    $roleClasses = [
+                                                        'admin' => 'bg-danger/10 text-danger border-danger/20',
+                                                        'manager' => 'bg-primary/10 text-primary border-primary/20',
+                                                        'staff' => 'bg-success/10 text-success border-success/20',
+                                                    ];
+                                                    $class = $roleClasses[$user->role] ?? 'bg-default-100 text-default-500';
+                                                @endphp
+                                                <span class="inline-flex items-center gap-x-1.5 py-1 px-2.5 rounded border text-xs font-bold uppercase tracking-wider {{ $class }}">
+                                                    {{ $user->role }}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-default-600">
+                                                {{ $user->created_at->format('d M Y') }}
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button aria-expanded="false" aria-haspopup="menu" aria-label="Dropdown"
+                                                        class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-md transition-all"
+                                                        hs-dropdown-placement="bottom-end" type="button">
+                                                        <i class="size-4" data-lucide="more-horizontal"></i>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-lg rounded-lg p-2 mt-2 border border-default-200 dark:bg-default-50" role="menu">
+                                                        <a class="flex items-center gap-2 py-2 px-3 text-sm text-default-600 hover:bg-default-100 rounded-md font-medium"
+                                                            href="{{ route('users.edit', $user) }}">
+                                                            <i class="size-4" data-lucide="user-cog"></i> Edit User
+                                                        </a>
+                                                        <div class="h-px bg-default-200 my-1"></div>
+                                                        <form action="{{ route('users.destroy', $user) }}" method="POST">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="w-full flex items-center gap-2 py-2 px-3 text-sm text-danger hover:bg-danger/10 rounded-md font-medium delete-confirm"
+                                                                data-name="User {{ $user->name }}"
+                                                                @if($user->id === auth()->id()) disabled title="Anda tidak dapat menghapus diri sendiri" @endif>
+                                                                <i class="size-4" data-lucide="user-minus"></i> Hapus
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer border-t border-default-200 p-4">
+                    {{ $users->links('vendor.pagination.tailwind-custom') }}
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
