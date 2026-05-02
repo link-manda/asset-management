@@ -53,10 +53,6 @@
 
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
-                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="purchase_date">Purchase Date</label>
-                                <input class="form-input" id="purchase_date" name="purchase_date" type="date" value="{{ old('purchase_date', $asset->purchase_date) }}" required />
-                            </div>
-                            <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="price">Harga Satuan (Unit Price)</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-default-500 font-semibold">Rp</span>
@@ -100,49 +96,7 @@
                             <div id="image-preview-container" class="grid grid-cols-4 gap-4 mt-4"></div>
                         </div>
 
-                        <div class="border-t border-default-200 pt-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <h6 class="card-title text-base">Distribusi Stok & Lokasi</h6>
-                                <p class="text-xs text-default-500 font-medium italic">*Perubahan stok akan memperbarui data distribusi saat ini</p>
-                            </div>
-                            
-                            <div id="distribution-container">
-                                @foreach($asset->stocks as $index => $stock)
-                                    <div class="distribution-row grid lg:grid-cols-12 grid-cols-1 gap-4 mb-3 items-end bg-default-50 p-4 rounded-md border border-default-200">
-                                        <div class="lg:col-span-5">
-                                            <label class="text-xs font-semibold text-default-600 mb-1 block">Lokasi Penyimpanan</label>
-                                            <select name="distributions[{{ $index }}][location_id]" class="form-input form-input-sm" required>
-                                                @foreach($locations as $location)
-                                                    <option value="{{ $location->id }}" {{ $stock->location_id == $location->id ? 'selected' : '' }}>{{ $location->full_path }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="lg:col-span-3">
-                                            <label class="text-xs font-semibold text-default-600 mb-1 block">Kuantitas (Qty)</label>
-                                            <input type="number" name="distributions[{{ $index }}][quantity]" class="form-input form-input-sm" value="{{ $stock->quantity }}" min="1" required>
-                                        </div>
-                                        <div class="lg:col-span-3">
-                                            <label class="text-xs font-semibold text-default-600 mb-1 block">Status Unit</label>
-                                            <select name="distributions[{{ $index }}][status]" class="form-input form-input-sm">
-                                                <option value="Available" {{ $stock->status == 'Available' ? 'selected' : '' }}>Available</option>
-                                                <option value="Deployed" {{ $stock->status == 'Deployed' ? 'selected' : '' }}>Deployed</option>
-                                                <option value="Maintenance" {{ $stock->status == 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
-                                                <option value="Broken" {{ $stock->status == 'Broken' ? 'selected' : '' }}>Broken</option>
-                                            </select>
-                                        </div>
-                                        <div class="lg:col-span-1 flex justify-center pb-1.5">
-                                            <button type="button" class="text-danger hover:text-danger-700 transition-all remove-row {{ count($asset->stocks) <= 1 ? 'disabled:opacity-30' : '' }}" {{ count($asset->stocks) <= 1 ? 'disabled' : '' }}>
-                                                <i data-lucide="trash-2" class="size-5"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            
-                            <button type="button" id="add-distribution" class="btn btn-sm border-dashed border-primary/50 text-primary hover:bg-primary/5 mt-2 w-full">
-                                <i data-lucide="plus" class="size-4 me-1"></i> Tambah Distribusi Lokasi Lainnya
-                            </button>
-                        </div>
+                        {{-- Distribution Section Removed: Manage physical units individually in the Asset Show view to preserve history --}}
 
                         <div class="mt-10 flex gap-3 md:justify-end border-t border-default-200 pt-5">
                             <a href="{{ route('assets.show', $asset) }}" class="btn border-default-200 text-default-600 hover:bg-default-100">Batal</a>
@@ -182,44 +136,6 @@
 @push('js')
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const container = document.getElementById('distribution-container');
-        const addButton = document.getElementById('add-distribution');
-        let rowIndex = {{ count($asset->stocks) }};
-
-        // Add row
-        addButton.addEventListener('click', function () {
-            const firstRow = container.querySelector('.distribution-row');
-            const newRow = firstRow.cloneNode(true);
-            
-            // Update names
-            newRow.querySelectorAll('select, input').forEach(el => {
-                const name = el.getAttribute('name');
-                if (name) {
-                    el.setAttribute('name', name.replace(/\[\d+\]/, '[' + rowIndex + ']'));
-                }
-                if (el.tagName === 'INPUT') el.value = 1;
-            });
-
-            // Enable delete button
-            const removeBtn = newRow.querySelector('.remove-row');
-            removeBtn.removeAttribute('disabled');
-            removeBtn.classList.remove('disabled:opacity-30');
-
-            container.appendChild(newRow);
-            rowIndex++;
-            
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-        });
-
-        // Remove row
-        container.addEventListener('click', function (e) {
-            if (e.target.closest('.remove-row')) {
-                const row = e.target.closest('.distribution-row');
-                if (container.querySelectorAll('.distribution-row').length > 1) {
-                    row.remove();
-                }
-            }
-        });
 
         const nameInput = document.getElementById('name');
         const previewName = document.getElementById('preview-name');

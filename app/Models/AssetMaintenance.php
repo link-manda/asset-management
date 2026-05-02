@@ -14,6 +14,11 @@ class AssetMaintenance extends Model
         'status',
     ];
 
+    protected $casts = [
+        'maintenance_date' => 'date',
+        'cost' => 'decimal:2',
+    ];
+
     public function item()
     {
         return $this->belongsTo(AssetItem::class, 'asset_item_id');

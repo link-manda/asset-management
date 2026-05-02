@@ -37,7 +37,7 @@
                 </li>
 
                 @php
-                    $isAssetActive = request()->is('assets*', 'maintenances*', 'assignments*', 'disposals*');
+                    $isAssetActive = request()->is('assets*', 'inventory*', 'maintenances*', 'assignments*', 'disposals*');
                 @endphp
                 <li class="menu-item hs-accordion {{ $isAssetActive ? 'active' : '' }}">
                     <a class="hs-accordion-toggle menu-link {{ $isAssetActive ? 'active' : '' }}" href="javascript:void(0)">
@@ -48,12 +48,17 @@
                     <ul class="sub-menu hs-accordion-content {{ $isAssetActive ? '' : 'hidden' }}">
                         <li class="menu-item">
                             <a class="menu-link {{ request()->routeIs('assets.index') ? 'active' : '' }}" href="{{ route('assets.index') }}">
-                                <span class="menu-text"> Daftar Asset </span>
+                                <span class="menu-text"> Asset List </span>
+                            </a>
+                        </li>
+                        <li class="menu-item">
+                            <a class="menu-link {{ request()->routeIs('inventory.index') ? 'active' : '' }}" href="{{ route('inventory.index') }}">
+                                <span class="menu-text"> Asset Item </span>
                             </a>
                         </li>
                         <li class="menu-item">
                             <a class="menu-link {{ request()->routeIs('assets.create') ? 'active' : '' }}" href="{{ route('assets.create') }}">
-                                <span class="menu-text"> Tambah Asset </span>
+                                <span class="menu-text"> Tambah Baru </span>
                             </a>
                         </li>
                         <li class="menu-item">

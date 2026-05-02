@@ -46,7 +46,7 @@
                                     <td class="px-3.5 py-4 text-default-500 text-sm whitespace-normal max-w-xs">{{ $location->address }}</td>
                                     <td class="px-3.5 py-4">
                                         <span class="inline-flex items-center gap-x-1.5 py-0.5 px-2.5 rounded text-xs font-medium bg-secondary/15 text-secondary">
-                                            {{ $location->assets_count }} Items
+                                            {{ $location->items_count }} Units
                                         </span>
                                     </td>
                                     <td class="px-3.5 py-4 text-center">

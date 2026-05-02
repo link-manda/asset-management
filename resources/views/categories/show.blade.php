@@ -15,7 +15,7 @@
                         </div>
                         <h5 class="text-lg font-bold text-default-800 mb-1">{{ $category->name }}</h5>
                         <p class="text-default-500 text-sm mb-4">Total Asset: {{ $category->assets->count() }}</p>
-                        
+
                         <div class="flex flex-col gap-2">
                             <a href="{{ route('categories.edit', $category) }}" class="btn btn-sm bg-primary text-white w-full">Edit Kategori</a>
                             <a href="{{ route('categories.index') }}" class="btn btn-sm border-default-200 text-default-600 w-full">Kembali</a>

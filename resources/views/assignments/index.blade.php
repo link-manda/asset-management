@@ -49,7 +49,10 @@
                                                         <a href="{{ route('assets.show', $assignment->asset) }}" class="text-sm font-bold text-default-800 hover:text-primary transition-all">
                                                             {{ $assignment->asset->name }}
                                                         </a>
-                                                        <p class="text-xs text-default-500 font-medium">#{{ $assignment->asset->asset_code }}</p>
+                                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                                            <span class="text-[10px] bg-primary/10 text-primary font-mono font-bold px-1 rounded">#{{ $assignment->item?->item_code ?? 'N/A' }}</span>
+                                                            <span class="text-[10px] text-default-400">Master: {{ $assignment->asset->asset_code }}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </td>

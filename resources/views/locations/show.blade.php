@@ -15,7 +15,7 @@
                         </div>
                         <h5 class="text-lg font-bold text-default-800 mb-1">{{ $location->name }}</h5>
                         <p class="text-default-500 text-sm mb-4">Total Asset: {{ $location->assets->count() }}</p>
-                        
+
                         <div class="flex flex-col gap-2">
                             <a href="{{ route('locations.edit', $location) }}" class="btn btn-sm bg-primary text-white w-full">Edit Lokasi</a>
                             <a href="{{ route('locations.index') }}" class="btn btn-sm border-default-200 text-default-600 w-full">Kembali</a>
@@ -39,31 +39,32 @@
 
             <div class="card">
                 <div class="card-header flex justify-between items-center">
-                    <h6 class="card-title">Daftar Asset di Lokasi Ini</h6>
-                    <a href="{{ route('assets.create', ['location_id' => $location->id]) }}" class="btn btn-sm bg-primary text-white">Tambah Asset</a>
+                    <h6 class="card-title">Daftar Unit Fisik di Lokasi Ini</h6>
+                    <a href="{{ route('inventory.index', ['location_id' => $location->id]) }}" class="btn btn-sm bg-primary text-white">Lihat Semua Item</a>
                 </div>
                 <div class="card-body p-0">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-default-200">
                             <thead class="bg-default-100">
                                 <tr class="text-xs font-semibold text-default-600 uppercase">
-                                    <th class="px-6 py-3 text-start">Kode</th>
+                                    <th class="px-6 py-3 text-start">Item Code</th>
                                     <th class="px-6 py-3 text-start">Nama Asset</th>
-                                    <th class="px-6 py-3 text-start">Kategori</th>
+                                    <th class="px-6 py-3 text-start">SN</th>
                                     <th class="px-6 py-3 text-start">Status</th>
                                     <th class="px-6 py-3 text-end">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-default-200">
-                                @forelse($location->assets as $asset)
+                                @forelse($location->items as $item)
                                     <tr class="text-sm">
-                                        <td class="px-6 py-4 font-bold text-primary">#{{ $asset->asset_code }}</td>
-                                        <td class="px-6 py-4 font-medium text-default-800">{{ $asset->name }}</td>
+                                        <td class="px-6 py-4 font-bold text-primary">#{{ $item->item_code }}</td>
                                         <td class="px-6 py-4">
-                                            <span class="inline-flex items-center py-0.5 px-2 rounded text-xs font-medium bg-default-100 text-default-500">
-                                                {{ $asset->category?->name ?? '-' }}
-                                            </span>
+                                            <div class="flex flex-col">
+                                                <span class="font-medium text-default-800">{{ $item->asset?->name }}</span>
+                                                <span class="text-xs text-default-500">{{ $item->asset?->category?->name ?? '-' }}</span>
+                                            </div>
                                         </td>
+                                        <td class="px-6 py-4 text-default-600">{{ $item->serial_number ?? '-' }}</td>
                                         <td class="px-6 py-4">
                                             @php
                                                 $statusClasses = [
@@ -71,19 +72,20 @@
                                                     'Deployed' => 'bg-primary/15 text-primary',
                                                     'Maintenance' => 'bg-warning/15 text-warning',
                                                     'Broken' => 'bg-danger/15 text-danger',
+                                                    'Disposed' => 'bg-danger text-white',
                                                 ];
                                             @endphp
-                                            <span class="inline-flex items-center py-0.5 px-2 rounded text-xs font-medium {{ $statusClasses[$asset->status] ?? 'bg-default-100 text-default-500' }}">
-                                                {{ $asset->status }}
+                                            <span class="inline-flex items-center py-0.5 px-2 rounded text-[10px] font-bold {{ $statusClasses[$item->status] ?? 'bg-default-100 text-default-500' }}">
+                                                {{ $item->status }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-end">
-                                            <a href="{{ route('assets.show', $asset) }}" class="text-primary hover:text-primary-600">Lihat</a>
+                                            <a href="{{ route('inventory.show', $item) }}" class="text-primary hover:text-primary-600">Detail</a>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-10 text-center text-default-400 italic">Belum ada asset di lokasi ini.</td>
+                                        <td colspan="5" class="px-6 py-10 text-center text-default-400 italic">Belum ada item fisik di lokasi ini.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

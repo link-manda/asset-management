@@ -81,7 +81,7 @@
             width: 100% !important;
             height: 100% !important;
         }
-        
+
         /* Preview Helper */
         @media screen {
             body {
@@ -130,7 +130,7 @@
                 color: #6b7280;
             }
         }
-        
+
         @media print {
             .no-print {
                 display: none;
@@ -148,18 +148,20 @@
         <span class="print-instructions">Ukuran: 50mm x 20mm. Pilih "Destination: Save as PDF" atau Printer Label Anda.</span>
     </div>
 
-    @foreach($assets as $asset)
+    @foreach($items as $item)
         <div class="label-container">
             <div class="qr-code">
-                {!! QrCode::size(100)->margin(0)->generate(route('assets.show', $asset)) !!}
+                {{-- QR Code points to the physical item detail --}}
+                {!! QrCode::size(100)->margin(0)->generate(route('inventory.show', $item)) !!}
             </div>
             <div class="info">
                 <div class="text-group">
-                    <p class="asset-name">{{ $asset->name }}</p>
-                    <p class="asset-code">{{ $asset->asset_code }}</p>
+                    <p class="asset-name">{{ $item->asset?->name }}</p>
+                    <p class="asset-code">{{ $item->item_code }}</p>
                 </div>
                 <div class="barcode-container">
-                    {!! DNS1D::getBarcodeSVG($asset->asset_code, 'C128', 1, 25) !!}
+                    {{-- Barcode uses the unique Item Code (Barcode) --}}
+                    {!! DNS1D::getBarcodeSVG($item->item_code, 'C128', 1, 25) !!}
                 </div>
             </div>
         </div>

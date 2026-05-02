@@ -19,6 +19,11 @@ class AssetAssignment extends Model
         'condition_on_return',
     ];
 
+    protected $casts = [
+        'assigned_date' => 'date',
+        'return_date' => 'datetime',
+    ];
+
     /**
      * Get the specific physical item that is assigned.
      */

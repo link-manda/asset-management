@@ -12,7 +12,7 @@ class LocationController extends Controller
      */
     public function index()
     {
-        $locations = Location::with(['parent'])->withCount('assets')->latest()->paginate(10);
+        $locations = Location::with(['parent'])->withCount('items')->latest()->paginate(10);
         $allLocations = Location::whereNull('parent_id')->get(); // For parent selection (only top level to keep it simple)
         return view('locations.index', compact('locations', 'allLocations'));
     }
@@ -47,7 +47,7 @@ class LocationController extends Controller
      */
     public function show(Location $location)
     {
-        $location->load('assets');
+        $location->load('items.asset');
         return view('locations.show', compact('location'));
     }
 
@@ -56,7 +56,8 @@ class LocationController extends Controller
      */
     public function edit(Location $location)
     {
-        return view('locations.edit', compact('location'));
+        $allLocations = Location::whereNull('parent_id')->get();
+        return view('locations.edit', compact('location', 'allLocations'));
     }
 
     /**
@@ -76,13 +77,10 @@ class LocationController extends Controller
             ->with('success', 'Lokasi berhasil diperbarui.');
     }
 
-    /**
-     * Menghapus lokasi dari database.
-     */
     public function destroy(Location $location)
     {
-        if ($location->assets()->count() > 0) {
-            return redirect()->back()->with('error', 'Gagal menghapus! Lokasi ini masih memiliki aset yang terdaftar.');
+        if ($location->items()->count() > 0) {
+            return redirect()->back()->with('error', 'Gagal menghapus! Lokasi ini masih memiliki item fisik yang terdaftar.');
         }
 
         $location->delete();

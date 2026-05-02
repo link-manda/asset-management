@@ -25,12 +25,16 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Manajemen Asset
-    Route::match(['get', 'post'], '/assets-bulk-print', [AssetController::class, 'bulkPrint'])->name('assets.bulk-print');
-    Route::get('/assets/{asset}/print', [AssetController::class, 'printLabel'])->name('assets.print');
+    // Manajemen Asset (Katalog)
     Route::resource('assets', AssetController::class);
     Route::resource('disposals', AssetDisposalController::class)->only(['index', 'store']);
     Route::delete('assets/images/{image}', [\App\Http\Controllers\AssetImageController::class, 'destroy'])->name('assets.images.destroy');
+
+    // Inventory List (Physical Items Global)
+    Route::get('/inventory', [\App\Http\Controllers\AssetItemController::class, 'index'])->name('inventory.index');
+    Route::post('/inventory', [\App\Http\Controllers\AssetItemController::class, 'store'])->name('inventory.store');
+    Route::get('/inventory/{item}', [\App\Http\Controllers\AssetItemController::class, 'show'])->name('inventory.show');
+    Route::post('/inventory/bulk-print', [\App\Http\Controllers\AssetItemController::class, 'bulkPrint'])->name('inventory.bulk-print');
 
     // Asset Maintenance
     Route::resource('maintenances', AssetMaintenanceController::class);

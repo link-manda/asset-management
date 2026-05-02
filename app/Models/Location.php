@@ -38,10 +38,35 @@ class Location extends Model
     }
 
     /**
-     * Get the assets for the location.
+     * Get the physical items for the location.
      */
-    public function assets(): HasMany
+    public function items(): HasMany
     {
-        return $this->hasMany(Asset::class);
+        return $this->hasMany(AssetItem::class);
+    }
+
+    /**
+     * Get the master assets through items (Unique).
+     */
+    public function assets()
+    {
+        return $this->hasManyThrough(Asset::class, AssetItem::class, 'location_id', 'id', 'id', 'asset_id')->distinct();
+    }
+
+    /**
+     * Get a flattened tree of locations for dropdowns.
+     */
+    public static function tree($parentId = null, $depth = 0)
+    {
+        $locations = self::where('parent_id', $parentId)->get();
+        $tree = collect();
+
+        foreach ($locations as $location) {
+            $location->depth = $depth;
+            $tree->push($location);
+            $tree = $tree->merge(self::tree($location->id, $depth + 1));
+        }
+
+        return $tree;
     }
 }

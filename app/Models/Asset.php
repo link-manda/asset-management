@@ -22,6 +22,10 @@ class Asset extends Model
         'notes',
     ];
 
+    protected $casts = [
+        'price' => 'decimal:2',
+    ];
+
     /**
      * The "booted" method of the model.
      */

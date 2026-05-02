@@ -10,21 +10,21 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="mb-4 card-title text-base">Detail Pengajuan Perbaikan</h6>
-                    
+
                     <form action="{{ route('maintenances.store') }}" method="POST">
                         @csrf
-                        
+
                         <div class="mb-5">
-                            <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="asset_id">Pilih Aset yang Akan Diperbaiki</label>
-                            <select class="form-input @error('asset_id') border-danger @enderror" id="asset_id" name="asset_id" required>
-                                <option value="">-- Pilih Aset --</option>
-                                @foreach($assets as $asset)
-                                    <option value="{{ $asset->id }}" {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
-                                        {{ $asset->name }} ({{ $asset->asset_code }}) - Status: {{ $asset->status }}
+                            <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="asset_item_id">Pilih Unit Fisik yang Akan Diperbaiki</label>
+                            <select class="form-input @error('asset_item_id') border-danger @enderror" id="asset_item_id" name="asset_item_id" required>
+                                <option value="">-- Pilih Unit --</option>
+                                @foreach($items as $item)
+                                    <option value="{{ $item->id }}" {{ old('asset_item_id') == $item->id ? 'selected' : '' }}>
+                                        {{ $item->item_code }} - {{ $item->asset?->name }} (SN: {{ $item->serial_number ?? '-' }})
                                     </option>
                                 @endforeach
                             </select>
-                            @error('asset_id')
+                            @error('asset_item_id')
                                 <p class="mt-1 text-danger text-xs">{{ $message }}</p>
                             @enderror
                         </div>

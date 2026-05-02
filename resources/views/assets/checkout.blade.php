@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout Aset: ' . $asset->name)
+@section('title', 'Checkout Unit: ' . $item->item_code)
 
 @section('content')
-    @include('layouts.partials/page-title', ['subtitle' => 'Penugasan', 'title' => 'Checkout Asset'])
+    @include('layouts.partials/page-title', ['subtitle' => 'Penugasan', 'title' => 'Checkout Unit Fisik'])
 
     <div class="grid lg:grid-cols-12 grid-cols-1 gap-6">
         <div class="lg:col-span-8 col-span-1">
@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <h6 class="mb-4 card-title text-base">Detail Penugasan Baru</h6>
                     
-                    <form action="{{ route('assets.checkout', $asset) }}" method="POST">
+                    <form action="{{ route('items.checkout', $item) }}" method="POST">
                         @csrf
                         
                         <div class="mb-5">
@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="mt-6 flex gap-3 md:justify-end border-t border-default-200 pt-5">
-                            <a href="{{ route('assets.show', $asset) }}" class="btn border-default-200 text-default-600 hover:bg-default-100">Batal</a>
+                            <a href="{{ route('assets.show', $item->asset_id) }}" class="btn border-default-200 text-default-600 hover:bg-default-100">Batal</a>
                             <button type="submit" class="text-white btn bg-primary px-10 font-bold uppercase tracking-wide">Konfirmasi Checkout</button>
                         </div>
                     </form>
@@ -55,29 +55,33 @@
             <div class="card overflow-hidden">
                 <div class="card-body bg-default-100/50">
                     <h6 class="mb-4 card-title text-base flex items-center gap-2">
-                        <i class="size-4 text-primary" data-lucide="package"></i> Ringkasan Aset
+                        <i class="size-4 text-primary" data-lucide="package"></i> Ringkasan Unit
                     </h6>
                     <div class="flex items-center gap-4 mb-5">
                         <div class="size-16 bg-white border border-default-200 rounded-lg flex items-center justify-center shadow-sm">
                             <i class="size-8 text-primary/50" data-lucide="monitor"></i>
                         </div>
                         <div>
-                            <h5 class="text-default-800 font-bold leading-tight">{{ $asset->name }}</h5>
-                            <p class="text-xs text-primary font-bold">#{{ $asset->asset_code }}</p>
+                            <h5 class="text-default-800 font-bold leading-tight">{{ $item->asset?->name }}</h5>
+                            <p class="text-xs text-primary font-bold font-mono">#{{ $item->item_code }}</p>
                         </div>
                     </div>
                     <div class="space-y-3 py-4 border-t border-default-200">
                         <div class="flex justify-between items-center text-xs">
+                            <span class="text-default-500 font-medium">Master Catalog:</span>
+                            <span class="text-default-800 font-bold">{{ $item->asset?->asset_code }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs">
                             <span class="text-default-500 font-medium">Kategori:</span>
-                            <span class="text-default-800 font-bold">{{ $asset->category?->name ?? '-' }}</span>
+                            <span class="text-default-800 font-bold">{{ $item->asset?->category?->name ?? '-' }}</span>
                         </div>
                         <div class="flex justify-between items-center text-xs">
-                            <span class="text-default-500 font-medium">Lokasi:</span>
-                            <span class="text-default-800 font-bold">{{ $asset->location?->name ?? '-' }}</span>
+                            <span class="text-default-500 font-medium">Lokasi Sekarang:</span>
+                            <span class="text-default-800 font-bold">{{ $item->location?->name ?? '-' }}</span>
                         </div>
                         <div class="flex justify-between items-center text-xs">
-                            <span class="text-default-500 font-medium">Status Saat Ini:</span>
-                            <span class="px-2 py-0.5 bg-success/10 text-success rounded-full font-bold uppercase">{{ $asset->status }}</span>
+                            <span class="text-default-500 font-medium">Kondisi Fisik:</span>
+                            <span class="px-2 py-0.5 bg-success/10 text-success rounded-full font-bold uppercase">{{ $item->condition }}</span>
                         </div>
                     </div>
                 </div>

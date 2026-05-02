@@ -39,7 +39,7 @@
                                 <i class="size-24 text-info/30" data-lucide="package"></i>
                             </div>
                         @endif
-                        
+
                         <div class="grid grid-cols-1 gap-2 mt-4">
                             <a href="{{ route('assets.edit', $asset) }}" class="border border-default-200 w-full rounded btn text-default-700 hover:bg-default-100 border-dashed">
                                 <i class="size-4 me-1" data-lucide="edit"></i> Edit Profil Master
@@ -49,24 +49,11 @@
                 </div>
 
                 <div class="card mb-5">
-                    <div class="card-body border-b border-b-default-200">
-                        <div class="flex justify-between items-center">
-                            <h6 class="text-default-800 font-semibold text-[15px] flex items-center gap-1.25">
-                                <i class="size-4" data-lucide="qr-code"></i>
-                                Katalog Barcode
-                            </h6>
-                            <a href="{{ route('assets.print', $asset) }}" target="_blank" class="text-primary hover:text-primary-600 transition-all">
-                                <i class="size-4" data-lucide="printer"></i>
-                            </a>
-                        </div>
-                    </div>
                     <div class="card-body">
-                        <div class="flex flex-col items-center gap-4 text-center">
-                            <div class="p-2 bg-white border border-default-100 rounded">
-                                {!! DNS1D::getBarcodeSVG($asset->asset_code, 'C128', 1.5, 33) !!}
-                            </div>
-                            <p class="text-[10px] font-mono text-default-500 uppercase tracking-widest">{{ $asset->asset_code }}</p>
-                            <p class="text-[9px] text-default-400 italic">Ini adalah kode katalog master aset.</p>
+                        <div class="flex flex-col items-center justify-center p-6 bg-primary/5 rounded-lg border border-dashed border-primary/20 text-center">
+                            <i class="size-10 text-primary/30 mb-3" data-lucide="package"></i>
+                            <h6 class="text-xs font-black text-primary/60 uppercase tracking-[0.2em] mb-1">Catalog Master</h6>
+                            <p class="text-[10px] text-default-500 italic">Gunakan Menu Inventory untuk operasional unit.</p>
                         </div>
                     </div>
                 </div>
@@ -133,10 +120,15 @@
                         {{ $asset->notes ?? 'Tidak ada deskripsi katalog.' }}
                     </div>
 
-                    <h6 class="text-[15px] font-bold text-default-800 mb-4 flex items-center gap-2">
-                        <i class="size-5 text-primary" data-lucide="box"></i>
-                        Daftar Unit Fisik (Physical Items)
-                    </h6>
+                    <div class="flex justify-between items-center mb-4">
+                        <h6 class="text-[15px] font-bold text-default-800 flex items-center gap-2">
+                            <i class="size-5 text-primary" data-lucide="box"></i>
+                            Daftar Unit Fisik (Physical Items)
+                        </h6>
+                        <button type="button" data-hs-overlay="#modal-add-item" class="btn btn-sm bg-primary text-white">
+                            <i class="size-4 me-1" data-lucide="plus"></i> Tambah Unit Baru
+                        </button>
+                    </div>
 
                     <div class="overflow-x-auto border rounded-lg border-default-200">
                         <table class="min-w-full divide-y divide-default-200">
@@ -189,13 +181,24 @@
                                                         <i class="size-3.5" data-lucide="log-out"></i>
                                                     </a>
                                                 @elseif($item->status == 'Deployed')
-                                                    <button type="button" onclick="openCheckinModal({{ $item->id }}, '{{ $item->item_code }}', '{{ $item->currentAssignment?->user->name }}')" class="size-7 flex items-center justify-center bg-success/10 text-success rounded hover:bg-success hover:text-white transition-all" title="Checkin">
+                                                    @php
+                                                        $borrowerName = $item->currentAssignment?->user?->name ?? 'Unknown';
+                                                    @endphp
+                                                    <button type="button"
+                                                        data-hs-overlay="#modal-checkin"
+                                                        data-item-id="{{ $item->id }}"
+                                                        data-item-code="{{ $item->item_code }}"
+                                                        data-borrower="{{ $borrowerName }}"
+                                                        class="btn-checkin size-7 flex items-center justify-center bg-success/10 text-success rounded hover:bg-success hover:text-white transition-all" title="Checkin">
                                                         <i class="size-3.5" data-lucide="log-in"></i>
                                                     </button>
                                                 @endif
 
                                                 @if($item->status != 'Disposed')
-                                                    <button type="button" onclick="openDisposalModal('{{ $item->item_code }}')" class="size-7 flex items-center justify-center bg-danger/10 text-danger rounded hover:bg-danger hover:text-white transition-all" title="Disposal">
+                                                    <button type="button"
+                                                        data-hs-overlay="#modal-disposal"
+                                                        data-barcode="{{ $item->item_code }}"
+                                                        class="btn-disposal size-7 flex items-center justify-center bg-danger/10 text-danger rounded hover:bg-danger hover:text-white transition-all" title="Disposal">
                                                         <i class="size-3.5" data-lucide="trash-2"></i>
                                                     </button>
                                                 @endif
@@ -341,35 +344,93 @@
         </div>
     </div>
 
+    {{-- Modal Add New Unit --}}
+    <div id="modal-add-item" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none">
+        <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto flex items-center min-h-[calc(100%-3.5rem)]">
+            <div class="flex flex-col bg-white border border-default-200 shadow-sm rounded-md pointer-events-auto w-full">
+                <div class="flex justify-between items-center py-3 px-4 border-b border-default-200">
+                    <h3 class="font-bold text-default-800">Tambah Unit Fisik Baru</h3>
+                    <button type="button" class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-default-100 text-default-800 hover:bg-default-200" data-hs-overlay="#modal-add-item">
+                        <i class="size-4" data-lucide="x"></i>
+                    </button>
+                </div>
+                <form action="{{ route('inventory.store') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="asset_id" value="{{ $asset->id }}">
+                    <div class="p-5 space-y-4">
+                        <div class="bg-primary/5 p-3 rounded text-xs text-primary font-medium flex items-center gap-2">
+                            <i class="size-4" data-lucide="info"></i>
+                            Unit baru akan menggunakan Master Code: <strong>{{ $asset->asset_code }}</strong>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-default-700 mb-1">Jumlah Unit yang Ditambah</label>
+                            <input type="number" name="quantity" class="form-input" value="1" min="1" max="50" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-default-700 mb-1">Lokasi Penyimpanan</label>
+                            <select name="location_id" class="form-select" required>
+                                @foreach($locations as $location)
+                                    <option value="{{ $location->id }}">{{ $location->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-default-700 mb-1">Kondisi Barang</label>
+                            <select name="condition" class="form-select" required>
+                                <option value="New">Baru (New)</option>
+                                <option value="Good" selected>Baik (Good)</option>
+                                <option value="Fair">Cukup (Fair)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end items-center gap-2 py-3 px-4 border-t border-default-200">
+                        <button type="button" class="btn border-default-200 text-default-600" data-hs-overlay="#modal-add-item">Batal</button>
+                        <button type="submit" class="btn bg-primary text-white">Simpan Unit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-    function openCheckinModal(itemId, itemCode, userName) {
-        document.getElementById('checkin-unit-name').innerText = itemCode;
-        document.getElementById('checkin-user-name').innerText = userName;
-        document.getElementById('form-checkin').action = "/items/" + itemId + "/checkin";
-        HSOverlay.open('#modal-checkin');
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Swiper init
+        new Swiper(".mySwiper", {
+            pagination: { el: ".swiper-pagination", dynamicBullets: true },
+            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+            loop: true,
+        });
 
-    function openDisposalModal(barcode) {
-        document.getElementById('disposal-unit-name').innerText = barcode;
-        document.getElementById('disposal-barcode').value = barcode;
-        HSOverlay.open('#modal-disposal');
-    }
+        // Modal Checkin Listener
+        document.querySelectorAll('.btn-checkin').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-item-id');
+                const code = this.getAttribute('data-item-code');
+                const borrower = this.getAttribute('data-borrower');
+
+                document.getElementById('checkin-unit-name').innerText = code;
+                document.getElementById('checkin-user-name').innerText = borrower;
+                document.getElementById('form-checkin').action = "/items/" + id + "/checkin";
+            });
+        });
+
+        // Modal Disposal Listener
+        document.querySelectorAll('.btn-disposal').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const barcode = this.getAttribute('data-barcode');
+                document.getElementById('disposal-unit-name').innerText = barcode;
+                document.getElementById('disposal-barcode').value = barcode;
+            });
+        });
+    });
 
     function togglePriceField(reason) {
         const field = document.getElementById('price-field');
         if (reason === 'Sold') field.classList.remove('hidden');
         else field.classList.add('hidden');
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        new Swiper(".mySwiper", {
-            pagination: { el: ".swiper-pagination", dynamicBullets: true },
-            navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-            loop: true,
-        });
-    });
 
     function openImageModal(url) {
         Swal.fire({

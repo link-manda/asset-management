@@ -10,14 +10,14 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="mb-4 card-title text-base">Update Informasi Maintenance</h6>
-                    
+
                     <form action="{{ route('maintenances.update', $maintenance) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="mb-5">
-                            <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="asset_id">Asset</label>
-                            <input type="text" class="form-input bg-default-100" value="{{ $maintenance->asset->name }} ({{ $maintenance->asset->asset_code }})" disabled>
+                            <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="asset_id">Unit Fisik (Item)</label>
+                            <input type="text" class="form-input bg-default-100" value="{{ $maintenance->item->item_code }} - {{ $maintenance->item->asset?->name }}" disabled>
                         </div>
 
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
@@ -63,21 +63,22 @@
                     <h6 class="mb-4 card-title text-base">Current Status</h6>
                     <div class="p-4 rounded-md border border-default-200 bg-default-50 mb-5">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="text-sm text-default-500">Asset Status:</span>
+                            <span class="text-sm text-default-500">Unit Status:</span>
                             @php
                                 $statusClasses = [
                                     'Available' => 'bg-success/15 text-success',
                                     'Deployed' => 'bg-primary/15 text-primary',
                                     'Maintenance' => 'bg-warning/15 text-warning',
                                     'Broken' => 'bg-danger/15 text-danger',
+                                    'Disposed' => 'bg-danger text-white',
                                 ];
-                                $class = $statusClasses[$maintenance->asset->status] ?? 'bg-default-100 text-default-500';
+                                $class = $statusClasses[$maintenance->item->status] ?? 'bg-default-100 text-default-500';
                             @endphp
-                            <span class="{{ $class }} px-2 py-0.5 rounded text-xs font-medium">{{ $maintenance->asset->status }}</span>
+                            <span class="{{ $class }} px-2 py-0.5 rounded text-[10px] font-bold">{{ $maintenance->item->status }}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm text-default-500">Code:</span>
-                            <span class="text-sm font-bold text-default-800">{{ $maintenance->asset->asset_code }}</span>
+                            <span class="text-sm text-default-500">Item Code:</span>
+                            <span class="text-sm font-bold text-primary font-mono">{{ $maintenance->item->item_code }}</span>
                         </div>
                     </div>
 

@@ -1,27 +1,24 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Asset')
+@section('title', 'Katalog Aset (Master)')
 
 @section('content')
-    @include('layouts.partials/page-title', ['subtitle' => 'Assets', 'title' => 'List View'])
+    @include('layouts.partials/page-title', ['subtitle' => 'Katalog', 'title' => 'Master Asset Catalog'])
 
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
             <div class="card-header flex justify-between items-center">
                 <div class="flex gap-3 items-center">
                     <div class="relative">
-                        <input class="ps-11 form-input form-input-sm w-full" placeholder="Search for assets..." type="text" />
+                        <input class="ps-11 form-input form-input-sm w-64" placeholder="Cari nama atau kode aset..." type="text" />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button type="button" id="btn-bulk-print" class="btn btn-sm bg-info text-white">
-                        <i class="size-4 me-1" data-lucide="printer"></i> Bulk Print
-                    </button>
                     <a href="{{ route('assets.create') }}" class="btn btn-sm bg-primary text-white">
-                        <i class="size-4 me-1" data-lucide="plus"></i>Tambah Asset
+                        <i class="size-4 me-1" data-lucide="plus"></i>Tambah Asset Baru
                     </a>
                 </div>
             </div>
@@ -30,51 +27,45 @@
                     <div class="min-w-full inline-block align-middle">
                         <div class="overflow-hidden">
                             <table class="min-w-full divide-y divide-default-200">
-                                <thead class="bg-default-150">
-                                    <tr class="text-sm font-normal text-default-700">
-                                        <th class="px-3.5 py-3 text-start w-10">
-                                            <input type="checkbox" id="select-all" class="form-checkbox size-4 rounded border-default-300 text-primary">
-                                        </th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Asset Code</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Asset Name</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Category</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Total Qty</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Total Nilai</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Status</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Action</th>
+                                <thead class="bg-default-150 font-normal">
+                                    <tr class="text-sm text-default-700">
+                                        <th class="px-3.5 py-3 text-start" scope="col">Master Code</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Nama Barang</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Kategori</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Stok Fisik</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Estimasi Nilai</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Status Distribusi</th>
+                                        <th class="px-3.5 py-3 text-center" scope="col">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
-                                    @foreach ($assets as $asset)
-                                        <tr class="text-default-800 font-normal">
-                                            <td class="px-3.5 py-2.5">
-                                                <input type="checkbox" value="{{ $asset->id }}" class="asset-checkbox form-checkbox size-4 rounded border-default-300 text-primary">
+                                    @forelse ($assets as $asset)
+                                        <tr class="text-default-800 font-normal hover:bg-default-50 transition-all">
+                                            <td class="px-3.5 py-4 whitespace-nowrap text-sm text-primary font-bold">
+                                                {{ $asset->asset_code }}
                                             </td>
-                                            <td class="px-3.5 py-2.5 whitespace-nowrap text-sm text-primary font-medium">
-                                                #{{ $asset->asset_code }}
-                                            </td>
-                                            <td class="px-3.5 py-2.5 whitespace-nowrap text-sm">
+                                            <td class="px-3.5 py-4 whitespace-nowrap text-sm">
                                                 <a href="{{ route('assets.show', $asset) }}" class="flex items-center gap-2">
-                                                    <h6 class="text-default-800 hover:text-primary transition-all">{{ $asset->name }}</h6>
+                                                    <h6 class="text-default-800 hover:text-primary transition-all font-semibold">{{ $asset->name }}</h6>
                                                 </a>
                                             </td>
-                                            <td class="px-3.5 py-2.5 whitespace-nowrap text-sm">
-                                                <div class="inline-flex py-0.5 px-2.5 rounded text-xs font-normal bg-default-100 border border-default-200 text-default-500">
+                                            <td class="px-3.5 py-4 whitespace-nowrap text-sm">
+                                                <span class="inline-flex py-0.5 px-2 rounded text-[10px] font-bold bg-default-100 text-default-600 border border-default-200">
                                                     {{ $asset->category?->name ?? 'Uncategorized' }}
-                                                </div>
+                                                </span>
                                             </td>
-                                            <td class="px-3.5 py-2.5 whitespace-nowrap text-sm">
-                                                <div class="flex items-center gap-1.5 font-bold text-default-800">
+                                            <td class="px-3.5 py-4 whitespace-nowrap text-sm">
+                                                <div class="font-bold text-default-800">
                                                     {{ $asset->total_quantity }} {{ $asset->uom?->symbol }}
                                                 </div>
                                             </td>
-                                            <td class="px-3.5 py-2.5 whitespace-nowrap text-sm">
+                                            <td class="px-3.5 py-4 whitespace-nowrap text-sm">
                                                 <div class="font-bold text-default-800">
                                                     Rp {{ number_format($asset->total_value, 0, ',', '.') }}
                                                 </div>
-                                                <p class="text-[10px] text-default-500">@ Rp {{ number_format($asset->price, 0, ',', '.') }}</p>
+                                                <p class="text-[10px] text-default-400">@ Rp {{ number_format($asset->price, 0, ',', '.') }}</p>
                                             </td>
-                                            <td class="px-3.5 py-2.5 whitespace-nowrap">
+                                            <td class="px-3.5 py-4 whitespace-nowrap">
                                                 @php
                                                     $itemStatuses = $asset->items->groupBy('status')->map->count();
                                                 @endphp
@@ -86,122 +77,43 @@
                                                                 'Deployed' => 'bg-primary/15 text-primary',
                                                                 'Maintenance' => 'bg-warning/15 text-warning',
                                                                 'Broken' => 'bg-danger/15 text-danger',
-                                                                'Lost' => 'bg-default-100 text-default-500',
-                                                                'Disposed' => 'bg-danger/20 text-danger-600',
+                                                                'Disposed' => 'bg-danger text-white',
                                                             ];
                                                             $class = $statusClasses[$status] ?? 'bg-default-100 text-default-500';
                                                         @endphp
-                                                        <span class="inline-flex items-center py-0.5 px-2 rounded text-[10px] font-medium {{ $class }}">
+                                                        <span class="inline-flex items-center py-0.5 px-1.5 rounded text-[9px] font-bold {{ $class }}">
                                                             {{ $count }} {{ $status }}
                                                         </span>
                                                     @endforeach
                                                 </div>
                                             </td>
-                                            <td class="px-3.5 py-2.5">
-                                                <div class="hs-dropdown relative inline-flex">
-                                                    <button aria-expanded="false" aria-haspopup="menu" aria-label="Dropdown"
-                                                        class="hs-dropdown-toggle btn size-7.5 bg-default-200 hover:bg-default-600 text-default-500 hover:text-white"
-                                                        hs-dropdown-placement="bottom-end" type="button">
-                                                        <i class="size-4" data-lucide="more-horizontal"></i>
-                                                    </button>
-                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 dark:bg-default-50 dark:border dark:border-default-200" role="menu">
-                                                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded"
-                                                            href="{{ route('assets.show', $asset) }}">
-                                                            <i class="size-3" data-lucide="eye"></i>
-                                                            Show
-                                                        </a>
-                                                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded"
-                                                            href="{{ route('assets.print', $asset) }}" target="_blank">
-                                                            <i class="size-3" data-lucide="printer"></i>
-                                                            Print Label
-                                                        </a>
-                                                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded"
-                                                            href="{{ route('assets.edit', $asset) }}">
-                                                            <i class="size-3" data-lucide="edit"></i>
-                                                            Edit
-                                                        </a>
-                                                        <div class="h-px bg-default-200 my-1"></div>
-                                                        <form action="{{ route('assets.destroy', $asset) }}" method="POST" class="inline">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="w-full flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-danger hover:bg-danger/10 rounded delete-confirm" data-name="Asset {{ $asset->name }}">
-                                                                <i class="size-3" data-lucide="trash-2"></i>
-                                                                Delete
-                                                            </button>
-                                                        </form>
-                                                    </div>
+                                            <td class="px-3.5 py-4 text-center">
+                                                <div class="flex items-center justify-center gap-2">
+                                                    <a href="{{ route('assets.show', $asset) }}" class="size-8 flex items-center justify-center bg-default-100 text-default-600 rounded hover:bg-primary/10 hover:text-primary transition-all">
+                                                        <i class="size-4" data-lucide="eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('assets.edit', $asset) }}" class="size-8 flex items-center justify-center bg-default-100 text-default-600 rounded hover:bg-warning/10 hover:text-warning transition-all">
+                                                        <i class="size-4" data-lucide="edit-3"></i>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="7" class="px-3.5 py-12 text-center text-default-400 italic">
+                                                Belum ada katalog aset terdaftar.
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer flex items-center justify-between">
-                    <p class="text-default-500 text-sm">Showing <b>{{ $assets->firstItem() }}-{{ $assets->lastItem() }}</b> of <b>{{ $assets->total() }}</b> Results</p>
-                    <div class="flex items-center gap-2">
-                         {{ $assets->links('vendor.pagination.tailwind-custom') }}
-                    </div>
+                <div class="card-footer p-4 border-t border-default-200">
+                    {{ $assets->links('vendor.pagination.tailwind-custom') }}
                 </div>
             </div>
         </div>
     </div>
-
-    {{-- Hidden Form for Bulk Print --}}
-    <form id="bulk-print-form" action="{{ route('assets.bulk-print') }}" method="POST" target="_blank" class="hidden">
-        @csrf
-        <div id="bulk-ids-container"></div>
-    </form>
 @endsection
-
-@push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectAll = document.getElementById('select-all');
-        const assetCheckboxes = document.querySelectorAll('.asset-checkbox');
-        const btnBulkPrint = document.getElementById('btn-bulk-print');
-        const bulkPrintForm = document.getElementById('bulk-print-form');
-        const bulkIdsContainer = document.getElementById('bulk-ids-container');
-
-        if (selectAll) {
-            selectAll.addEventListener('change', function () {
-                assetCheckboxes.forEach(checkbox => {
-                    checkbox.checked = selectAll.checked;
-                });
-            });
-        }
-
-        if (btnBulkPrint) {
-            btnBulkPrint.addEventListener('click', function () {
-                const checked = document.querySelectorAll('.asset-checkbox:checked');
-                
-                if (checked.length === 0) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Perhatian',
-                        text: 'Pilih minimal satu aset untuk dicetak.',
-                        confirmButtonColor: '#4f46e5',
-                    });
-                    return;
-                }
-
-                // Clear previous IDs
-                bulkIdsContainer.innerHTML = '';
-
-                // Append new IDs
-                checked.forEach(checkbox => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'ids[]';
-                    input.value = checkbox.value;
-                    bulkIdsContainer.appendChild(input);
-                });
-
-                bulkPrintForm.submit();
-            });
-        }
-    });
-</script>
-@endpush

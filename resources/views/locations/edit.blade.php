@@ -24,6 +24,18 @@
                         </div>
 
                         <div>
+                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="parent_id">Lokasi Induk (Parent)</label>
+                            <select name="parent_id" class="form-input w-full">
+                                <option value="">- Jadikan Lokasi Utama -</option>
+                                @foreach($allLocations as $parent)
+                                    @if($parent->id != $location->id)
+                                        <option value="{{ $parent->id }}" {{ old('parent_id', $location->parent_id) == $parent->id ? 'selected' : '' }}>{{ $parent->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
                             <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="address">Alamat Lengkap <span class="text-danger">*</span></label>
                             <textarea class="form-input w-full @error('address') border-danger @enderror" id="address" name="address" rows="5" required>{{ old('address', $location->address) }}</textarea>
                             @error('address')

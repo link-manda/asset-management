@@ -102,12 +102,14 @@
                         @php
                             $percentage = $totalAssets > 0 ? ($count / $totalAssets) * 100 : 0;
                             $barColors = [
-                                'Available' => 'bg-success',
-                                'Deployed' => 'bg-primary',
+                                'Available'   => 'bg-success',
+                                'Deployed'    => 'bg-primary',
                                 'Maintenance' => 'bg-warning',
-                                'Broken' => 'bg-danger',
-                                'Lost' => 'bg-default-500',
+                                'Broken'      => 'bg-danger',
+                                'Lost'        => 'bg-default-500',
+                                'Disposed'    => 'bg-danger/50',
                             ];
+                            $currentColor = $barColors[$status] ?? 'bg-default-400';
                         @endphp
                         <div>
                             <div class="flex justify-between mb-1">
@@ -115,7 +117,7 @@
                                 <span class="text-sm font-medium text-default-700">{{ $count }} Unit</span>
                             </div>
                             <div class="w-full bg-default-100 rounded-full h-1.5">
-                                <div class="{{ $barColors[$status] }} h-1.5 rounded-full" style="width: {{ $percentage }}%"></div>
+                                <div class="{{ $currentColor }} h-1.5 rounded-full" style="width: {{ $percentage }}%"></div>
                             </div>
                         </div>
                     @endforeach

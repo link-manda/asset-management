@@ -42,38 +42,57 @@ class AssetController extends Controller
             'name'          => 'required|string|max:255',
             'category_id'   => 'required|exists:categories,id',
             'uom_id'        => 'required|exists:unit_of_measurements,id',
+            'purchase_date' => 'required|date',
             'price'         => 'required|numeric|min:0',
             'notes'         => 'nullable|string',
             'asset_code'    => 'nullable|string|unique:assets,asset_code',
-            // Bulk initialization via distributions
-            'distributions' => 'required|array|min:1',
-            'distributions.*.location_id' => 'required|exists:locations,id',
-            'distributions.*.quantity'    => 'required|integer|min:1',
-            'distributions.*.status'      => 'required|in:Available,Deployed,Maintenance,Broken,Lost',
+            // Physical Items
+            'items'         => 'required|array|min:1',
+            'items.*.serial_number' => 'nullable|string',
+            'items.*.location_id'   => 'required|exists:locations,id',
+            'items.*.condition'     => 'required|string',
             'images'        => 'nullable|array|max:4',
             'images.*'      => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         return DB::transaction(function () use ($validated, $request) {
+            // 1. Generate Master Code if empty
             if (empty($validated['asset_code'])) {
-                $validated['asset_code'] = 'AST-' . now()->format('YmdHis');
+                $category = Category::find($validated['category_id']);
+                $prefix = strtoupper(substr($category->name, 0, 3));
+                $validated['asset_code'] = $prefix . '-' . strtoupper(bin2hex(random_bytes(2)));
             }
 
-            $asset = Asset::create($validated);
+            // 2. Create Master Asset
+            $asset = Asset::create([
+                'name' => $validated['name'],
+                'asset_code' => $validated['asset_code'],
+                'category_id' => $validated['category_id'],
+                'uom_id' => $validated['uom_id'],
+                'price' => $validated['price'],
+                'notes' => $validated['notes'],
+            ]);
 
-            foreach ($validated['distributions'] as $dist) {
-                for ($i = 0; $i < $dist['quantity']; $i++) {
-                    AssetItem::create([
-                        'asset_id'      => $asset->id,
-                        'item_code'     => 'SN-' . strtoupper(bin2hex(random_bytes(4))),
-                        'location_id'   => $dist['location_id'],
-                        'status'        => $dist['status'],
-                        'condition'     => 'Good',
-                        'purchase_price'=> $asset->price,
-                    ]);
-                }
+            // 3. Create Physical Items
+            foreach ($validated['items'] as $index => $itemData) {
+                // Generate Item Code (Barcode)
+                // Pattern: ASSETCODE-001
+                $sequence = str_pad($index + 1, 3, '0', STR_PAD_LEFT);
+                $itemCode = $asset->asset_code . '-' . $sequence;
+
+                AssetItem::create([
+                    'asset_id'      => $asset->id,
+                    'item_code'     => $itemCode,
+                    'serial_number' => $itemData['serial_number'],
+                    'location_id'   => $itemData['location_id'],
+                    'status'        => 'Available',
+                    'condition'     => $itemData['condition'],
+                    'purchase_date' => $validated['purchase_date'],
+                    'purchase_price'=> $validated['price'],
+                ]);
             }
 
+            // 4. Handle Images
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('assets/images', 'public');
@@ -85,7 +104,7 @@ class AssetController extends Controller
             }
 
             return redirect()->route('assets.index')
-                ->with('success', 'Master Asset dan Unit Fisik berhasil didaftarkan.');
+                ->with('success', 'Master Asset dan ' . count($validated['items']) . ' Unit Fisik berhasil didaftarkan.');
         });
     }
 
@@ -94,21 +113,20 @@ class AssetController extends Controller
      */
     public function show(Asset $asset)
     {
-        $asset->load(['category', 'uom', 'items.location', 'assignments.user', 'maintenances']);
+        $asset->load(['category', 'uom', 'items.location', 'items.currentAssignment.user', 'assignments.user', 'maintenances']);
         $users = User::all();
-        return view('assets.show', compact('asset', 'users'));
+        $locations = Location::all();
+        return view('assets.show', compact('asset', 'users', 'locations'));
     }
 
     /**
-     * edit: Mengambil data aset untuk dropdown.
+     * edit: Form edit master asset.
      */
     public function edit(Asset $asset)
     {
         $categories = Category::all();
-        $locations = Location::all();
         $uoms = UnitOfMeasurement::all();
-        $asset->load('items');
-        return view('assets.edit', compact('asset', 'categories', 'locations', 'uoms'));
+        return view('assets.edit', compact('asset', 'categories', 'uoms'));
     }
 
     /**
@@ -123,26 +141,12 @@ class AssetController extends Controller
             'price'         => 'required|numeric|min:0',
             'notes'         => 'nullable|string',
             'asset_code'    => 'required|string|unique:assets,asset_code,' . $asset->id,
-            'images'        => 'nullable|array|max:4',
-            'images.*'      => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        return DB::transaction(function () use ($validated, $asset, $request) {
-            $asset->update($validated);
+        $asset->update($validated);
 
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $path = $image->store('assets/images', 'public');
-                    \App\Models\AssetImage::create([
-                        'asset_id' => $asset->id,
-                        'image_path' => $path,
-                    ]);
-                }
-            }
-
-            return redirect()->route('assets.index')
-                ->with('success', 'Data Master Asset berhasil diperbarui.');
-        });
+        return redirect()->route('assets.index')
+            ->with('success', 'Data Master Asset berhasil diperbarui.');
     }
 
     /**
@@ -153,28 +157,5 @@ class AssetController extends Controller
         $asset->delete();
         return redirect()->route('assets.index')
             ->with('success', 'Asset dan seluruh unit fisik berhasil dihapus.');
-    }
-
-    /**
-     * printLabel: Menampilkan halaman cetak label.
-     */
-    public function printLabel(Asset $asset)
-    {
-        return view('assets.print-label', ['assets' => collect([$asset])]);
-    }
-
-    /**
-     * bulkPrint: Cetak label massal.
-     */
-    public function bulkPrint(Request $request)
-    {
-        $ids = $request->input('ids', []);
-        
-        if (empty($ids)) {
-            return back()->with('error', 'Pilih minimal satu aset untuk dicetak.');
-        }
-
-        $assets = Asset::whereIn('id', $ids)->get();
-        return view('assets.print-label', compact('assets'));
     }
 }
