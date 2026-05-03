@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = ['name', 'description', 'default_useful_life_months', 'default_residual_percentage'];
+    protected $fillable = ['name', 'description', 'default_useful_life_months', 'default_residual_percentage', 'fiscal_group'];
 
     /**
      * Get the assets for the category.

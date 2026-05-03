@@ -19,6 +19,7 @@
                         <thead class="bg-default-100 font-normal whitespace-nowrap">
                             <tr class="text-sm text-default-800">
                                 <th class="px-3.5 py-3 font-medium text-start" scope="col">Nama Kategori</th>
+                                <th class="px-3.5 py-3 font-medium text-start" scope="col">Fiskal</th>
                                 <th class="px-3.5 py-3 font-medium text-start" scope="col">Umur (Bln)</th>
                                 <th class="px-3.5 py-3 font-medium text-start" scope="col">Nilai Sisa (%)</th>
                                 <th class="px-3.5 py-3 font-medium text-start" scope="col">Total Asset</th>
@@ -27,10 +28,17 @@
                         </thead>
                         <tbody class="divide-y divide-default-200">
                             @foreach ($categories as $category)
-                                <tr class="text-default-800 font-normal whitespace-nowrap">
-                                    <td class="px-3.5 py-4 text-sm font-medium text-default-800">{{ $category->name }}</td>
-                                    <td class="px-3.5 py-4 text-default-500 text-sm">{{ $category->default_useful_life_months ?? '-' }} Bln</td>
-                                    <td class="px-3.5 py-4 text-default-500 text-sm">{{ $category->default_residual_percentage ?? 0 }}%</td>
+                                <tr class="text-default-800 font-normal whitespace-nowrap text-sm">
+                                    <td class="px-3.5 py-4 font-medium text-default-800">{{ $category->name }}</td>
+                                    <td class="px-3.5 py-4 text-default-500">
+                                        @if($category->fiscal_group)
+                                            <span class="text-xs font-bold text-primary">{{ $category->fiscal_group }}</span>
+                                        @else
+                                            <span class="text-xs text-default-400 italic">None</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-3.5 py-4 text-default-500">{{ $category->default_useful_life_months ?? '-' }} Bln</td>
+                                    <td class="px-3.5 py-4 text-default-500">{{ $category->default_residual_percentage ?? 0 }}%</td>
                                     <td class="px-3.5 py-4">
                                         <span class="inline-flex items-center gap-x-1.5 py-0.5 px-2.5 rounded text-xs font-medium bg-info/15 text-info">
                                             {{ $category->assets_count }} Items
@@ -74,7 +82,7 @@
                                                         <label class="inline-block mb-2 text-sm text-default-800 font-medium">Deskripsi</label>
                                                         <textarea name="description" class="form-input" rows="2">{{ $category->description }}</textarea>
                                                     </div>
-                                                    <div class="grid grid-cols-2 gap-4">
+                                                    <div class="grid grid-cols-2 gap-4 mb-4">
                                                         <div class="mb-0">
                                                             <label class="inline-block mb-2 text-sm text-default-800 font-medium">Umur (Bln)</label>
                                                             <input type="number" name="default_useful_life_months" class="form-input" value="{{ $category->default_useful_life_months }}">
@@ -83,6 +91,15 @@
                                                             <label class="inline-block mb-2 text-sm text-default-800 font-medium">Nilai Sisa (%)</label>
                                                             <input type="number" name="default_residual_percentage" step="0.01" class="form-input" value="{{ $category->default_residual_percentage }}">
                                                         </div>
+                                                    </div>
+                                                    <div>
+                                                        <label class="inline-block mb-2 text-sm text-default-800 font-medium">Kelompok Fiskal (Pajak)</label>
+                                                        <select name="fiscal_group" class="form-input">
+                                                            <option value="">-- Pilih Kelompok Fiskal --</option>
+                                                            @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                                                                <option value="{{ $group }}" {{ $category->fiscal_group == $group ? 'selected' : '' }}>{{ $group }} ({{ $months / 12 }} Tahun)</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="flex justify-end items-center gap-2 py-3 px-4 border-t border-default-200">
@@ -125,7 +142,7 @@
                             <label class="inline-block mb-2 text-sm text-default-800 font-medium">Deskripsi</label>
                             <textarea name="description" class="form-input" rows="2" placeholder="Deskripsi singkat..."></textarea>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-2 gap-4 mb-4">
                             <div class="mb-0">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium">Umur (Bln)</label>
                                 <input type="number" name="default_useful_life_months" class="form-input" placeholder="Misal: 48">
@@ -134,6 +151,15 @@
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium">Nilai Sisa (%)</label>
                                 <input type="number" name="default_residual_percentage" step="0.01" class="form-input" placeholder="Misal: 10" value="0">
                             </div>
+                        </div>
+                        <div>
+                            <label class="inline-block mb-2 text-sm text-default-800 font-medium">Kelompok Fiskal (Pajak)</label>
+                            <select name="fiscal_group" class="form-input">
+                                <option value="">-- Pilih Kelompok Fiskal --</option>
+                                @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                                    <option value="{{ $group }}">{{ $group }} ({{ $months / 12 }} Tahun)</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="flex justify-end items-center gap-2 py-3 px-4 border-t border-default-200">

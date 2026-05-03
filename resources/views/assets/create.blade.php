@@ -82,6 +82,7 @@
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Serial Number</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Lokasi</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Kondisi</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Fiskal (Tax)</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Nilai Sisa</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Umur (Bln)</th>
                                         <th class="px-4 py-2 text-center text-xs font-bold text-default-600 uppercase w-10"></th>
@@ -108,6 +109,14 @@
                                                 <option value="Good">Good</option>
                                                 <option value="New">New</option>
                                                 <option value="Fair">Fair</option>
+                                            </select>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <select name="items[0][fiscal_group]" class="form-input form-input-sm">
+                                                <option value="">Default</option>
+                                                @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                                                    <option value="{{ $group }}">{{ $group }}</option>
+                                                @endforeach
                                             </select>
                                         </td>
                                         <td class="px-4 py-3">
@@ -244,6 +253,14 @@
                         <option value="Good">Good</option>
                         <option value="New">New</option>
                         <option value="Fair">Fair</option>
+                    </select>
+                </td>
+                <td class="px-4 py-3">
+                    <select name="items[${index}][fiscal_group]" class="form-input form-input-sm">
+                        <option value="">Default</option>
+                        @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                            <option value="${group}">${group}</option>
+                        @endforeach
                     </select>
                 </td>
                 <td class="px-4 py-3">

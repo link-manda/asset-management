@@ -63,37 +63,10 @@ class AssetItemController extends Controller
     {
         $item->load(['asset.images', 'asset.category', 'location', 'assignments.user', 'maintenances']);
         
-        $schedule = [];
-        if ($item->purchase_price && $item->useful_life_months && $item->purchase_date) {
-            $purchasePrice = (float) $item->purchase_price;
-            $residualValue = (float) ($item->residual_value ?? 0);
-            $usefulLife = (int) $item->useful_life_months;
-            
-            $depreciationPerMonth = ($purchasePrice - $residualValue) / $usefulLife;
-            $currentBookValue = $purchasePrice;
-            $accumulated = 0;
-            $startDate = \Carbon\Carbon::parse($item->purchase_date);
+        $commercialSchedule = $item->generateSchedule('commercial');
+        $fiscalSchedule = $item->generateSchedule('fiscal');
 
-            for ($i = 1; $i <= $usefulLife; $i++) {
-                $periodDate = $startDate->copy()->addMonths($i);
-                $monthYear = $periodDate->translatedFormat('F Y');
-                
-                $accumulated += $depreciationPerMonth;
-                $beginningValue = $currentBookValue;
-                $currentBookValue -= $depreciationPerMonth;
-
-                $schedule[] = [
-                    'period' => $i,
-                    'month_year' => $monthYear,
-                    'beginning_value' => $beginningValue,
-                    'depreciation_expense' => $depreciationPerMonth,
-                    'accumulated_depreciation' => $accumulated,
-                    'ending_book_value' => max($currentBookValue, $residualValue),
-                ];
-            }
-        }
-
-        return view('inventory.show', compact('item', 'schedule'));
+        return view('inventory.show', compact('item', 'commercialSchedule', 'fiscalSchedule'));
     }
 
     /**
@@ -125,6 +98,7 @@ class AssetItemController extends Controller
             'purchase_price' => 'nullable|numeric|min:0',
             'residual_value' => 'nullable|numeric|min:0',
             'useful_life_months' => 'nullable|integer|min:1',
+            'fiscal_group' => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
         ]);
 
         $asset = \App\Models\Asset::find($validated['asset_id']);
@@ -156,6 +130,7 @@ class AssetItemController extends Controller
                     'purchase_price' => $validated['purchase_price'] ?? $asset->price,
                     'residual_value' => $validated['residual_value'] ?? 0,
                     'useful_life_months' => $validated['useful_life_months'] ?? ($asset->category->default_useful_life_months ?? 0),
+                    'fiscal_group' => $validated['fiscal_group'] ?? null,
                 ]);
             }
         });

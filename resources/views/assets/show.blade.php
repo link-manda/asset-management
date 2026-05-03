@@ -404,6 +404,15 @@
                                     <input type="number" name="useful_life_months" class="form-input text-sm" value="{{ $asset->category->default_useful_life_months ?? 0 }}">
                                 </div>
                             </div>
+                            <div class="mt-3">
+                                <label class="block text-xs font-medium text-default-500 mb-1">Kelompok Fiskal (Pajak)</label>
+                                <select name="fiscal_group" class="form-select text-sm">
+                                    <option value="">-- Gunakan Default Kategori ({{ $asset->category->fiscal_group ?? 'N/A' }}) --</option>
+                                    @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                                        <option value="{{ $group }}">{{ $group }} ({{ $months / 12 }} Tahun)</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="flex justify-end items-center gap-2 py-3 px-4 border-t border-default-200">

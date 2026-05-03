@@ -49,6 +49,20 @@
                                 <p class="text-danger text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div>
+                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="fiscal_group">Kelompok Fiskal (Pajak)</label>
+                            <select class="form-input w-full @error('fiscal_group') border-danger @enderror" id="fiscal_group" name="fiscal_group">
+                                <option value="">-- Pilih Kelompok Fiskal --</option>
+                                @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                                    <option value="{{ $group }}" {{ old('fiscal_group', $category->fiscal_group) == $group ? 'selected' : '' }}>{{ $group }} ({{ $months / 12 }} Tahun)</option>
+                                @endforeach
+                            </select>
+                            <p class="text-xs text-default-500 mt-1">Sesuai dengan peraturan perpajakan untuk penyusutan fiskal.</p>
+                            @error('fiscal_group')
+                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="flex justify-end gap-3 mt-6">

@@ -53,6 +53,7 @@ class AssetController extends Controller
             'items.*.condition'     => 'required|string',
             'items.*.residual_value'=> 'nullable|numeric|min:0',
             'items.*.useful_life_months' => 'nullable|integer|min:1',
+            'items.*.fiscal_group'  => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
             'images'        => 'nullable|array|max:4',
             'images.*'      => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -91,7 +92,8 @@ class AssetController extends Controller
                     'purchase_date' => $validated['purchase_date'],
                     'purchase_price'=> $validated['price'],
                     'residual_value' => $itemData['residual_value'] ?? 0,
-                    'useful_life_months' => $itemData['useful_life_months'] ?? 0,
+                    'useful_life_months' => $itemData['useful_life_months'] ?? ($asset->category->default_useful_life_months ?? 0),
+                    'fiscal_group'  => $itemData['fiscal_group'] ?? null,
                 ]);
             }
 

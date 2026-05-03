@@ -34,6 +34,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string|max:500',
             'default_useful_life_months' => 'nullable|integer|min:1',
             'default_residual_percentage' => 'nullable|numeric|min:0|max:100',
+            'fiscal_group' => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
         ]);
 
         Category::create($validated);
@@ -69,6 +70,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string|max:500',
             'default_useful_life_months' => 'nullable|integer|min:1',
             'default_residual_percentage' => 'nullable|numeric|min:0|max:100',
+            'fiscal_group' => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
         ]);
 
         $category->update($validated);

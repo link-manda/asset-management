@@ -20,6 +20,16 @@ class AssetItem extends Model
         'purchase_price',
         'residual_value',
         'useful_life_months',
+        'fiscal_group',
+    ];
+
+    const FISCAL_GROUPS = [
+        'Kelompok 1'            => 48,  // 4 Tahun
+        'Kelompok 2'            => 96,  // 8 Tahun
+        'Kelompok 3'            => 192, // 16 Tahun
+        'Kelompok 4'            => 240, // 20 Tahun
+        'Bangunan Permanen'     => 240, // 20 Tahun
+        'Bangunan Non-Permanen' => 120, // 10 Tahun
     ];
 
     protected $casts = [
@@ -109,5 +119,70 @@ class AssetItem extends Model
     public function disposal(): HasOne
     {
         return $this->hasOne(AssetDisposal::class, 'asset_item_id');
+    }
+
+    /**
+     * Get effective fiscal group (own or from category)
+     */
+    public function getEffectiveFiscalGroupAttribute()
+    {
+        return $this->fiscal_group ?: $this->asset->category->fiscal_group;
+    }
+
+    /**
+     * Get fiscal useful life based on group
+     */
+    public function getFiscalUsefulLifeAttribute()
+    {
+        $group = $this->effective_fiscal_group;
+        return self::FISCAL_GROUPS[$group] ?? 0;
+    }
+
+    /**
+     * Generate depreciation schedule
+     * @param string $type 'commercial' or 'fiscal'
+     */
+    public function generateSchedule($type = 'commercial')
+    {
+        if (!$this->purchase_date || !$this->purchase_price) {
+            return [];
+        }
+
+        $price = (float) $this->purchase_price;
+        $startDate = \Carbon\Carbon::parse($this->purchase_date);
+
+        if ($type === 'fiscal') {
+            $usefulLife = $this->fiscal_useful_life;
+            $residual = 0; // Aturan Pajak: Nilai Sisa 0
+        } else {
+            $usefulLife = (int) $this->useful_life_months;
+            $residual = (float) ($this->residual_value ?? 0);
+        }
+
+        if ($usefulLife <= 0) return [];
+
+        $schedule = [];
+        $depreciationPerMonth = ($price - $residual) / $usefulLife;
+        $currentBookValue = $price;
+        $accumulated = 0;
+
+        for ($i = 1; $i <= $usefulLife; $i++) {
+            $periodDate = $startDate->copy()->addMonths($i);
+            
+            $accumulated += $depreciationPerMonth;
+            $beginningValue = $currentBookValue;
+            $currentBookValue -= $depreciationPerMonth;
+
+            $schedule[] = [
+                'period' => $i,
+                'month_year' => $periodDate->translatedFormat('F Y'),
+                'beginning_value' => $beginningValue,
+                'depreciation_expense' => $depreciationPerMonth,
+                'accumulated_depreciation' => $accumulated,
+                'ending_book_value' => max($currentBookValue, $residual),
+            ];
+        }
+
+        return $schedule;
     }
 }

@@ -228,14 +228,28 @@
                 </div>
 
                 {{-- Simulation Table (3/5) --}}
-                <div class="lg:col-span-3 card">
-                    <div class="card-header border-b border-default-200 flex justify-between items-center">
-                        <h6 class="card-title text-sm">Simulasi Penyusutan (Straight-Line)</h6>
-                        <div class="flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 px-2 py-1 rounded">
+                <div class="lg:col-span-3 card" x-data="{ tab: 'commercial' }">
+                    <div class="card-header border-b border-default-200 flex justify-between items-center bg-default-50/50">
+                        <div class="flex items-center gap-4">
+                            <h6 class="card-title text-sm">Simulasi Penyusutan</h6>
+                            <div class="flex bg-default-200 p-0.5 rounded-lg">
+                                <button @click="tab = 'commercial'" :class="tab === 'commercial' ? 'bg-white text-primary shadow-sm' : 'text-default-500 hover:text-default-700'" class="px-3 py-1 rounded-md text-[10px] font-bold transition-all uppercase tracking-wider">Komersial</button>
+                                <button @click="tab = 'fiscal'" :class="tab === 'fiscal' ? 'bg-white text-primary shadow-sm' : 'text-default-500 hover:text-default-700'" class="px-3 py-1 rounded-md text-[10px] font-bold transition-all uppercase tracking-wider">Fiskal</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 text-[10px] font-bold text-primary px-2 py-1">
                             <i class="size-3" data-lucide="trending-down"></i> PROYEKSI
                         </div>
                     </div>
-                    <div class="card-body p-0">
+                    
+                    {{-- Commercial Table --}}
+                    <div x-show="tab === 'commercial'" class="card-body p-0">
+                        <div class="p-3 bg-primary/5 border-b border-primary/10">
+                            <div class="flex justify-between text-[10px]">
+                                <span class="text-default-500 uppercase font-bold">Parameter Komersial:</span>
+                                <span class="text-primary font-black uppercase">Umur: {{ $item->useful_life_months }} Bln | Sisa: Rp {{ number_format($item->residual_value, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
                         <div class="overflow-x-auto max-h-[350px]" data-simplebar>
                             <table class="min-w-full divide-y divide-default-200 text-[11px]">
                                 <thead class="bg-default-50 sticky top-0 z-10">
@@ -247,7 +261,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
-                                    @forelse($schedule as $row)
+                                    @forelse($commercialSchedule as $row)
                                         @php $isCurrent = $row['month_year'] == now()->translatedFormat('F Y'); @endphp
                                         <tr class="{{ $isCurrent ? 'bg-primary/5 font-bold' : '' }} hover:bg-default-50 transition-all">
                                             <td class="px-4 py-2 whitespace-nowrap">
@@ -269,8 +283,60 @@
                             </table>
                         </div>
                     </div>
+
+                    {{-- Fiscal Table --}}
+                    <div x-show="tab === 'fiscal'" class="card-body p-0" x-cloak>
+                        <div class="p-3 bg-warning/5 border-b border-warning/10">
+                            <div class="flex justify-between text-[10px]">
+                                <span class="text-default-500 uppercase font-bold">Parameter Fiskal (Pajak):</span>
+                                <span class="text-warning font-black uppercase">Group: {{ $item->effective_fiscal_group ?? 'N/A' }} ({{ $item->fiscal_useful_life }} Bln) | Sisa: Rp 0</span>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto max-h-[350px]" data-simplebar>
+                            <table class="min-w-full divide-y divide-default-200 text-[11px]">
+                                <thead class="bg-default-50 sticky top-0 z-10">
+                                    <tr>
+                                        <th class="px-4 py-2 text-start font-bold">Bulan</th>
+                                        <th class="px-4 py-2 text-end font-bold">Nilai Awal</th>
+                                        <th class="px-4 py-2 text-end font-bold">Penyusutan</th>
+                                        <th class="px-4 py-2 text-end font-bold">Nilai Buku</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-default-200">
+                                    @forelse($fiscalSchedule as $row)
+                                        @php $isCurrent = $row['month_year'] == now()->translatedFormat('F Y'); @endphp
+                                        <tr class="{{ $isCurrent ? 'bg-warning/5 font-bold' : '' }} hover:bg-default-50 transition-all">
+                                            <td class="px-4 py-2 whitespace-nowrap">
+                                                @if($isCurrent)
+                                                    <span class="size-2 bg-warning rounded-full inline-block me-1 animate-pulse"></span>
+                                                @endif
+                                                {{ $row['month_year'] }}
+                                            </td>
+                                            <td class="px-4 py-2 text-end text-default-500">Rp {{ number_format($row['beginning_value'], 0, ',', '.') }}</td>
+                                            <td class="px-4 py-2 text-end text-danger">-Rp {{ number_format($row['depreciation_expense'], 0, ',', '.') }}</td>
+                                            <td class="px-4 py-2 text-end font-bold {{ $isCurrent ? 'text-warning' : 'text-default-800' }}">Rp {{ number_format($row['ending_book_value'], 0, ',', '.') }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="px-4 py-8 text-center text-default-400 italic">
+                                                @if(!$item->effective_fiscal_group)
+                                                    <div class="flex flex-col items-center">
+                                                        <i class="size-8 text-warning/30 mb-2" data-lucide="alert-circle"></i>
+                                                        <span>Kelompok Fiskal Belum Diset.</span>
+                                                    </div>
+                                                @else
+                                                    Financial data incomplete.
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <div class="card-footer bg-default-50 py-2">
-                        <p class="text-[10px] text-default-500 italic text-center">Data simulasi ini bersifat informatif dan tidak menggantikan pencatatan akuntansi resmi.</p>
+                        <p class="text-[10px] text-default-500 italic text-center">Penyusutan fiskal menggunakan metode garis lurus dengan nilai sisa Rp 0 sesuai aturan perpajakan.</p>
                     </div>
                 </div>
             </div>
