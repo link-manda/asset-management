@@ -46,10 +46,10 @@
                                                         <i class="size-5 text-default-500" data-lucide="package"></i>
                                                     </div>
                                                     <div>
-                                                        <a href="{{ route('assets.show', $item->asset) }}" class="text-sm font-bold text-default-800 hover:text-primary transition-all">
-                                                            {{ $item->asset->name }}
+                                                        <a href="{{ route('assets.show', $item->item->asset) }}" class="text-sm font-bold text-default-800 hover:text-primary transition-all">
+                                                            {{ $item->item->asset->name }}
                                                         </a>
-                                                        <p class="text-xs text-primary font-medium">#{{ $item->asset->asset_code }}</p>
+                                                        <p class="text-xs text-primary font-medium">#{{ $item->item->asset->asset_code }}</p>
                                                     </div>
                                                 </div>
                                             </td>
@@ -93,7 +93,7 @@
                                                         <form action="{{ route('maintenances.destroy', $item) }}" method="POST">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="w-full flex items-center gap-2 py-2 px-3 text-sm text-danger hover:bg-danger/10 rounded-md font-medium delete-confirm" data-name="Log Maintenance {{ $item->asset->name }}">
+                                                            <button type="submit" class="w-full flex items-center gap-2 py-2 px-3 text-sm text-danger hover:bg-danger/10 rounded-md font-medium delete-confirm" data-name="Log Maintenance {{ $item->item->asset->name }}">
                                                                 <i class="size-4" data-lucide="trash-2"></i> Hapus Log
                                                             </button>
                                                         </form>

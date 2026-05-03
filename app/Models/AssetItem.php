@@ -40,6 +40,36 @@ class AssetItem extends Model
     ];
 
     /**
+     * Get the current commercial book value (Alias).
+     */
+    public function getCommercialValueAttribute()
+    {
+        return $this->current_value;
+    }
+
+    /**
+     * Get the current fiscal book value.
+     */
+    public function getFiscalValueAttribute()
+    {
+        $schedule = $this->generateSchedule('fiscal');
+        $currentMonth = now()->format('Y-m');
+        
+        foreach ($schedule as $row) {
+            if ($row['month_year_key'] == $currentMonth) {
+                return $row['ending_book_value'];
+            }
+        }
+
+        // Jika sudah lewat masa manfaat fiskal atau belum beli
+        if ($this->purchase_date && now()->greaterThan($this->purchase_date)) {
+            return 0;
+        }
+        
+        return $this->purchase_price;
+    }
+
+    /**
      * Calculate book value at a specific date using straight-line method.
      */
     public function calculateValueAt($date = null)
@@ -176,6 +206,7 @@ class AssetItem extends Model
             $schedule[] = [
                 'period' => $i,
                 'month_year' => $periodDate->translatedFormat('F Y'),
+                'month_year_key' => $periodDate->format('Y-m'),
                 'beginning_value' => $beginningValue,
                 'depreciation_expense' => $depreciationPerMonth,
                 'accumulated_depreciation' => $accumulated,

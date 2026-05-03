@@ -17,7 +17,10 @@ class AssetMaintenanceController extends Controller
 
     public function create()
     {
-        $items = AssetItem::where('status', 'Available')->with('asset')->get();
+        $items = AssetItem::whereIn('status', ['Available', 'Deployed'])
+            ->with(['asset.category', 'location'])
+            ->get();
+            
         return view('maintenances.create', compact('items'));
     }
 

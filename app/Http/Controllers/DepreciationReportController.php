@@ -15,6 +15,7 @@ class DepreciationReportController extends Controller
     public function index(Request $request)
     {
         $query = AssetItem::with(['asset.category', 'location']);
+        $mode = $request->get('mode', 'commercial'); // Default commercial
 
         // Filter Kategori
         if ($request->filled('category_id')) {
@@ -23,7 +24,7 @@ class DepreciationReportController extends Controller
             });
         }
 
-        // Filter Status (Hanya yang belum di-dispose biasanya untuk laporan nilai buku aktif)
+        // Filter Status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         } else {
@@ -47,11 +48,11 @@ class DepreciationReportController extends Controller
         $categories = Category::all();
         $statuses = ['Available', 'Deployed', 'Maintenance', 'Broken'];
 
-        return view('reports.depreciation', compact('items', 'categories', 'statuses'));
+        return view('reports.depreciation', compact('items', 'categories', 'statuses', 'mode'));
     }
 
     /**
-     * Export laporan ke CSV (Simpel tanpa library berat).
+     * Export laporan ke CSV.
      */
     public function export(Request $request)
     {
@@ -65,7 +66,7 @@ class DepreciationReportController extends Controller
 
         $items = $query->get();
 
-        $fileName = 'Laporan_Penyusutan_' . date('Y-m-d') . '.csv';
+        $fileName = 'Laporan_Penyusutan_Rekonsiliasi_' . date('Y-m-d') . '.csv';
         $headers = [
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$fileName",
@@ -74,14 +75,21 @@ class DepreciationReportController extends Controller
             "Expires"             => "0"
         ];
 
-        $columns = ['Item Code', 'Nama Aset', 'Kategori', 'Tgl Beli', 'Harga Perolehan', 'Umur (Bulan)', 'Nilai Sisa', 'Akumulasi Penyusutan', 'Nilai Buku'];
+        $columns = [
+            'Item Code', 'Nama Aset', 'Kategori', 'Tgl Beli', 'Harga Perolehan', 
+            'Umur K (Bln)', 'Nilai Sisa K', 'Nilai Buku K',
+            'Kelompok F', 'Umur F (Bln)', 'Nilai Buku F',
+            'Selisih (K-F)'
+        ];
 
         $callback = function() use($items, $columns) {
             $file = fopen('php://output', 'w');
             fputcsv($file, $columns);
 
             foreach ($items as $item) {
-                $accumulated = $item->purchase_price - $item->current_value;
+                $commValue = (float) $item->commercial_value;
+                $fiscalValue = (float) $item->fiscal_value;
+                $diff = $commValue - $fiscalValue;
                 
                 fputcsv($file, [
                     $item->item_code,
@@ -91,8 +99,11 @@ class DepreciationReportController extends Controller
                     $item->purchase_price,
                     $item->useful_life_months,
                     $item->residual_value,
-                    round($accumulated, 2),
-                    round($item->current_value, 2)
+                    round($commValue, 2),
+                    $item->effective_fiscal_group ?? '-',
+                    $item->fiscal_useful_life,
+                    round($fiscalValue, 2),
+                    round($diff, 2)
                 ]);
             }
 
