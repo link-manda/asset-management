@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Location extends Model
 {
-    protected $fillable = ['name', 'address', 'parent_id'];
+    protected $fillable = ['name', 'address', 'parent_id', 'type'];
 
     /**
      * Get the parent location.

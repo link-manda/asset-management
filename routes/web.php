@@ -34,6 +34,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/inventory', [\App\Http\Controllers\AssetItemController::class, 'index'])->name('inventory.index');
     Route::post('/inventory', [\App\Http\Controllers\AssetItemController::class, 'store'])->name('inventory.store');
     Route::get('/inventory/{item}', [\App\Http\Controllers\AssetItemController::class, 'show'])->name('inventory.show');
+    Route::get('/inventory/{item}/edit', [\App\Http\Controllers\AssetItemController::class, 'edit'])->name('inventory.edit');
+    Route::put('/inventory/{item}', [\App\Http\Controllers\AssetItemController::class, 'update'])->name('inventory.update');
     Route::post('/inventory/bulk-print', [\App\Http\Controllers\AssetItemController::class, 'bulkPrint'])->name('inventory.bulk-print');
 
     // Asset Maintenance

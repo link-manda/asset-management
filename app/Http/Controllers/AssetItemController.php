@@ -66,7 +66,14 @@ class AssetItemController extends Controller
         $commercialSchedule = $item->generateSchedule('commercial');
         $fiscalSchedule = $item->generateSchedule('fiscal');
 
-        return view('inventory.show', compact('item', 'commercialSchedule', 'fiscalSchedule'));
+        // Fetch activity logs for this item
+        $activities = \Spatie\Activitylog\Models\Activity::where('subject_id', $item->id)
+            ->where('subject_type', AssetItem::class)
+            ->with('causer')
+            ->latest()
+            ->get();
+
+        return view('inventory.show', compact('item', 'commercialSchedule', 'fiscalSchedule', 'activities'));
     }
 
     /**
@@ -136,5 +143,41 @@ class AssetItemController extends Controller
         });
 
         return back()->with('success', $validated['quantity'] . ' Unit baru berhasil ditambahkan ke katalog.');
+    }
+
+    /**
+     * Show the form for editing the specified asset item.
+     */
+    public function edit(AssetItem $item)
+    {
+        $item->load('asset');
+        $locations = Location::all();
+        $statuses = ['Available', 'Deployed', 'Maintenance', 'Broken', 'Disposed'];
+        $fiscalGroups = array_keys(AssetItem::FISCAL_GROUPS);
+
+        return view('inventory.edit', compact('item', 'locations', 'statuses', 'fiscalGroups'));
+    }
+
+    /**
+     * Update the specified asset item in storage.
+     */
+    public function update(Request $request, AssetItem $item)
+    {
+        $validated = $request->validate([
+            'serial_number' => 'nullable|string|max:255',
+            'location_id' => 'required|exists:locations,id',
+            'status' => 'required|string|in:Available,Deployed,Maintenance,Broken,Disposed',
+            'condition' => 'required|string',
+            'purchase_date' => 'required|date',
+            'purchase_price' => 'required|numeric|min:0',
+            'residual_value' => 'required|numeric|min:0',
+            'useful_life_months' => 'required|integer|min:0',
+            'fiscal_group' => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
+        ]);
+
+        $item->update($validated);
+
+        return redirect()->route('inventory.show', $item)
+            ->with('success', 'Informasi unit aset berhasil diperbarui.');
     }
 }

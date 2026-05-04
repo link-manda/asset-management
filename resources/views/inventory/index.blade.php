@@ -100,18 +100,26 @@
                                                         <span class="text-default-300 italic">-</span>
                                                     @endif
                                                 </td>
-                                                <td class="px-4 py-4 text-center">
-                                                    <div class="flex items-center justify-center gap-2">
-                                                        <a href="{{ route('inventory.show', $item) }}" class="size-8 flex items-center justify-center bg-default-100 text-default-600 rounded hover:bg-primary/10 hover:text-primary transition-all" title="Detail Item">
-                                                            <i class="size-4" data-lucide="eye"></i>
-                                                        </a>
-                                                        <form action="{{ route('inventory.bulk-print') }}" method="POST" target="_blank">
-                                                            @csrf
-                                                            <input type="hidden" name="ids[]" value="{{ $item->id }}">
-                                                            <button type="submit" class="size-8 flex items-center justify-center bg-default-100 text-default-600 rounded hover:bg-secondary/10 hover:text-secondary transition-all" title="Cetak Label">
-                                                                <i class="size-4" data-lucide="printer"></i>
-                                                            </button>
-                                                        </form>
+                                                <td class="px-4 py-2 text-center">
+                                                    <div class="hs-dropdown relative inline-flex">
+                                                        <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
+                                                            <i class="size-4" data-lucide="more-vertical"></i>
+                                                        </button>
+                                                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200" role="menu">
+                                                            <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('inventory.show', $item) }}">
+                                                                <i class="size-3.5" data-lucide="eye"></i> Detail
+                                                            </a>
+                                                            <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-info hover:bg-info/10 rounded" href="{{ route('inventory.edit', $item) }}">
+                                                                <i class="size-3.5" data-lucide="edit-3"></i> Edit
+                                                            </a>
+                                                            <form action="{{ route('inventory.bulk-print') }}" method="POST" target="_blank" class="block">
+                                                                @csrf
+                                                                <input type="hidden" name="ids[]" value="{{ $item->id }}">
+                                                                <button type="submit" class="w-full flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-secondary hover:bg-secondary/10 rounded">
+                                                                    <i class="size-3.5" data-lucide="printer"></i> Cetak
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>

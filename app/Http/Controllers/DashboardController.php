@@ -50,6 +50,17 @@ class DashboardController extends Controller
             ->orderBy('month')
             ->get();
 
+        // 5. Data Grafik: Biaya Maintenance 6 Bulan Terakhir (Bar)
+        $maintenanceTrend = \App\Models\AssetMaintenance::select(
+                DB::raw("DATE_FORMAT(maintenance_date, '%Y-%m') as month"),
+                DB::raw('SUM(cost) as total_cost')
+            )
+            ->whereNotNull('maintenance_date')
+            ->where('maintenance_date', '>=', now()->subMonths(6))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
         return view('dashboard.index', [
             'totalAssets'    => $totalItems,
             'totalValue'     => $totalValue,
@@ -59,6 +70,10 @@ class DashboardController extends Controller
             'categoryValues' => $categoryData->pluck('total_value'),
             'trendLabels'    => $monthlyTrend->pluck('month'),
             'trendValues'    => $monthlyTrend->pluck('total_value'),
+            'maintLabels'    => $maintenanceTrend->pluck('month'),
+            'maintValues'    => $maintenanceTrend->pluck('total_cost'),
+            'statusLabels'   => array_keys($stats),
+            'statusValues'   => array_values($stats),
         ]);
     }
 }

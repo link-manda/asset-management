@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             LocationSeeder::class,
             AssetSeeder::class,
             UserSeeder::class,
+            DemoSystemSeeder::class,
         ]);
     }
 }

@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class AssetItem extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'asset_id',
         'item_code',
@@ -22,6 +26,14 @@ class AssetItem extends Model
         'useful_life_months',
         'fiscal_group',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     const FISCAL_GROUPS = [
         'Kelompok 1'            => 48,  // 4 Tahun

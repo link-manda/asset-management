@@ -116,17 +116,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-4 bg-default-100 rounded-md text-default-600 text-sm italic mb-5">
+                    <div class="p-3 bg-default-100 rounded-md text-default-600 text-sm italic mb-4">
                         {{ $asset->notes ?? 'Tidak ada deskripsi katalog.' }}
                     </div>
 
-                    <div class="flex justify-between items-center mb-4">
-                        <h6 class="text-[15px] font-bold text-default-800 flex items-center gap-2">
-                            <i class="size-5 text-primary" data-lucide="box"></i>
+                    <div class="flex justify-between items-center mb-3">
+                        <h6 class="text-[14px] font-bold text-default-800 flex items-center gap-2">
+                            <i class="size-4 text-primary" data-lucide="box"></i>
                             Daftar Unit Fisik (Physical Items)
                         </h6>
-                        <button type="button" data-hs-overlay="#modal-add-item" class="btn btn-sm bg-primary text-white">
-                            <i class="size-4 me-1" data-lucide="plus"></i> Tambah Unit Baru
+                        <button type="button" data-hs-overlay="#modal-add-item" class="btn btn-sm bg-primary text-white py-1">
+                            <i class="size-3.5 me-1" data-lucide="plus"></i> Tambah Unit
                         </button>
                     </div>
 
@@ -174,34 +174,43 @@
                                                 {{ $item->status }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 text-end">
-                                            <div class="flex justify-end gap-1">
-                                                @if($item->status == 'Available')
-                                                    <a href="{{ route('items.checkout.create', $item) }}" class="size-7 flex items-center justify-center bg-primary/10 text-primary rounded hover:bg-primary hover:text-white transition-all" title="Checkout">
-                                                        <i class="size-3.5" data-lucide="log-out"></i>
+                                        <td class="px-4 py-2 text-end">
+                                            <div class="hs-dropdown relative inline-flex">
+                                                <button class="hs-dropdown-toggle btn size-7 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded transition-all" type="button">
+                                                    <i class="size-3.5" data-lucide="more-vertical"></i>
+                                                </button>
+                                                <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200 text-start" role="menu">
+                                                    <a href="{{ route('inventory.edit', $item) }}" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-info hover:bg-info/10 rounded">
+                                                        <i class="size-3.5" data-lucide="edit-3"></i> Edit Unit
                                                     </a>
-                                                @elseif($item->status == 'Deployed')
-                                                    @php
-                                                        $borrowerName = $item->currentAssignment?->user?->name ?? 'Unknown';
-                                                    @endphp
-                                                    <button type="button"
-                                                        data-hs-overlay="#modal-checkin"
-                                                        data-item-id="{{ $item->id }}"
-                                                        data-item-code="{{ $item->item_code }}"
-                                                        data-borrower="{{ $borrowerName }}"
-                                                        class="btn-checkin size-7 flex items-center justify-center bg-success/10 text-success rounded hover:bg-success hover:text-white transition-all" title="Checkin">
-                                                        <i class="size-3.5" data-lucide="log-in"></i>
-                                                    </button>
-                                                @endif
 
-                                                @if($item->status != 'Disposed')
-                                                    <button type="button"
-                                                        data-hs-overlay="#modal-disposal"
-                                                        data-barcode="{{ $item->item_code }}"
-                                                        class="btn-disposal size-7 flex items-center justify-center bg-danger/10 text-danger rounded hover:bg-danger hover:text-white transition-all" title="Disposal">
-                                                        <i class="size-3.5" data-lucide="trash-2"></i>
-                                                    </button>
-                                                @endif
+                                                    @if($item->status == 'Available')
+                                                        <a href="{{ route('items.checkout.create', $item) }}" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-primary hover:bg-primary/10 rounded">
+                                                            <i class="size-3.5" data-lucide="log-out"></i> Checkout
+                                                        </a>
+                                                    @elseif($item->status == 'Deployed')
+                                                        @php
+                                                            $borrowerName = $item->currentAssignment?->user?->name ?? 'Unknown';
+                                                        @endphp
+                                                        <button type="button"
+                                                            data-hs-overlay="#modal-checkin"
+                                                            data-item-id="{{ $item->id }}"
+                                                            data-item-code="{{ $item->item_code }}"
+                                                            data-borrower="{{ $borrowerName }}"
+                                                            class="btn-checkin w-full flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-success hover:bg-success/10 rounded">
+                                                            <i class="size-3.5" data-lucide="log-in"></i> Checkin
+                                                        </button>
+                                                    @endif
+
+                                                    @if($item->status != 'Disposed')
+                                                        <button type="button"
+                                                            data-hs-overlay="#modal-disposal"
+                                                            data-barcode="{{ $item->item_code }}"
+                                                            class="btn-disposal w-full flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-danger hover:bg-danger/10 rounded">
+                                                            <i class="size-3.5" data-lucide="trash-2"></i> Disposal
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
