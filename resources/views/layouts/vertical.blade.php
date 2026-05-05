@@ -29,6 +29,9 @@
     </div>
 
     @include('layouts.partials/customizer')
+
+    @vite(['resources/js/vendor.js', 'resources/js/app.js'])
+    @stack('js')
 </body>
 
 </html>

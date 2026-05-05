@@ -47,32 +47,27 @@
                     </a>
                     <ul class="sub-menu hs-accordion-content {{ $isAssetActive ? '' : 'hidden' }}">
                         <li class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('assets.index') ? 'active' : '' }}" href="{{ route('assets.index') }}">
+                            <a class="menu-link {{ request()->routeIs('assets.index', 'assets.show', 'assets.edit') ? 'active' : '' }}" href="{{ route('assets.index') }}">
                                 <span class="menu-text"> Asset List </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('inventory.index') ? 'active' : '' }}" href="{{ route('inventory.index') }}">
+                            <a class="menu-link {{ request()->routeIs('inventory.*') ? 'active' : '' }}" href="{{ route('inventory.index') }}">
                                 <span class="menu-text"> Asset Item </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('assets.create') ? 'active' : '' }}" href="{{ route('assets.create') }}">
-                                <span class="menu-text"> Tambah Baru </span>
-                            </a>
-                        </li>
-                        <li class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('assignments.index') ? 'active' : '' }}" href="{{ route('assignments.index') }}">
+                            <a class="menu-link {{ request()->routeIs('assignments.*') ? 'active' : '' }}" href="{{ route('assignments.index') }}">
                                 <span class="menu-text"> Riwayat Penugasan </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('maintenances.index') ? 'active' : '' }}" href="{{ route('maintenances.index') }}">
+                            <a class="menu-link {{ request()->routeIs('maintenances.*') ? 'active' : '' }}" href="{{ route('maintenances.index') }}">
                                 <span class="menu-text"> Maintenance Aset </span>
                             </a>
                         </li>
                         <li class="menu-item">
-                            <a class="menu-link {{ request()->routeIs('disposals.index') ? 'active' : '' }}" href="{{ route('disposals.index') }}">
+                            <a class="menu-link {{ request()->routeIs('disposals.*') ? 'active' : '' }}" href="{{ route('disposals.index') }}">
                                 <span class="menu-text"> Penghapusan (Disposal) </span>
                             </a>
                         </li>
@@ -120,6 +115,13 @@
 
                 <li class="menu-title">
                     <span>Laporan</span>
+                </li>
+
+                <li class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('reports.general') ? 'active' : '' }}" href="{{ route('reports.general') }}">
+                        <span class="menu-icon"><i data-lucide="pie-chart"></i></span>
+                        <div class="menu-text">Laporan Aset Umum</div>
+                    </a>
                 </li>
 
                 <li class="menu-item">

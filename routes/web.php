@@ -12,6 +12,8 @@ use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\UnitOfMeasurementController;
 use App\Http\Controllers\AssetDisposalController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DepreciationReportController;
 
 use App\Http\Controllers\Auth\LoginController;
 
@@ -59,8 +61,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/settings', fn() => redirect()->route('dashboard'))->name('settings.index');
 
     // Reports
-    Route::get('/reports/depreciation', [\App\Http\Controllers\DepreciationReportController::class, 'index'])->name('reports.depreciation');
-    Route::get('/reports/depreciation/export', [\App\Http\Controllers\DepreciationReportController::class, 'export'])->name('reports.depreciation.export');
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/general', [ReportController::class, 'generalReport'])->name('general');
+        Route::get('/general/export/excel', [ReportController::class, 'exportExcel'])->name('general.excel');
+        Route::get('/general/export/csv', [ReportController::class, 'exportCsv'])->name('general.csv');
+        Route::get('/depreciation', [DepreciationReportController::class, 'index'])->name('depreciation');
+        Route::get('/depreciation/export', [DepreciationReportController::class, 'export'])->name('depreciation.export');
+    });
 });
 
 // Fallback untuk route template Tailwick agar tidak error

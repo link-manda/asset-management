@@ -10,8 +10,11 @@
             <div class="card-header flex justify-between items-center">
                 <h6 class="card-title text-base">Filter Laporan</h6>
                 <div class="flex gap-2">
-                    <a href="{{ route('reports.depreciation.export', request()->all()) }}" class="btn btn-sm bg-success text-white flex items-center gap-2">
-                        <i class="size-4" data-lucide="download"></i> Export CSV
+                    <a href="{{ route('reports.depreciation.export', array_merge(request()->all(), ['format' => 'xlsx'])) }}" class="btn btn-sm bg-success/10 text-success border border-success/20 hover:bg-success hover:text-white transition-all">
+                        <i class="size-4 me-1" data-lucide="download"></i> Excel
+                    </a>
+                    <a href="{{ route('reports.depreciation.export', array_merge(request()->all(), ['format' => 'csv'])) }}" class="btn btn-sm bg-info/10 text-info border border-info/20 hover:bg-info hover:text-white transition-all">
+                        <i class="size-4 me-1" data-lucide="file-text"></i> CSV
                     </a>
                 </div>
             </div>
@@ -40,8 +43,12 @@
                         </select>
                     </div>
                     <div class="flex items-end gap-2">
-                        <button type="submit" class="btn btn-sm bg-primary text-white w-full">Filter</button>
-                        <a href="{{ route('reports.depreciation') }}" class="btn btn-sm border-default-200 text-default-600">Reset</a>
+                        <button type="submit" class="btn btn-sm bg-primary text-white w-full">
+                            <i class="size-4 me-1" data-lucide="search"></i> Filter
+                        </button>
+                        <a href="{{ route('reports.depreciation') }}" class="btn btn-sm border-default-200 text-default-600">
+                            <i class="size-4 me-1" data-lucide="rotate-ccw"></i> Reset
+                        </a>
                     </div>
                 </form>
             </div>

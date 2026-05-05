@@ -64,11 +64,11 @@
                             <h6 class="card-title text-base flex items-center gap-2">
                                 <i class="size-4 text-primary" data-lucide="layers"></i> Registrasi Unit Fisik
                             </h6>
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-bold text-default-600">Generate Unit:</label>
-                                <div class="flex">
-                                    <input type="number" id="gen-qty" class="form-input form-input-sm w-16 rounded-e-none" value="1" min="1" max="50">
-                                    <button type="button" id="btn-generate" class="btn btn-sm bg-primary text-white rounded-s-none">Tambah</button>
+                            <div class="flex items-center gap-3">
+                                <label class="text-sm font-semibold text-default-700 whitespace-nowrap" for="gen-qty">Generate Unit:</label>
+                                <div class="flex shadow-sm rounded-md">
+                                    <input type="number" id="gen-qty" class="form-input form-input-sm w-20 rounded-e-none border-e-0 focus:ring-primary focus:border-primary z-10" value="1" min="1" max="50">
+                                    <button type="button" id="btn-generate" class="btn btn-sm bg-primary hover:bg-primary-600 text-white rounded-s-none z-10 transition-colors">Tambah</button>
                                 </div>
                             </div>
                         </div>
@@ -78,13 +78,13 @@
                             <table class="min-w-full divide-y divide-default-200" id="items-table">
                                 <thead class="bg-default-50">
                                     <tr>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Barcode/Item Code</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Serial Number</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Lokasi</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Kondisi</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Fiskal (Tax)</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Nilai Sisa</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase">Umur (Bln)</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[150px]">Barcode/Item Code</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[180px]">Serial Number</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[200px]">Lokasi</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[120px]">Kondisi</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[130px]">Fiskal (Tax)</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[150px]">Nilai Sisa</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[110px]">Umur (Bln)</th>
                                         <th class="px-4 py-2 text-center text-xs font-bold text-default-600 uppercase w-10"></th>
                                     </tr>
                                 </thead>
@@ -126,8 +126,8 @@
                                             <input type="number" name="items[0][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="0">
                                         </td>
                                         <td class="px-4 py-3 text-center">
-                                            <button type="button" class="text-danger hover:text-danger-700 remove-row">
-                                                <i data-lucide="x" class="size-4"></i>
+                                            <button type="button" class="text-danger hover:text-danger-700 remove-row" title="Hapus Unit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                             </button>
                                         </td>
                                     </tr>
@@ -259,7 +259,7 @@
                     <select name="items[${index}][fiscal_group]" class="form-input form-input-sm">
                         <option value="">Default</option>
                         @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
-                            <option value="${group}">${group}</option>
+                            <option value="{{ $group }}">{{ $group }}</option>
                         @endforeach
                     </select>
                 </td>
@@ -270,8 +270,8 @@
                     <input type="number" name="items[${index}][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="${defaultUsefulLife}">
                 </td>
                 <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-danger hover:text-danger-700 remove-row">
-                        <i data-lucide="x" class="size-4"></i>
+                    <button type="button" class="text-danger hover:text-danger-700 remove-row" title="Hapus Unit">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
                 </td>
             `;
@@ -289,7 +289,6 @@
                 itemsBody.appendChild(createRow(rowIndex, catData.useful_life, residualValue));
                 rowIndex++;
             }
-            lucide.createIcons();
         });
 
         // Remove Row
