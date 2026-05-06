@@ -18,7 +18,7 @@ class LocationController extends Controller
     }
 
     /**
-     * Menampilkan form tambah lokasi.
+     * Show the form for creating a new location.
      */
     public function create()
     {
@@ -39,7 +39,7 @@ class LocationController extends Controller
         Location::create($validated);
 
         return redirect()->route('locations.index')
-            ->with('success', 'Lokasi berhasil ditambahkan.');
+            ->with('success', 'Location successfully added.');
     }
 
     /**
@@ -74,18 +74,18 @@ class LocationController extends Controller
         $location->update($validated);
 
         return redirect()->route('locations.index')
-            ->with('success', 'Lokasi berhasil diperbarui.');
+            ->with('success', 'Location successfully updated.');
     }
 
     public function destroy(Location $location)
     {
         if ($location->items()->count() > 0) {
-            return redirect()->back()->with('error', 'Gagal menghapus! Lokasi ini masih memiliki item fisik yang terdaftar.');
+            return redirect()->back()->with('error', 'Failed to delete! This location still has registered physical items.');
         }
 
         $location->delete();
 
         return redirect()->route('locations.index')
-            ->with('success', 'Lokasi berhasil dihapus.');
+            ->with('success', 'Location successfully removed.');
     }
 }

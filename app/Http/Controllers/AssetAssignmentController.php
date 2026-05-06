@@ -7,15 +7,49 @@ use App\Models\AssetAssignment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AssignmentHistoryExport;
 
 class AssetAssignmentController extends Controller
 {
     /**
      * index: Menampilkan seluruh riwayat penugasan aset.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $assignments = AssetAssignment::with(['item.asset', 'user'])->latest()->paginate(10);
+        $query = AssetAssignment::with(['item.asset', 'user']);
+
+        // Filter Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('item', function($sq) use ($search) {
+                    $sq->where('item_code', 'like', "%{$search}%");
+                })
+                ->orWhereHas('item.asset', function($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%")
+                      ->orWhere('asset_code', 'like', "%{$search}%");
+                })
+                ->orWhereHas('user', function($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        // Export Logic
+        if ($request->export === 'excel') {
+            return Excel::download(new AssignmentHistoryExport($request), 'assignment_history_' . now()->format('YmdHis') . '.xlsx');
+        }
+
+        if ($request->export === 'pdf') {
+            $assignments = $query->latest()->get();
+            $pdf = Pdf::loadView('assignments.export-pdf', compact('assignments'))
+                      ->setPaper('a4', 'landscape');
+            return $pdf->download('assignment_history_' . now()->format('YmdHis') . '.pdf');
+        }
+
+        $assignments = $query->latest()->paginate(10)->withQueryString();
         return view('assignments.index', compact('assignments'));
     }
 
@@ -40,7 +74,7 @@ class AssetAssignmentController extends Controller
         ]);
 
         if ($item->status !== 'Available') {
-            return back()->with('error', 'Unit ini sedang tidak tersedia untuk dipinjam.');
+            return back()->with('error', 'This unit is currently not available for checkout.');
         }
 
         DB::transaction(function () use ($request, $item) {
@@ -55,7 +89,7 @@ class AssetAssignmentController extends Controller
         });
 
         return redirect()->route('assets.show', $item->asset_id)
-            ->with('success', 'Unit ' . $item->item_code . ' berhasil di-checkout.');
+            ->with('success', 'Unit ' . $item->item_code . ' has been successfully checked out.');
     }
 
     /**
@@ -81,6 +115,6 @@ class AssetAssignmentController extends Controller
             $item->update(['status' => 'Available']);
         });
 
-        return redirect()->back()->with('success', 'Unit ' . $item->item_code . ' berhasil di-checkin.');
+        return redirect()->back()->with('success', 'Unit ' . $item->item_code . ' has been successfully checked in.');
     }
 }

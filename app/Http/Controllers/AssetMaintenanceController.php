@@ -29,6 +29,7 @@ class AssetMaintenanceController extends Controller
         $request->validate([
             'asset_item_id' => 'required|exists:asset_items,id',
             'maintenance_date' => 'required|date',
+            'type' => 'required|string',
             'description' => 'required|string',
             'cost' => 'required|numeric|min:0',
             'status' => 'required|in:Scheduled,In Progress,Completed',
@@ -37,7 +38,10 @@ class AssetMaintenanceController extends Controller
         DB::transaction(function () use ($request) {
             $maintenance = AssetMaintenance::create($request->all());
 
-            if ($request->status != 'Completed') {
+            // Update item status based on maintenance status
+            if ($request->status == 'Completed') {
+                $maintenance->item->update(['status' => 'Available']);
+            } else {
                 $maintenance->item->update(['status' => 'Maintenance']);
             }
         });
@@ -55,18 +59,27 @@ class AssetMaintenanceController extends Controller
     {
         $request->validate([
             'maintenance_date' => 'required|date',
+            'type' => 'required|string',
             'description' => 'required|string',
             'cost' => 'required|numeric|min:0',
             'status' => 'required|in:Scheduled,In Progress,Completed',
         ]);
 
         DB::transaction(function () use ($request, $maintenance) {
-            $oldStatus = $maintenance->status;
             $maintenance->update($request->all());
 
-            if ($request->status == 'Completed' && $oldStatus != 'Completed') {
-                $maintenance->item->update(['status' => 'Available']);
-            } elseif ($request->status != 'Completed' && $oldStatus == 'Completed') {
+            // Sync item status
+            if ($request->status == 'Completed') {
+                // Check if there are other active maintenances for this item
+                $hasOtherActive = $maintenance->item->maintenances()
+                    ->where('id', '!=', $maintenance->id)
+                    ->where('status', '!=', 'Completed')
+                    ->exists();
+                
+                if (!$hasOtherActive) {
+                    $maintenance->item->update(['status' => 'Available']);
+                }
+            } else {
                 $maintenance->item->update(['status' => 'Maintenance']);
             }
         });
@@ -80,6 +93,7 @@ class AssetMaintenanceController extends Controller
             $item = $maintenance->item;
             $maintenance->delete();
 
+            // Reset item status if no other active maintenance
             if ($item->status == 'Maintenance' && !$item->maintenances()->where('status', '!=', 'Completed')->exists()) {
                 $item->update(['status' => 'Available']);
             }

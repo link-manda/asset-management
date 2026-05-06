@@ -76,21 +76,21 @@ class CategoryController extends Controller
         $category->update($validated);
 
         return redirect()->route('categories.index')
-            ->with('success', 'Kategori berhasil diperbarui.');
+            ->with('success', 'Category successfully updated.');
     }
 
     /**
-     * Menghapus kategori dari database.
+     * Remove the specified category from storage.
      */
     public function destroy(Category $category)
     {
         if ($category->assets()->count() > 0) {
-            return redirect()->back()->with('error', 'Gagal menghapus! Kategori ini masih memiliki aset yang terdaftar.');
+            return redirect()->back()->with('error', 'Failed to delete! This category still has registered assets.');
         }
 
         $category->delete();
 
         return redirect()->route('categories.index')
-            ->with('success', 'Kategori berhasil dihapus.');
+            ->with('success', 'Category successfully removed.');
     }
 }

@@ -1,73 +1,49 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Kategori')
+@section('title', 'Add New Category')
 
 @section('content')
-    @include('layouts.partials/page-title', ['subtitle' => 'Categories', 'title' => 'Create Category'])
+    @include('layouts.partials/page-title', ['subtitle' => 'Master Data', 'title' => 'Create Category'])
 
-    <div class="grid grid-cols-1 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="card">
-            <div class="card-header">
-                <h6 class="card-title">Informasi Kategori</h6>
-            </div>
             <div class="card-body">
                 <form action="{{ route('categories.store') }}" method="POST">
                     @csrf
-                    <div class="grid grid-cols-1 gap-5">
-                        <div>
-                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="name">Nama Kategori <span class="text-danger">*</span></label>
-                            <input class="form-input w-full @error('name') border-danger @enderror" id="name" name="name" type="text" placeholder="Masukkan nama kategori" value="{{ old('name') }}" required />
-                            @error('name')
-                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div class="mb-5">
+                        <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="name">Category Name</label>
+                        <input class="form-input" id="name" name="name" placeholder="e.g.: IT Equipment" type="text" value="{{ old('name') }}" required />
+                    </div>
 
-                        <div>
-                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="description">Deskripsi</label>
-                            <textarea class="form-input w-full @error('description') border-danger @enderror" id="description" name="description" rows="3" placeholder="Masukkan deskripsi kategori">{{ old('description') }}</textarea>
-                            @error('description')
-                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div class="mb-5">
+                        <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="description">Description</label>
+                        <textarea class="form-input" id="description" name="description" placeholder="Short description..." rows="3">{{ old('description') }}</textarea>
+                    </div>
 
-                        <div>
-                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="default_useful_life_months">Umur Ekonomis Default (Bulan)</label>
-                            <input class="form-input w-full @error('default_useful_life_months') border-danger @enderror" id="default_useful_life_months" name="default_useful_life_months" type="number" placeholder="Misal: 48" value="{{ old('default_useful_life_months') }}" />
-                            @error('default_useful_life_months')
-                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                    <div class="grid grid-cols-2 gap-4 mb-5">
+                        <div class="col-span-1">
+                            <label class="inline-block mb-2 text-sm text-default-800 font-medium">Default Life (Months)</label>
+                            <input type="number" name="default_useful_life_months" class="form-input" placeholder="e.g.: 48" value="{{ old('default_useful_life_months') }}">
                         </div>
-
-                        <div>
-                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="default_residual_percentage">Default Persentase Nilai Sisa (%)</label>
-                            <div class="relative">
-                                <input class="form-input w-full @error('default_residual_percentage') border-danger @enderror" id="default_residual_percentage" name="default_residual_percentage" type="number" step="0.01" placeholder="Misal: 10" value="{{ old('default_residual_percentage', 0) }}" />
-                                <span class="absolute inset-y-0 end-0 flex items-center pe-3 text-default-500">%</span>
-                            </div>
-                            <p class="text-xs text-default-500 mt-1">Digunakan untuk menghitung estimasi nilai rongsok di akhir umur ekonomis.</p>
-                            @error('default_residual_percentage')
-                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label class="form-label text-sm font-medium text-default-700 mb-2 block" for="fiscal_group">Kelompok Fiskal (Pajak)</label>
-                            <select class="form-input w-full @error('fiscal_group') border-danger @enderror" id="fiscal_group" name="fiscal_group">
-                                <option value="">-- Pilih Kelompok Fiskal --</option>
-                                @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
-                                    <option value="{{ $group }}" {{ old('fiscal_group') == $group ? 'selected' : '' }}>{{ $group }} ({{ $months / 12 }} Tahun)</option>
-                                @endforeach
-                            </select>
-                            <p class="text-xs text-default-500 mt-1">Sesuai dengan peraturan perpajakan untuk penyusutan fiskal.</p>
-                            @error('fiscal_group')
-                                <p class="text-danger text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                        <div class="col-span-1">
+                            <label class="inline-block mb-2 text-sm text-default-800 font-medium">Residual Value (%)</label>
+                            <input type="number" name="default_residual_percentage" step="0.01" class="form-input" placeholder="e.g.: 10" value="{{ old('default_residual_percentage', 0) }}">
                         </div>
                     </div>
 
-                    <div class="flex justify-end gap-3 mt-6">
-                        <a href="{{ route('categories.index') }}" class="btn border-default-200 text-default-600 hover:bg-default-100">Batal</a>
-                        <button type="submit" class="btn bg-primary text-white">Simpan Kategori</button>
+                    <div class="mb-8">
+                        <label class="inline-block mb-2 text-sm text-default-800 font-medium">Fiscal Group (Tax)</label>
+                        <select name="fiscal_group" class="form-input">
+                            <option value="">-- Select Fiscal Group --</option>
+                            @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                                <option value="{{ $group }}" {{ old('fiscal_group') == $group ? 'selected' : '' }}>{{ $group }} ({{ $months / 12 }} Years)</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-5 border-t border-default-200">
+                        <a href="{{ route('categories.index') }}" class="btn border-default-200 text-default-600 px-6">Cancel</a>
+                        <button type="submit" class="btn bg-primary text-white px-10 font-bold uppercase tracking-widest">Save Category</button>
                     </div>
                 </form>
             </div>

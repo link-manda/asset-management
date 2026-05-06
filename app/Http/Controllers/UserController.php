@@ -50,7 +50,7 @@ class UserController extends Controller
             'department_id' => $request->department_id,
         ]);
 
-        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('users.index')->with('success', 'User successfully added.');
     }
 
     /**
@@ -88,7 +88,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('users.index')->with('success', 'Data user berhasil diperbarui.');
+        return redirect()->route('users.index')->with('success', 'User account successfully updated.');
     }
 
     /**
@@ -96,13 +96,13 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        // Cegah hapus diri sendiri
+        // Prevent deleting self
         if ($user->id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+            return redirect()->route('users.index')->with('error', 'You cannot delete your own account.');
         }
 
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
+        return redirect()->route('users.index')->with('success', 'User successfully removed.');
     }
 }

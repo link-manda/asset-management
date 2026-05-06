@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Item Fisik (Inventory List)')
+@section('title', 'Physical Items List (Inventory)')
 
 @section('content')
     @include('layouts.partials/page-title', ['subtitle' => 'Inventory', 'title' => 'Global Item List'])
@@ -24,7 +24,7 @@
 
                 <div class="flex items-center gap-2">
                     <button id="btn-bulk-print" class="btn btn-sm bg-primary text-white hidden">
-                        <i class="size-4 me-1" data-lucide="printer"></i> Cetak Label Terpilih (<span id="selected-count">0</span>)
+                        <i class="size-4 me-1" data-lucide="printer"></i> Print Selected (<span id="selected-count">0</span>)
                     </button>
                 </div>
             </div>
@@ -37,16 +37,16 @@
                                 @csrf
                                 <table class="min-w-full divide-y divide-default-200">
                                     <thead class="bg-default-100 font-normal whitespace-nowrap">
-                                        <tr class="text-sm text-default-800">
+                                        <tr class="text-sm text-default-800 uppercase tracking-wider text-[11px] font-bold">
                                             <th class="px-4 py-3 text-start w-10">
                                                 <input type="checkbox" id="check-all" class="form-checkbox size-4 rounded border-default-300 text-primary">
                                             </th>
-                                            <th class="px-4 py-3 font-medium text-start">Item Code / Barcode</th>
-                                            <th class="px-4 py-3 font-medium text-start">Asset Name</th>
-                                            <th class="px-4 py-3 font-medium text-start">Location</th>
-                                            <th class="px-4 py-3 font-medium text-start">Status</th>
-                                            <th class="px-4 py-3 font-medium text-start">Borrower</th>
-                                            <th class="px-4 py-3 font-medium text-center">Actions</th>
+                                            <th class="px-4 py-3 text-start">Item Code / Barcode</th>
+                                            <th class="px-4 py-3 text-start">Asset Name</th>
+                                            <th class="px-4 py-3 text-start">Location</th>
+                                            <th class="px-4 py-3 text-start">Status</th>
+                                            <th class="px-4 py-3 text-start">Borrower / User</th>
+                                            <th class="px-4 py-3 text-center">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-default-200">
@@ -63,8 +63,10 @@
                                                 </td>
                                                 <td class="px-4 py-4">
                                                     <div class="flex flex-col">
-                                                        <span class="font-semibold">{{ $item->asset?->name }}</span>
-                                                        <span class="text-[10px] text-default-500">{{ $item->asset?->category?->name ?? 'Uncategorized' }}</span>
+                                                        <a href="{{ route('assets.show', $item->asset_id) }}" class="group">
+                                                            <span class="font-semibold text-default-800 group-hover:text-primary transition-all">{{ $item->asset?->name }}</span>
+                                                            <span class="text-[10px] text-default-500 block group-hover:text-primary/70">{{ $item->asset?->category?->name ?? 'Uncategorized' }}</span>
+                                                        </a>
                                                     </div>
                                                 </td>
                                                 <td class="px-4 py-4 text-sm text-default-600">
@@ -107,16 +109,16 @@
                                                         </button>
                                                         <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200" role="menu">
                                                             <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('inventory.show', $item) }}">
-                                                                <i class="size-3.5" data-lucide="eye"></i> Detail
+                                                                <i class="size-3.5" data-lucide="eye"></i> View Details
                                                             </a>
                                                             <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-info hover:bg-info/10 rounded" href="{{ route('inventory.edit', $item) }}">
-                                                                <i class="size-3.5" data-lucide="edit-3"></i> Edit
+                                                                <i class="size-3.5" data-lucide="edit-3"></i> Edit Specs
                                                             </a>
                                                             <form action="{{ route('inventory.bulk-print') }}" method="POST" target="_blank" class="block">
                                                                 @csrf
                                                                 <input type="hidden" name="ids[]" value="{{ $item->id }}">
                                                                 <button type="submit" class="w-full flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-secondary hover:bg-secondary/10 rounded">
-                                                                    <i class="size-3.5" data-lucide="printer"></i> Cetak
+                                                                    <i class="size-3.5" data-lucide="printer"></i> Print Label
                                                                 </button>
                                                             </form>
                                                         </div>
@@ -151,7 +153,7 @@
         <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto flex items-center min-h-[calc(100%-3.5rem)]">
             <div class="flex flex-col bg-white border border-default-200 shadow-sm rounded-md pointer-events-auto w-full">
                 <div class="flex justify-between items-center py-3 px-4 border-b border-default-200">
-                    <h3 class="font-bold text-default-800">Filter Inventory</h3>
+                    <h3 class="font-bold text-default-800">Inventory Filter</h3>
                     <button type="button" class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-default-100 text-default-800 hover:bg-default-200" data-hs-overlay="#modal-filters">
                         <i class="size-4" data-lucide="x"></i>
                     </button>
@@ -159,27 +161,27 @@
                 <form action="{{ route('inventory.index') }}" method="GET">
                     <div class="p-5 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-default-700 mb-1">Status Item</label>
+                            <label class="block text-sm font-medium text-default-700 mb-1">Item Status</label>
                             <select name="status" class="form-select">
-                                <option value="">Semua Status</option>
+                                <option value="">All Statuses</option>
                                 @foreach($statuses as $status)
                                     <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>{{ $status }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-default-700 mb-1">Kategori</label>
+                            <label class="block text-sm font-medium text-default-700 mb-1">Category</label>
                             <select name="category_id" class="form-select">
-                                <option value="">Semua Kategori</option>
+                                <option value="">All Categories</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-default-700 mb-1">Lokasi</label>
+                            <label class="block text-sm font-medium text-default-700 mb-1">Location</label>
                             <select name="location_id" class="form-select">
-                                <option value="">Semua Lokasi</option>
+                                <option value="">All Locations</option>
                                 @foreach($locations as $location)
                                     <option value="{{ $location->id }}" {{ request('location_id') == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
                                 @endforeach
@@ -188,7 +190,7 @@
                     </div>
                     <div class="flex justify-end items-center gap-2 py-3 px-4 border-t border-default-200">
                         <a href="{{ route('inventory.index') }}" class="btn border-default-200 text-default-600">Reset</a>
-                        <button type="submit" class="btn bg-primary text-white">Terapkan Filter</button>
+                        <button type="submit" class="btn bg-primary text-white">Apply Filter</button>
                     </div>
                 </form>
             </div>

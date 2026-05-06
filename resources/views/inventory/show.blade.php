@@ -3,7 +3,14 @@
 @section('title', 'Detail Item: ' . $item->item_code)
 
 @section('content')
-    @include('layouts.partials/page-title', ['subtitle' => 'Inventory', 'title' => 'Item Specification'])
+    @include('layouts.partials/page-title', [
+        'subtitle' => 'Inventory', 
+        'title' => 'Item Specification',
+        'breadcrumbs' => [
+            ['label' => 'Global List', 'url' => route('inventory.index')],
+            ['label' => 'Item Details', 'url' => null],
+        ]
+    ])
 
     <div class="grid lg:grid-cols-12 grid-cols-1 gap-4">
         {{-- Left Column: Identity (3/12) --}}
@@ -80,20 +87,20 @@
                 </div>
             </div>
             
-            <div class="card bg-default-900 text-white overflow-hidden relative">
+            <div class="card overflow-hidden relative border-primary/20 border">
                 <div class="card-body p-3 z-10 relative">
                     <div class="flex justify-between items-center mb-2.5">
-                        <p class="text-[9px] font-black uppercase tracking-widest text-default-400 leading-none">QR Identification</p>
+                        <p class="text-[9px] font-black uppercase tracking-widest text-primary leading-none">QR Identification</p>
                         <i class="size-3 text-primary" data-lucide="qr-code"></i>
                     </div>
-                    <div class="bg-white p-1.5 rounded-lg inline-block mb-2">
-                        <div class="size-16 bg-default-100 flex items-center justify-center">
-                            <i class="size-6 text-default-400" data-lucide="scan-barcode"></i>
+                    <div class="bg-primary/5 p-1.5 rounded-lg inline-block mb-2 border border-primary/10">
+                        <div class="size-16 bg-white dark:bg-default-100 flex items-center justify-center rounded">
+                            <i class="size-6 text-primary/40" data-lucide="scan-barcode"></i>
                         </div>
                     </div>
-                    <p class="text-[9px] text-default-400 italic leading-snug">Scan to verify asset authenticity and history.</p>
+                    <p class="text-[9px] text-default-500 italic leading-snug">Scan to verify asset authenticity and history.</p>
                 </div>
-                <div class="absolute -bottom-4 -right-4 size-20 bg-primary/20 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-4 -right-4 size-20 bg-primary/5 rounded-full blur-2xl"></div>
             </div>
         </div>
 
@@ -219,39 +226,39 @@
                 <div class="lg:col-span-8 card flex flex-col" x-data="{ tab: 'commercial' }">
                     <div class="card-header border-b border-default-200 py-2 px-4 flex justify-between items-center bg-default-50/50">
                         <div class="flex items-center gap-3">
-                            <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Penyusutan</h6>
+                            <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Depreciation</h6>
                             <div class="flex bg-default-200 p-0.5 rounded-md">
-                                <button @click="tab = 'commercial'" :class="tab === 'commercial' ? 'bg-white text-primary shadow-sm' : 'text-default-500 hover:text-default-700'" class="px-2 py-0.5 rounded-sm text-[9px] font-black transition-all uppercase tracking-widest">Komersial</button>
-                                <button @click="tab = 'fiscal'" :class="tab === 'fiscal' ? 'bg-white text-primary shadow-sm' : 'text-default-500 hover:text-default-700'" class="px-2 py-0.5 rounded-sm text-[9px] font-black transition-all uppercase tracking-widest">Fiskal</button>
+                                <button @click="tab = 'commercial'" :class="tab === 'commercial' ? 'bg-white text-primary shadow-sm' : 'text-default-500 hover:text-default-700'" class="px-2 py-0.5 rounded-sm text-[9px] font-black transition-all uppercase tracking-widest">Commercial</button>
+                                <button @click="tab = 'fiscal'" :class="tab === 'fiscal' ? 'bg-white text-primary shadow-sm' : 'text-default-500 hover:text-default-700'" class="px-2 py-0.5 rounded-sm text-[9px] font-black transition-all uppercase tracking-widest">Fiscal</button>
                             </div>
                         </div>
                         <div class="flex items-center gap-1 text-[9px] font-black text-primary uppercase tracking-widest">
-                            <i class="size-3" data-lucide="trending-down"></i> PROYEKSI
+                            <i class="size-3" data-lucide="trending-down"></i> PROJECTION
                         </div>
                     </div>
                     
                     <div x-show="tab === 'commercial'" class="grow flex flex-col">
                         <div class="p-2 bg-primary/5 border-b border-primary/10 flex justify-between items-center px-4">
-                            <span class="text-[9px] text-default-500 font-bold uppercase tracking-widest">Parameter:</span>
-                            <span class="text-primary text-[9px] font-black uppercase tracking-tight">Umur: {{ $item->useful_life_months }} Bln | Sisa: Rp {{ number_format($item->residual_value, 0, ',', '.') }}</span>
+                            <span class="text-[9px] text-default-500 font-bold uppercase tracking-widest">Parameters:</span>
+                            <span class="text-primary text-[9px] font-black uppercase tracking-tight">Life: {{ $item->useful_life_months }} Mos | Residual: Rp {{ number_format($item->residual_value, 0, ',', '.') }}</span>
                         </div>
                         <div class="overflow-x-auto max-h-[280px]" data-simplebar>
                             <table class="min-w-full divide-y divide-default-200 text-[10px]">
                                 <thead class="bg-default-50 sticky top-0 z-10 shadow-sm">
                                     <tr>
-                                        <th class="px-4 py-2 text-start font-black uppercase tracking-wider text-default-500">Bulan</th>
-                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Nilai Awal</th>
-                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Penyusutan</th>
-                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Nilai Buku</th>
+                                        <th class="px-4 py-2 text-start font-black uppercase tracking-wider text-default-500">Month</th>
+                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Beginning Value</th>
+                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Depreciation</th>
+                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Book Value</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
                                     @foreach($commercialSchedule as $row)
                                         @php $isCurrent = $row['month_year'] == now()->translatedFormat('F Y'); @endphp
                                         <tr class="{{ $isCurrent ? 'bg-primary/5 font-black' : '' }} hover:bg-default-50 transition-all">
-                                            <td class="px-4 py-1.5 whitespace-nowrap">{{ $row['month_year'] }}</td>
+                                            <td class="px-4 py-1.5 whitespace-nowrap uppercase">{{ $row['month_year'] }}</td>
                                             <td class="px-4 py-1.5 text-end text-default-500">Rp{{ number_format($row['beginning_value'], 0, ',', '.') }}</td>
-                                            <td class="px-4 py-1.5 text-end text-danger">-Rp{{ number_format($row['depreciation_expense'], 0, ',', '.') }}</td>
+                                            <td class="px-4 py-1.5 text-end text-danger font-bold">-Rp{{ number_format($row['depreciation_expense'], 0, ',', '.') }}</td>
                                             <td class="px-4 py-1.5 text-end font-bold {{ $isCurrent ? 'text-primary' : 'text-default-800' }}">Rp{{ number_format($row['ending_book_value'], 0, ',', '.') }}</td>
                                         </tr>
                                     @endforeach
@@ -262,26 +269,26 @@
 
                     <div x-show="tab === 'fiscal'" class="grow flex flex-col" x-cloak>
                         <div class="p-2 bg-warning/5 border-b border-warning/10 flex justify-between items-center px-4">
-                            <span class="text-[9px] text-default-500 font-bold uppercase tracking-widest">Parameter Fiskal (Pajak):</span>
-                            <span class="text-warning text-[9px] font-black uppercase tracking-tight">Group: {{ $item->effective_fiscal_group ?? 'N/A' }} | Umur: {{ $item->fiscal_useful_life }} Bln</span>
+                            <span class="text-[9px] text-default-500 font-bold uppercase tracking-widest">Fiscal Parameters (Tax):</span>
+                            <span class="text-warning text-[9px] font-black uppercase tracking-tight">Group: {{ $item->effective_fiscal_group ?? 'N/A' }} | Life: {{ $item->fiscal_useful_life }} Mos</span>
                         </div>
                         <div class="overflow-x-auto max-h-[280px]" data-simplebar>
                             <table class="min-w-full divide-y divide-default-200 text-[10px]">
                                 <thead class="bg-default-50 sticky top-0 z-10 shadow-sm">
                                     <tr>
-                                        <th class="px-4 py-2 text-start font-black uppercase tracking-wider text-default-500">Bulan</th>
-                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Nilai Awal</th>
-                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Penyusutan</th>
-                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Nilai Buku</th>
+                                        <th class="px-4 py-2 text-start font-black uppercase tracking-wider text-default-500">Month</th>
+                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Beginning Value</th>
+                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Depreciation</th>
+                                        <th class="px-4 py-2 text-end font-black uppercase tracking-wider text-default-500">Book Value</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
                                     @foreach($fiscalSchedule as $row)
                                         @php $isCurrent = $row['month_year'] == now()->translatedFormat('F Y'); @endphp
                                         <tr class="{{ $isCurrent ? 'bg-warning/5 font-black' : '' }} hover:bg-default-50 transition-all">
-                                            <td class="px-4 py-1.5 whitespace-nowrap">{{ $row['month_year'] }}</td>
+                                            <td class="px-4 py-1.5 whitespace-nowrap uppercase">{{ $row['month_year'] }}</td>
                                             <td class="px-4 py-1.5 text-end text-default-500">Rp{{ number_format($row['beginning_value'], 0, ',', '.') }}</td>
-                                            <td class="px-4 py-1.5 text-end text-danger">-Rp{{ number_format($row['depreciation_expense'], 0, ',', '.') }}</td>
+                                            <td class="px-4 py-1.5 text-end text-danger font-bold">-Rp{{ number_format($row['depreciation_expense'], 0, ',', '.') }}</td>
                                             <td class="px-4 py-1.5 text-end font-bold {{ $isCurrent ? 'text-warning' : 'text-default-800' }}">Rp{{ number_format($row['ending_book_value'], 0, ',', '.') }}</td>
                                         </tr>
                                     @endforeach
@@ -291,7 +298,7 @@
                     </div>
 
                     <div class="card-footer bg-default-50 py-1.5">
-                        <p class="text-[8px] text-default-400 italic text-center font-bold tracking-widest uppercase">Garis Lurus | Sisa Rp0 (Fiskal)</p>
+                        <p class="text-[8px] text-default-400 italic text-center font-bold tracking-widest uppercase">Straight Line Method | Residual Rp0 (Fiscal)</p>
                     </div>
                 </div>
             </div>

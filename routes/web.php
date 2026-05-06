@@ -28,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Manajemen Asset (Katalog)
-    Route::resource('assets', AssetController::class);
+    Route::resource('assets', AssetController::class)->except(['destroy']);
     Route::resource('disposals', AssetDisposalController::class)->only(['index', 'store']);
     Route::delete('assets/images/{image}', [\App\Http\Controllers\AssetImageController::class, 'destroy'])->name('assets.images.destroy');
 
@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
 
     // User Management
     Route::resource('users', UserController::class);
+    Route::get('/activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('/settings', fn() => redirect()->route('dashboard'))->name('settings.index');
 
     // Reports
@@ -65,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/general', [ReportController::class, 'generalReport'])->name('general');
         Route::get('/general/export/excel', [ReportController::class, 'exportExcel'])->name('general.excel');
         Route::get('/general/export/csv', [ReportController::class, 'exportCsv'])->name('general.csv');
+        Route::get('/general/export/pdf', [ReportController::class, 'exportPdf'])->name('general.pdf');
         Route::get('/depreciation', [DepreciationReportController::class, 'index'])->name('depreciation');
         Route::get('/depreciation/export', [DepreciationReportController::class, 'export'])->name('depreciation.export');
     });

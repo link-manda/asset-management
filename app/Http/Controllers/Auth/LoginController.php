@@ -34,16 +34,16 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             return redirect()->intended(route('dashboard'))
-                ->with('success', 'Selamat datang kembali, ' . Auth::user()->name . '!');
+                ->with('success', 'Welcome back, ' . Auth::user()->name . '!');
         }
 
         throw ValidationException::withMessages([
-            'email' => 'Kredensial yang Anda berikan tidak cocok dengan data kami.',
+            'email' => 'The credentials you provided do not match our records.',
         ]);
     }
 
     /**
-     * logout: Keluar dari sistem.
+     * logout: Sign out of the system.
      */
     public function logout(Request $request)
     {
@@ -53,6 +53,6 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login')
-            ->with('success', 'Anda telah berhasil keluar dari sistem.');
+            ->with('success', 'You have successfully logged out of the system.');
     }
 }

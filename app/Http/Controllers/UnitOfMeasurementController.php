@@ -37,7 +37,7 @@ class UnitOfMeasurementController extends Controller
         UnitOfMeasurement::create($validated);
 
         return redirect()->route('uoms.index')
-            ->with('success', 'Satuan (UoM) berhasil ditambahkan.');
+            ->with('success', 'Unit (UoM) successfully added.');
     }
 
     /**
@@ -61,7 +61,7 @@ class UnitOfMeasurementController extends Controller
         $uom->update($validated);
 
         return redirect()->route('uoms.index')
-            ->with('success', 'Satuan (UoM) berhasil diperbarui.');
+            ->with('success', 'Unit (UoM) successfully updated.');
     }
 
     /**
@@ -70,12 +70,12 @@ class UnitOfMeasurementController extends Controller
     public function destroy(UnitOfMeasurement $uom)
     {
         if ($uom->assets()->count() > 0) {
-            return redirect()->back()->with('error', 'Gagal menghapus! Satuan ini masih digunakan oleh aset.');
+            return redirect()->back()->with('error', 'Failed to delete! This unit is still in use by assets.');
         }
 
         $uom->delete();
 
         return redirect()->route('uoms.index')
-            ->with('success', 'Satuan (UoM) berhasil dihapus.');
+            ->with('success', 'Unit (UoM) successfully removed.');
     }
 }

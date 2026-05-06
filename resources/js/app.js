@@ -136,17 +136,17 @@ class App {
             if (btn) {
                 e.preventDefault();
                 const form = btn.closest('form');
-                const name = btn.getAttribute('data-name') || 'data ini';
+                const name = btn.getAttribute('data-name') || 'this record';
 
                 Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    text: `Anda akan menghapus ${name}. Tindakan ini tidak dapat dibatalkan!`,
+                    title: 'Are you sure?',
+                    text: `You are about to permanently delete "${name}". This action cannot be undone!`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444', // Tailwick Danger
                     cancelButtonColor: '#6b7280',  // Tailwick Gray
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
                     customClass: {
                         confirmButton: 'btn bg-danger text-white border-danger mx-2',
                         cancelButton: 'btn bg-default-200 text-default-800 border-default-200 mx-2'

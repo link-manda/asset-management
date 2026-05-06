@@ -144,8 +144,8 @@
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()" class="btn-print">Cetak Label</button>
-        <span class="print-instructions">Ukuran: 50mm x 20mm. Pilih "Destination: Save as PDF" atau Printer Label Anda.</span>
+        <button onclick="window.print()" class="btn-print">Print Labels</button>
+        <span class="print-instructions">Size: 50mm x 20mm. Select "Destination: Save as PDF" or your Label Printer.</span>
     </div>
 
     @foreach($items as $item)

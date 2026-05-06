@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Katalog Aset (Master)')
+@section('title', 'Asset Catalog (Master)')
 
 @section('content')
-    @include('layouts.partials/page-title', ['subtitle' => 'Katalog', 'title' => 'Master Asset Catalog'])
+    @include('layouts.partials/page-title', ['subtitle' => 'Catalog', 'title' => 'Master Asset List'])
 
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
             <div class="card-header flex justify-between items-center">
                 <div class="flex gap-3 items-center">
                     <div class="relative">
-                        <input class="ps-11 form-input form-input-sm w-64" placeholder="Cari nama atau kode aset..." type="text" />
+                        <input class="ps-11 form-input form-input-sm w-64" placeholder="Search name or asset code..." type="text" />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
@@ -18,24 +18,24 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <a href="{{ route('assets.create') }}" class="btn btn-sm bg-primary text-white">
-                        <i class="size-4 me-1" data-lucide="plus"></i>Tambah Asset Baru
+                        <i class="size-4 me-1" data-lucide="plus"></i> Add New Asset
                     </a>
                 </div>
             </div>
             <div class="flex flex-col">
                 <div class="overflow-x-auto">
-                    <div class="min-w-full inline-block align-middle">
+                    <div class="inline-block min-w-full align-middle">
                         <div class="overflow-hidden">
                             <table class="min-w-full divide-y divide-default-200">
                                 <thead class="bg-default-150 font-normal">
-                                    <tr class="text-sm text-default-700">
-                                        <th class="px-3.5 py-3 text-start" scope="col">Master Code</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Nama Barang</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Kategori</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Stok Fisik</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Estimasi Nilai</th>
-                                        <th class="px-3.5 py-3 text-start" scope="col">Status Distribusi</th>
-                                        <th class="px-3.5 py-3 text-center" scope="col">Aksi</th>
+                                    <tr class="text-sm text-default-700 uppercase tracking-wider text-[11px] font-bold">
+                                        <th class="px-3.5 py-3 text-start" scope="col">Asset Code</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Asset Name</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Category</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Total Stock</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Estimated Value</th>
+                                        <th class="px-3.5 py-3 text-start" scope="col">Distribution</th>
+                                        <th class="px-3.5 py-3 text-center" scope="col">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
@@ -45,8 +45,9 @@
                                                 {{ $asset->asset_code }}
                                             </td>
                                             <td class="px-3.5 py-4 whitespace-nowrap text-sm">
-                                                <a href="{{ route('assets.show', $asset) }}" class="flex items-center gap-2">
-                                                    <h6 class="text-default-800 hover:text-primary transition-all font-semibold">{{ $asset->name }}</h6>
+                                                <a href="{{ route('assets.show', $asset) }}" class="group">
+                                                    <h6 class="text-default-800 group-hover:text-primary transition-all font-semibold">{{ $asset->name }}</h6>
+                                                    <p class="text-[10px] text-default-400 group-hover:text-primary/70">Click to view overview</p>
                                                 </a>
                                             </td>
                                             <td class="px-3.5 py-4 whitespace-nowrap text-sm">
@@ -88,20 +89,25 @@
                                                 </div>
                                             </td>
                                             <td class="px-3.5 py-4 text-center">
-                                                <div class="flex items-center justify-center gap-2">
-                                                    <a href="{{ route('assets.show', $asset) }}" class="size-8 flex items-center justify-center bg-default-100 text-default-600 rounded hover:bg-primary/10 hover:text-primary transition-all">
-                                                        <i class="size-4" data-lucide="eye"></i>
-                                                    </a>
-                                                    <a href="{{ route('assets.edit', $asset) }}" class="size-8 flex items-center justify-center bg-default-100 text-default-600 rounded hover:bg-warning/10 hover:text-warning transition-all">
-                                                        <i class="size-4" data-lucide="edit-3"></i>
-                                                    </a>
+                                                <div class="hs-dropdown relative inline-flex">
+                                                    <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
+                                                        <i class="size-4" data-lucide="more-vertical"></i>
+                                                    </button>
+                                                    <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200" role="menu">
+                                                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('assets.show', $asset) }}">
+                                                            <i class="size-3.5" data-lucide="eye"></i> View Details
+                                                        </a>
+                                                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-warning hover:bg-warning/10 rounded" href="{{ route('assets.edit', $asset) }}">
+                                                            <i class="size-3.5" data-lucide="edit-3"></i> Edit Asset
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
                                             <td colspan="7" class="px-3.5 py-12 text-center text-default-400 italic">
-                                                Belum ada katalog aset terdaftar.
+                                                No asset catalog registered yet.
                                             </td>
                                         </tr>
                                     @endforelse

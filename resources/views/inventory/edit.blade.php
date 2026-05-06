@@ -1,153 +1,154 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Unit Aset: ' . $item->item_code)
+@section('title', 'Edit Specs: ' . $item->item_code)
 
 @section('content')
-    @include('layouts.partials/page-title', ['subtitle' => 'Inventory', 'title' => 'Update Asset Specification'])
+    @include('layouts.partials/page-title', [
+        'subtitle' => 'Inventory', 
+        'title' => 'Edit Item Specifications',
+        'breadcrumbs' => [
+            ['label' => 'Global List', 'url' => route('inventory.index')],
+            ['label' => 'Item Details', 'url' => route('inventory.show', $item)],
+            ['label' => 'Edit Specs', 'url' => null],
+        ]
+    ])
 
-    <div class="max-w-6xl mx-auto">
-        <form action="{{ route('inventory.update', $item) }}" method="POST">
-            @csrf
-            @method('PUT')
+    <form action="{{ route('inventory.update', $item) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="grid lg:grid-cols-12 grid-cols-1 gap-6">
+            {{-- Left Column: Core Specs (8/12) --}}
+            <div class="lg:col-span-8 col-span-1">
+                <div class="card mb-6">
+                    <div class="card-body">
+                        <h6 class="mb-4 card-title text-base flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs">
+                            <i class="size-4" data-lucide="settings-2"></i> Physical Specifications
+                        </h6>
 
-            {{-- Header: Fixed Identity (Read Only) - More Compact --}}
-            <div class="card mb-4 border-primary/20 border bg-primary/5">
-                <div class="card-body py-3 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="size-10 bg-primary text-white rounded-lg flex items-center justify-center shadow-md shadow-primary/20">
-                            <i class="size-5" data-lucide="hash"></i>
-                        </div>
-                        <div>
-                            <p class="text-[9px] text-primary font-black uppercase tracking-widest leading-none mb-1">Identitas Unit Tetap (Read-Only)</p>
-                            <h3 class="text-lg font-black text-default-900 tracking-tight leading-none">{{ $item->item_code }}</h3>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <p class="text-[9px] text-default-400 font-bold uppercase mb-0.5">Master Katalog</p>
-                        <p class="text-sm font-bold text-default-700">{{ $item->asset->name }}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid lg:grid-cols-12 grid-cols-1 gap-4">
-                {{-- Column Left: Operational & Condition (5/12) --}}
-                <div class="lg:col-span-5 space-y-4">
-                    <div class="card">
-                        <div class="card-header border-b border-default-200 bg-default-50/50 py-2 px-4 flex items-center gap-2">
-                            <i class="size-3.5 text-primary" data-lucide="settings"></i>
-                            <h6 class="card-title text-[11px] font-bold uppercase tracking-tight">Informasi Operasional</h6>
-                        </div>
-                        <div class="card-body p-4 space-y-3">
-                            <div>
-                                <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="serial_number">Serial Number / IMEI</label>
-                                <input class="form-input rounded-lg border-default-200 focus:border-primary py-2 text-sm" 
-                                       id="serial_number" name="serial_number" value="{{ old('serial_number', $item->serial_number) }}" 
-                                       placeholder="Misal: SN-9988776655" type="text" />
+                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium">Item Code (Barcode)</label>
+                                <input class="form-input bg-default-50 font-mono font-bold text-primary" type="text" value="{{ $item->item_code }}" readonly />
+                                <p class="mt-1 text-[10px] text-default-400 italic">* Item code is unique and cannot be changed.</p>
                             </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="location_id">Lokasi</label>
-                                    <select class="form-select rounded-lg border-default-200 focus:border-primary py-2 text-sm" id="location_id" name="location_id" required>
-                                        @foreach($locations as $loc)
-                                            <option value="{{ $loc->id }}" {{ $item->location_id == $loc->id ? 'selected' : '' }}>{{ $loc->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="condition">Kondisi Fisik</label>
-                                    <select class="form-select rounded-lg border-default-200 focus:border-primary py-2 text-sm" id="condition" name="condition" required>
-                                        <option value="Good" {{ $item->condition == 'Good' ? 'selected' : '' }}>Good (Baik)</option>
-                                        <option value="Fair" {{ $item->condition == 'Fair' ? 'selected' : '' }}>Fair (Cukup)</option>
-                                        <option value="Poor" {{ $item->condition == 'Poor' ? 'selected' : '' }}>Poor (Buruk)</option>
-                                        <option value="Broken" {{ $item->condition == 'Broken' ? 'selected' : '' }}>Broken (Rusak)</option>
-                                    </select>
-                                </div>
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="serial_number">Serial Number (SN)</label>
+                                <input class="form-input @error('serial_number') border-danger @enderror" id="serial_number" name="serial_number" placeholder="Factory SN..." type="text" value="{{ old('serial_number', $item->serial_number) }}" />
                             </div>
+                        </div>
 
-                            <div>
-                                <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="status">Status Aset</label>
-                                <select class="form-select rounded-lg border-default-200 focus:border-primary py-2 text-sm" id="status" name="status" required>
-                                    @foreach($statuses as $status)
-                                        <option value="{{ $status }}" {{ $item->status == $status ? 'selected' : '' }}>{{ $status }}</option>
+                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="location_id">Current Location</label>
+                                <select class="form-input" id="location_id" name="location_id" required>
+                                    @foreach($locations as $location)
+                                        <option value="{{ $location->id }}" {{ old('location_id', $item->location_id) == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
-
-                            <div class="p-2.5 bg-warning/5 border border-warning/10 rounded flex gap-2">
-                                <i class="size-3.5 text-warning shrink-0" data-lucide="alert-circle"></i>
-                                <p class="text-[9px] text-warning/80 leading-tight">Berhati-hatilah mengubah status manual. Status 'Deployed' hanya boleh digunakan jika aset sedang dipinjam.</p>
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="condition">Physical Condition</label>
+                                <select class="form-input" id="condition" name="condition" required>
+                                    <option value="New" {{ old('condition', $item->condition) == 'New' ? 'selected' : '' }}>New (Mint)</option>
+                                    <option value="Good" {{ old('condition', $item->condition) == 'Good' ? 'selected' : '' }}>Good (Normal)</option>
+                                    <option value="Fair" {{ old('condition', $item->condition) == 'Fair' ? 'selected' : '' }}>Fair (Usable)</option>
+                                    <option value="Poor" {{ old('condition', $item->condition) == 'Poor' ? 'selected' : '' }}>Poor (Damaged)</option>
+                                    <option value="Broken" {{ old('condition', $item->condition) == 'Broken' ? 'selected' : '' }}>Broken (Non-functional)</option>
+                                </select>
                             </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="font-medium text-default-800 text-sm mb-2 inline-block">Technical Notes</label>
+                            <textarea class="form-input" name="notes" rows="3" placeholder="Specific details for this unit...">{{ old('notes', $item->notes) }}</textarea>
                         </div>
                     </div>
                 </div>
 
-                {{-- Column Right: Financial Parameters (7/12) --}}
-                <div class="lg:col-span-7 space-y-4">
-                    <div class="card h-full flex flex-col">
-                        <div class="card-header border-b border-default-200 bg-default-50/50 py-2 px-4 flex items-center gap-2">
-                            <i class="size-3.5 text-success" data-lucide="coins"></i>
-                            <h6 class="card-title text-[11px] font-bold uppercase tracking-tight">Parameter Finansial</h6>
-                        </div>
-                        <div class="card-body p-4 space-y-4 grow">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="purchase_date">Tanggal Perolehan</label>
-                                    <input class="form-input rounded-lg border-default-200 focus:border-primary py-2 text-sm" 
-                                           id="purchase_date" name="purchase_date" value="{{ old('purchase_date', $item->purchase_date->format('Y-m-d')) }}" 
-                                           type="date" required />
-                                </div>
-                                <div>
-                                    <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="fiscal_group">Grup Fiskal</label>
-                                    <select class="form-select rounded-lg border-default-200 focus:border-primary py-2 text-sm" id="fiscal_group" name="fiscal_group">
-                                        <option value="">(Inherit dari Kategori)</option>
-                                        @foreach($fiscalGroups as $group)
-                                            <option value="{{ $group }}" {{ $item->fiscal_group == $group ? 'selected' : '' }}>{{ $group }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="mb-4 card-title text-base flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs">
+                            <i class="size-4" data-lucide="trending-down"></i> Financial & Depreciation
+                        </h6>
 
-                            <div class="grid grid-cols-3 gap-3">
-                                <div class="col-span-1">
-                                    <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="purchase_price">Harga Beli (Rp)</label>
-                                    <input class="form-input rounded-lg border-default-200 focus:border-primary py-2 text-sm" 
-                                           id="purchase_price" name="purchase_price" value="{{ old('purchase_price', (float)$item->purchase_price) }}" 
-                                           type="number" step="0.01" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="residual_value">Nilai Sisa (Rp)</label>
-                                    <input class="form-input rounded-lg border-default-200 focus:border-primary py-2 text-sm" 
-                                           id="residual_value" name="residual_value" value="{{ old('residual_value', (float)$item->residual_value) }}" 
-                                           type="number" step="0.01" required />
-                                </div>
-                                <div class="col-span-1">
-                                    <label class="block font-bold text-default-700 text-[9px] uppercase tracking-widest mb-1.5" for="useful_life_months">Umur (Bln)</label>
-                                    <input class="form-input rounded-lg border-default-200 focus:border-primary py-2 text-sm" 
-                                           id="useful_life_months" name="useful_life_months" value="{{ old('useful_life_months', $item->useful_life_months) }}" 
-                                           type="number" required />
-                                </div>
+                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="purchase_date">Acquisition Date</label>
+                                <input type="date" name="purchase_date" id="purchase_date" class="form-input" value="{{ old('purchase_date', $item->purchase_date ? $item->purchase_date->format('Y-m-d') : '') }}">
                             </div>
-
-                            <div class="p-3 bg-default-50 border border-default-100 rounded-lg">
-                                <p class="text-[9px] text-default-500 italic leading-relaxed">
-                                    Perubahan parameter finansial akan langsung mengupdate simulasi penyusutan dan nilai buku secara real-time pada tab History.
-                                </p>
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="purchase_price">Acquisition Cost</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-default-500">Rp</span>
+                                    <input type="number" name="purchase_price" id="purchase_price" class="form-input ps-10" value="{{ old('purchase_price', (int)$item->purchase_price) }}">
+                                </div>
                             </div>
                         </div>
-                        <div class="card-footer bg-default-50/50 border-t border-default-200 py-3 px-4">
-                            <div class="flex items-center gap-3">
-                                <button type="submit" class="btn btn-sm bg-primary hover:bg-primary-600 text-white grow py-2.5 rounded-lg font-bold shadow-md shadow-primary/10 transition-all flex items-center justify-center gap-2">
-                                    <i class="size-3.5" data-lucide="save"></i> Simpan Perubahan
-                                </button>
-                                <a href="{{ route('inventory.show', $item) }}" class="btn btn-sm bg-default-200 hover:bg-default-300 text-default-700 px-5 py-2.5 rounded-lg font-bold transition-all">
-                                    Batal
-                                </a>
+
+                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="residual_value">Residual Value</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-default-500">Rp</span>
+                                    <input type="number" name="residual_value" id="residual_value" class="form-input ps-10" value="{{ old('residual_value', (int)$item->residual_value) }}">
+                                </div>
                             </div>
+                            <div class="col-span-1">
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="useful_life_months">Useful Life (Months)</label>
+                                <input type="number" name="useful_life_months" id="useful_life_months" class="form-input" value="{{ old('useful_life_months', $item->useful_life_months) }}">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-5 p-3 bg-primary/5 rounded-lg border border-primary/10">
+                            <label class="inline-block mb-2 text-sm text-primary font-black uppercase tracking-widest text-[10px]">Fiscal Group (Tax Authority)</label>
+                            <select name="fiscal_group" class="form-input">
+                                <option value="">- Use Category Default -</option>
+                                @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
+                                    <option value="{{ $group }}" {{ old('fiscal_group', $item->fiscal_group) == $group ? 'selected' : '' }}>{{ $group }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
+
+            {{-- Right Column: Summary & Actions (4/12) --}}
+            <div class="lg:col-span-4 col-span-1 space-y-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="size-10 bg-primary/10 text-primary rounded flex items-center justify-center">
+                                <i class="size-6" data-lucide="info"></i>
+                            </div>
+                            <h6 class="text-sm font-bold text-default-800 uppercase tracking-wider">Unit Status</h6>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="status">Operational Status</label>
+                            <select class="form-input font-bold" id="status" name="status" required>
+                                @foreach($statuses as $status)
+                                    <option value="{{ $status }}" {{ old('status', $item->status) == $status ? 'selected' : '' }}>{{ $status }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <p class="text-xs text-default-500 mb-4 italic">This unit is tied to the master catalog below:</p>
+                        <div class="p-3 border border-default-200 rounded-lg bg-default-50">
+                            <h6 class="text-sm font-black text-default-800 uppercase mb-1">{{ $item->asset->name }}</h6>
+                            <p class="text-[10px] text-primary font-mono font-bold">{{ $item->asset->asset_code }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body flex flex-col gap-2">
+                        <button type="submit" class="btn bg-primary text-white w-full py-3 font-bold uppercase tracking-widest">
+                            <i class="size-3.5 me-1" data-lucide="save"></i> Save Changes
+                        </button>
+                        <a href="{{ route('inventory.show', $item) }}" class="btn border-default-200 text-default-600 w-full text-center">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 @endsection

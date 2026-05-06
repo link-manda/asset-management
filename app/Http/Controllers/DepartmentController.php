@@ -38,7 +38,7 @@ class DepartmentController extends Controller
 
         Department::create($request->all());
 
-        return redirect()->route('departments.index')->with('success', 'Departemen berhasil ditambahkan.');
+        return redirect()->route('departments.index')->with('success', 'Department successfully added.');
     }
 
     /**
@@ -62,7 +62,7 @@ class DepartmentController extends Controller
 
         $department->update($request->all());
 
-        return redirect()->route('departments.index')->with('success', 'Departemen berhasil diperbarui.');
+        return redirect()->route('departments.index')->with('success', 'Department successfully updated.');
     }
 
     /**
@@ -71,11 +71,11 @@ class DepartmentController extends Controller
     public function destroy(Department $department)
     {
         if ($department->users()->count() > 0) {
-            return redirect()->route('departments.index')->with('error', 'Departemen tidak bisa dihapus karena masih memiliki user.');
+            return redirect()->route('departments.index')->with('error', 'Cannot delete department because it still has registered users.');
         }
 
         $department->delete();
 
-        return redirect()->route('departments.index')->with('success', 'Departemen berhasil dihapus.');
+        return redirect()->route('departments.index')->with('success', 'Department successfully removed.');
     }
 }

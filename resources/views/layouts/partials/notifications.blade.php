@@ -47,6 +47,36 @@
                     title: "Please check the form for errors."
                 });
             @endif
+
+            // Global Delete Confirmation
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.delete-confirm')) {
+                    const btn = e.target.closest('.delete-confirm');
+                    e.preventDefault();
+                    const name = btn.getAttribute('data-name') || 'this record';
+                    
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: `You are about to permanently delete "${name}". This action cannot be undone!`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true,
+                        customClass: {
+                            confirmButton: 'btn bg-danger text-white px-4 py-2 rounded-md',
+                            cancelButton: 'btn bg-default-100 text-default-700 px-4 py-2 rounded-md'
+                        },
+                        buttonsStyling: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            btn.closest('form').submit();
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endif

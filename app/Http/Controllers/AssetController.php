@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 class AssetController extends Controller
 {
     /**
-     * index: Menampilkan daftar aset (Master) dengan paginasi.
+     * index: Display asset list (Master) with pagination.
      */
     public function index()
     {
@@ -23,7 +23,7 @@ class AssetController extends Controller
     }
 
     /**
-     * create: Menampilkan form tambah aset.
+     * create: Show the form to add a new asset.
      */
     public function create()
     {
@@ -34,53 +34,55 @@ class AssetController extends Controller
     }
 
     /**
-     * store: Membuat Master Asset dan Unit Fisik (Items) secara otomatis.
+     * store: Save Master Asset and its physical items in one transaction.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
+            // Master
             'name'          => 'required|string|max:255',
             'category_id'   => 'required|exists:categories,id',
             'uom_id'        => 'required|exists:unit_of_measurements,id',
-            'purchase_date' => 'required|date',
             'price'         => 'required|numeric|min:0',
             'notes'         => 'nullable|string',
-            'asset_code'    => 'nullable|string|unique:assets,asset_code',
-            // Physical Items
+            'asset_code'    => 'required|string|unique:assets,asset_code',
+            'purchase_date' => 'required|date',
+            // Physical Units
             'items'         => 'required|array|min:1',
             'items.*.serial_number' => 'nullable|string',
             'items.*.location_id'   => 'required|exists:locations,id',
             'items.*.condition'     => 'required|string',
-            'items.*.residual_value'=> 'nullable|numeric|min:0',
-            'items.*.useful_life_months' => 'nullable|integer|min:1',
-            'items.*.fiscal_group'  => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
+            'items.*.fiscal_group'  => 'nullable|string',
+            'items.*.useful_life_months' => 'nullable|integer',
+            'items.*.residual_value'      => 'nullable|numeric',
+            // Images
             'images'        => 'nullable|array|max:4',
             'images.*'      => 'image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         return DB::transaction(function () use ($validated, $request) {
-            // 1. Generate Master Code if empty
-            if (empty($validated['asset_code'])) {
-                $category = Category::find($validated['category_id']);
-                $prefix = strtoupper(substr($category->name, 0, 3));
-                $validated['asset_code'] = $prefix . '-' . strtoupper(bin2hex(random_bytes(2)));
-            }
-
-            // 2. Create Master Asset
+            // 1. Create Master Asset
             $asset = Asset::create([
-                'name' => $validated['name'],
-                'asset_code' => $validated['asset_code'],
                 'category_id' => $validated['category_id'],
-                'uom_id' => $validated['uom_id'],
-                'price' => $validated['price'],
-                'notes' => $validated['notes'],
+                'uom_id'      => $validated['uom_id'],
+                'name'        => $validated['name'],
+                'asset_code'  => $validated['asset_code'],
+                'price'       => $validated['price'],
+                'notes'       => $validated['notes'],
             ]);
 
-            // 3. Create Physical Items
+            // 2. Resolve Prefix Category
+            $category = Category::find($validated['category_id']);
+            $prefix = strtoupper(substr($category->name, 0, 3));
+
+            // 3. Create Physical Units
             foreach ($validated['items'] as $index => $itemData) {
-                // Generate Item Code (Barcode)
-                $sequence = str_pad($index + 1, 3, '0', STR_PAD_LEFT);
-                $itemCode = $asset->asset_code . '-' . $sequence;
+                // Generate Item Code
+                $count = AssetItem::whereHas('asset', function($q) use ($category) {
+                    $q->where('category_id', $category->id);
+                })->count() + $index + 1;
+                
+                $itemCode = $prefix . '-' . str_pad($count, 5, '0', STR_PAD_LEFT);
 
                 AssetItem::create([
                     'asset_id'      => $asset->id,
@@ -91,9 +93,9 @@ class AssetController extends Controller
                     'condition'     => $itemData['condition'],
                     'purchase_date' => $validated['purchase_date'],
                     'purchase_price'=> $validated['price'],
-                    'residual_value' => $itemData['residual_value'] ?? 0,
-                    'useful_life_months' => $itemData['useful_life_months'] ?? ($asset->category->default_useful_life_months ?? 0),
-                    'fiscal_group'  => $itemData['fiscal_group'] ?? null,
+                    'useful_life_months' => $itemData['useful_life_months'] ?? 0,
+                    'residual_value'     => $itemData['residual_value'] ?? 0,
+                    'fiscal_group'       => $itemData['fiscal_group'] ?? null,
                 ]);
             }
 
@@ -101,12 +103,12 @@ class AssetController extends Controller
             $this->handleImageUploads($request, $asset);
 
             return redirect()->route('assets.index')
-                ->with('success', 'Master Asset dan ' . count($validated['items']) . ' Unit Fisik berhasil didaftarkan.');
+                ->with('success', 'Master Asset and ' . count($validated['items']) . ' Physical Units successfully registered.');
         });
     }
 
     /**
-     * show: Menampilkan detail Master Asset dan daftar Unit Fisik.
+     * show: Display Master Asset details and list of Physical Units.
      */
     public function show(Asset $asset)
     {
@@ -117,7 +119,7 @@ class AssetController extends Controller
     }
 
     /**
-     * edit: Form edit master asset.
+     * edit: Form to edit master asset.
      */
     public function edit(Asset $asset)
     {
@@ -127,7 +129,7 @@ class AssetController extends Controller
     }
 
     /**
-     * update: Update data Master Asset.
+     * update: Update Master Asset data.
      */
     public function update(Request $request, Asset $asset)
     {
@@ -148,7 +150,7 @@ class AssetController extends Controller
         $this->handleImageUploads($request, $asset);
 
         return redirect()->route('assets.show', $asset)
-            ->with('success', 'Data Master Asset berhasil diperbarui.');
+            ->with('success', 'Master Asset information successfully updated.');
     }
 
     /**
@@ -168,12 +170,12 @@ class AssetController extends Controller
     }
 
     /**
-     * destroy: Menghapus Master Asset dan seluruh unit fisiknya.
+     * destroy: Delete Master Asset and all physical units.
      */
     public function destroy(Asset $asset)
     {
         $asset->delete();
         return redirect()->route('assets.index')
-            ->with('success', 'Asset dan seluruh unit fisik berhasil dihapus.');
+            ->with('success', 'Asset and all physical units successfully removed.');
     }
 }

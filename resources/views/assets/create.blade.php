@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Asset Baru')
+@section('title', 'Add New Asset')
 
 @section('content')
     @include('layouts.partials/page-title', ['subtitle' => 'Assets', 'title' => 'Create Asset & Items'])
@@ -13,13 +13,13 @@
                 <div class="card mb-6">
                     <div class="card-body">
                         <h6 class="mb-4 card-title text-base flex items-center gap-2">
-                            <i class="size-4 text-primary" data-lucide="info"></i> Informasi Katalog (Master)
+                            <i class="size-4 text-primary" data-lucide="info"></i> Catalog Information (Master)
                         </h6>
 
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
-                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="name">Nama Barang</label>
-                                <input class="form-input @error('name') border-danger @enderror" id="name" name="name" placeholder="Contoh: Laptop Lenovo Thinkpad" type="text" value="{{ old('name') }}" required />
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="name">Asset Name</label>
+                                <input class="form-input @error('name') border-danger @enderror" id="name" name="name" placeholder="e.g.: Lenovo Thinkpad Laptop" type="text" value="{{ old('name') }}" required />
                                 @error('name')
                                     <p class="mt-1 text-danger text-xs">{{ $message }}</p>
                                 @enderror
@@ -27,22 +27,22 @@
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="asset_code">Master Code</label>
                                 <input class="form-input @error('asset_code') border-danger @enderror" id="asset_code" name="asset_code" placeholder="AST-..." type="text" value="{{ old('asset_code') }}" />
-                                <p class="mt-1 text-default-400 text-[10px] italic">Kode unik untuk model/katalog barang ini.</p>
+                                <p class="mt-1 text-default-400 text-[10px] italic">Unique code for this model/catalog item.</p>
                             </div>
                         </div>
 
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
-                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="category_id">Kategori</label>
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="category_id">Category</label>
                                 <select class="form-input" id="category_id" name="category_id" required>
-                                    <option value="">-- Pilih Kategori --</option>
+                                    <option value="">-- Select Category --</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-span-1">
-                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="uom_id">Satuan (UoM)</label>
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="uom_id">Unit of Measurement (UoM)</label>
                                 <select class="form-input" id="uom_id" name="uom_id" required>
                                     @foreach($uoms as $uom)
                                         <option value="{{ $uom->id }}" {{ old('uom_id', 1) == $uom->id ? 'selected' : '' }}>{{ $uom->name }} ({{ $uom->symbol }})</option>
@@ -52,8 +52,8 @@
                         </div>
 
                         <div class="mb-5">
-                            <label class="font-medium text-default-800 text-sm mb-2 inline-block" for="notes">Deskripsi Katalog</label>
-                            <textarea class="form-input" id="notes" name="notes" placeholder="Spesifikasi teknis, merek, model, dll..." rows="3">{{ old('notes') }}</textarea>
+                            <label class="font-medium text-default-800 text-sm mb-2 inline-block" for="notes">Catalog Description</label>
+                            <textarea class="form-input" id="notes" name="notes" placeholder="Technical specs, brand, model, etc..." rows="3">{{ old('notes') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -62,13 +62,13 @@
                     <div class="card-header border-b border-default-200">
                         <div class="flex justify-between items-center">
                             <h6 class="card-title text-base flex items-center gap-2">
-                                <i class="size-4 text-primary" data-lucide="layers"></i> Registrasi Unit Fisik
+                                <i class="size-4 text-primary" data-lucide="layers"></i> Physical Unit Registration
                             </h6>
                             <div class="flex items-center gap-3">
-                                <label class="text-sm font-semibold text-default-700 whitespace-nowrap" for="gen-qty">Generate Unit:</label>
+                                <label class="text-sm font-semibold text-default-700 whitespace-nowrap" for="gen-qty">Generate Units:</label>
                                 <div class="flex shadow-sm rounded-md">
                                     <input type="number" id="gen-qty" class="form-input form-input-sm w-20 rounded-e-none border-e-0 focus:ring-primary focus:border-primary z-10" value="1" min="1" max="50">
-                                    <button type="button" id="btn-generate" class="btn btn-sm bg-primary hover:bg-primary-600 text-white rounded-s-none z-10 transition-colors">Tambah</button>
+                                    <button type="button" id="btn-generate" class="btn btn-sm bg-primary hover:bg-primary-600 text-white rounded-s-none z-10 transition-colors">Add</button>
                                 </div>
                             </div>
                         </div>
@@ -80,11 +80,11 @@
                                     <tr>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[150px]">Barcode/Item Code</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[180px]">Serial Number</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[200px]">Lokasi</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[120px]">Kondisi</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[130px]">Fiskal (Tax)</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[150px]">Nilai Sisa</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[110px]">Umur (Bln)</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[200px]">Location</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[120px]">Condition</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[130px]">Fiscal (Tax)</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[150px]">Residual Value</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[110px]">Life (Mos)</th>
                                         <th class="px-4 py-2 text-center text-xs font-bold text-default-600 uppercase w-10"></th>
                                     </tr>
                                 </thead>
@@ -95,7 +95,7 @@
                                             <input type="text" name="items[0][item_code]" class="form-input form-input-sm font-mono text-primary font-bold" placeholder="Auto-gen" readonly>
                                         </td>
                                         <td class="px-4 py-3">
-                                            <input type="text" name="items[0][serial_number]" class="form-input form-input-sm" placeholder="SN Pabrik">
+                                            <input type="text" name="items[0][serial_number]" class="form-input form-input-sm" placeholder="Factory SN">
                                         </td>
                                         <td class="px-4 py-3">
                                             <select name="items[0][location_id]" class="form-input form-input-sm" required>
@@ -123,10 +123,10 @@
                                             <input type="number" name="items[0][residual_value]" class="form-input form-input-sm residual-value-input" placeholder="0" value="0">
                                         </td>
                                         <td class="px-4 py-3">
-                                            <input type="number" name="items[0][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="0">
+                                            <input type="number" name="items[0][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Months" value="0">
                                         </td>
                                         <td class="px-4 py-3 text-center">
-                                            <button type="button" class="text-danger hover:text-danger-700 remove-row" title="Hapus Unit">
+                                            <button type="button" class="text-danger hover:text-danger-700 remove-row" title="Remove Unit">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                                             </button>
                                         </td>
@@ -135,7 +135,7 @@
                             </table>
                         </div>
                         <p class="mt-4 text-xs text-default-500 italic">
-                            * Item Code akan di-generate otomatis oleh sistem berdasarkan pola kode kategori dan nomor urut.
+                            * Item Code will be auto-generated by the system based on category code pattern and sequence.
                         </p>
                     </div>
                 </div>
@@ -146,12 +146,12 @@
                 <div class="card mb-6">
                     <div class="card-body">
                         <h6 class="mb-4 card-title text-base flex items-center gap-2">
-                            <i class="size-4 text-primary" data-lucide="image"></i> Foto Katalog
+                            <i class="size-4 text-primary" data-lucide="image"></i> Catalog Photo
                         </h6>
                         <label for="images" class="flex flex-col items-center justify-center w-full h-32 border-2 border-default-300 border-dashed rounded-lg cursor-pointer bg-default-50 hover:bg-default-100 transition-all">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                 <i class="size-8 text-default-400 mb-2" data-lucide="upload-cloud"></i>
-                                <p class="text-xs text-default-500 font-semibold">Klik untuk Upload</p>
+                                <p class="text-xs text-default-500 font-semibold">Click to Upload</p>
                             </div>
                             <input id="images" name="images[]" type="file" class="hidden" multiple accept="image/*" />
                         </label>
@@ -162,23 +162,23 @@
                 <div class="card">
                     <div class="card-body">
                         <h6 class="mb-4 card-title text-base flex items-center gap-2">
-                            <i class="size-4 text-primary" data-lucide="dollar-sign"></i> Info Pembelian (General)
+                            <i class="size-4 text-primary" data-lucide="dollar-sign"></i> Purchase Info (General)
                         </h6>
                         <div class="mb-4">
-                            <label class="text-sm font-medium text-default-800 mb-1 block">Harga Per Unit (Est)</label>
+                            <label class="text-sm font-medium text-default-800 mb-1 block">Price Per Unit (Est)</label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-default-500">Rp</span>
                                 <input type="number" name="price" class="form-input ps-10" placeholder="0" required>
                             </div>
                         </div>
                         <div class="mb-6">
-                            <label class="text-sm font-medium text-default-800 mb-1 block">Tanggal Beli</label>
+                            <label class="text-sm font-medium text-default-800 mb-1 block">Purchase Date</label>
                             <input type="date" name="purchase_date" class="form-input" value="{{ date('Y-m-d') }}" required>
                         </div>
 
                         <div class="grid grid-cols-1 gap-2">
-                            <button type="submit" class="btn bg-primary text-white w-full py-3 font-bold uppercase tracking-widest">Simpan Master & Unit</button>
-                            <a href="{{ route('assets.index') }}" class="btn border-default-200 text-default-600 w-full">Batal</a>
+                            <button type="submit" class="btn bg-primary text-white w-full py-3 font-bold uppercase tracking-widest">Save Master & Units</button>
+                            <a href="{{ route('assets.index') }}" class="btn border-default-200 text-default-600 w-full">Cancel</a>
                         </div>
                     </div>
                 </div>
@@ -239,7 +239,7 @@
                     <input type="text" name="items[${index}][item_code]" class="form-input form-input-sm font-mono text-primary font-bold" placeholder="Auto-gen" readonly>
                 </td>
                 <td class="px-4 py-3">
-                    <input type="text" name="items[${index}][serial_number]" class="form-input form-input-sm" placeholder="SN Pabrik">
+                    <input type="text" name="items[${index}][serial_number]" class="form-input form-input-sm" placeholder="Factory SN">
                 </td>
                 <td class="px-4 py-3">
                     <select name="items[${index}][location_id]" class="form-input form-input-sm" required>
@@ -259,7 +259,7 @@
                     <select name="items[${index}][fiscal_group]" class="form-input form-input-sm">
                         <option value="">Default</option>
                         @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
-                            <option value="{{ $group }}">{{ $group }}</option>
+                            <option value="${group}">${group}</option>
                         @endforeach
                     </select>
                 </td>
@@ -267,10 +267,10 @@
                     <input type="number" name="items[${index}][residual_value]" class="form-input form-input-sm residual-value-input" placeholder="0" value="${defaultResidualValue}">
                 </td>
                 <td class="px-4 py-3">
-                    <input type="number" name="items[${index}][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Bulan" value="${defaultUsefulLife}">
+                    <input type="number" name="items[${index}][useful_life_months]" class="form-input form-input-sm useful-life-input" placeholder="Months" value="${defaultUsefulLife}">
                 </td>
                 <td class="px-4 py-3 text-center">
-                    <button type="button" class="text-danger hover:text-danger-700 remove-row" title="Hapus Unit">
+                    <button type="button" class="text-danger hover:text-danger-700 remove-row" title="Remove Unit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
                 </td>
@@ -300,7 +300,7 @@
                 } else {
                     Swal.fire({
                         icon: 'warning',
-                        text: 'Minimal harus ada 1 unit fisik yang didaftarkan.',
+                        text: 'At least 1 physical unit must be registered.',
                         confirmButtonColor: '#3e60d5'
                     });
                 }

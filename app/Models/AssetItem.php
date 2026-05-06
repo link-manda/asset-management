@@ -25,6 +25,7 @@ class AssetItem extends Model
         'residual_value',
         'useful_life_months',
         'fiscal_group',
+        'notes',
     ];
 
     public function getActivitylogOptions(): LogOptions
@@ -36,12 +37,12 @@ class AssetItem extends Model
     }
 
     const FISCAL_GROUPS = [
-        'Kelompok 1'            => 48,  // 4 Tahun
-        'Kelompok 2'            => 96,  // 8 Tahun
-        'Kelompok 3'            => 192, // 16 Tahun
-        'Kelompok 4'            => 240, // 20 Tahun
-        'Bangunan Permanen'     => 240, // 20 Tahun
-        'Bangunan Non-Permanen' => 120, // 10 Tahun
+        'Group 1'            => 48,  // 4 Years
+        'Group 2'            => 96,  // 8 Years
+        'Group 3'            => 192, // 16 Years
+        'Group 4'            => 240, // 20 Years
+        'Permanent Building'     => 240, // 20 Years
+        'Non-Permanent Building' => 120, // 10 Years
     ];
 
     protected $casts = [
@@ -64,21 +65,31 @@ class AssetItem extends Model
      */
     public function getFiscalValueAttribute()
     {
-        $schedule = $this->generateSchedule('fiscal');
-        $currentMonth = now()->format('Y-m');
-        
-        foreach ($schedule as $row) {
-            if ($row['month_year_key'] == $currentMonth) {
-                return $row['ending_book_value'];
-            }
+        if (!$this->purchase_date || !$this->purchase_price) {
+            return (float) $this->purchase_price;
         }
 
-        // Jika sudah lewat masa manfaat fiskal atau belum beli
-        if ($this->purchase_date && now()->greaterThan($this->purchase_date)) {
-            return 0;
+        $usefulLife = $this->fiscal_useful_life;
+        if ($usefulLife <= 0) return (float) $this->purchase_price;
+
+        $purchaseDate = \Carbon\Carbon::parse($this->purchase_date);
+        $now = now();
+
+        if ($now->lessThan($purchaseDate)) {
+            return (float) $this->purchase_price;
         }
-        
-        return $this->purchase_price;
+
+        $monthsPassed = $purchaseDate->diffInMonths($now);
+
+        if ($monthsPassed >= $usefulLife) {
+            return 0.0;
+        }
+
+        // Aturan Pajak: Nilai Sisa 0
+        $depreciationPerMonth = (float) $this->purchase_price / $usefulLife;
+        $currentValue = (float) $this->purchase_price - ($depreciationPerMonth * $monthsPassed);
+
+        return max($currentValue, 0.0);
     }
 
     /**
@@ -92,25 +103,27 @@ class AssetItem extends Model
             return $this->purchase_price ?? 0;
         }
 
-        $purchaseDate = $this->purchase_date;
+        $purchaseDate = \Carbon\Carbon::parse($this->purchase_date);
 
         if ($date->lessThan($purchaseDate)) {
-            return $this->purchase_price;
+            return (float) $this->purchase_price;
         }
 
         $monthsPassed = $purchaseDate->diffInMonths($date);
 
         if ($monthsPassed >= $this->useful_life_months) {
-            return $this->residual_value;
+            return (float) ($this->residual_value ?? 0);
         }
 
-        $depreciableAmount = $this->purchase_price - $this->residual_value;
+        $price = (float) $this->purchase_price;
+        $residual = (float) ($this->residual_value ?? 0);
+        $depreciableAmount = $price - $residual;
         $depreciationPerMonth = $depreciableAmount / $this->useful_life_months;
         $totalDepreciation = $depreciationPerMonth * $monthsPassed;
 
-        $currentValue = $this->purchase_price - $totalDepreciation;
+        $currentValue = $price - $totalDepreciation;
 
-        return max($currentValue, $this->residual_value);
+        return max($currentValue, $residual);
     }
 
     public function getCurrentValueAttribute()

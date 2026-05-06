@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Exports\GeneralAssetExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
@@ -84,5 +85,35 @@ class ReportController extends Controller
     public function exportCsv(Request $request)
     {
         return Excel::download(new GeneralAssetExport($request), 'laporan_aset_umum_' . now()->format('YmdHis') . '.csv', \Maatwebsite\Excel\Excel::CSV);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = AssetItem::with(['asset.category', 'location'])
+            ->when($request->category_id, function ($q) use ($request) {
+                $q->whereHas('asset', function ($sq) use ($request) {
+                    $sq->where('category_id', $request->category_id);
+                });
+            })
+            ->when($request->location_id, function ($q) use ($request) {
+                $q->where('location_id', $request->location_id);
+            })
+            ->when($request->status, function ($q) use ($request) {
+                $q->where('status', $request->status);
+            })
+            ->when($request->search, function ($q) use ($request) {
+                $q->where('item_code', 'like', '%' . $request->search . '%')
+                  ->orWhere('serial_number', 'like', '%' . $request->search . '%')
+                  ->orWhereHas('asset', function ($sq) use ($request) {
+                      $sq->where('name', 'like', '%' . $request->search . '%');
+                  });
+            });
+
+        $items = $query->latest()->get();
+
+        $pdf = Pdf::loadView('reports.general-pdf', compact('items'))
+                  ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan_aset_umum_' . now()->format('YmdHis') . '.pdf');
     }
 }

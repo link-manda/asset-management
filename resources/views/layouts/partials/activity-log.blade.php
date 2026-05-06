@@ -17,8 +17,8 @@
                 <div class="flex justify-between items-start mb-1">
                     <h6 class="text-sm font-bold text-default-800">
                         {{ $activity->causer ? $activity->causer->name : 'System' }} 
-                        <span class="font-normal text-default-500">
-                            {{ $activity->event === 'created' ? 'menambahkan data baru' : ($activity->event === 'updated' ? 'memperbarui data' : 'menghapus data') }}
+                        <span class="font-normal text-default-500 lowercase">
+                            {{ $activity->event === 'created' ? 'added new record' : ($activity->event === 'updated' ? 'updated data' : 'removed record') }}
                         </span>
                     </h6>
                     <span class="text-[10px] text-default-400 font-medium">{{ $activity->created_at->diffForHumans() }}</span>
@@ -26,7 +26,7 @@
 
                 @if($activity->event === 'updated' && !empty($activity->changes['attributes']))
                     <div class="bg-default-50 rounded-lg p-3 border border-default-100 mt-2">
-                        <p class="text-[10px] uppercase font-bold text-default-400 mb-2 tracking-widest">Perubahan Detail:</p>
+                        <p class="text-[10px] uppercase font-bold text-default-400 mb-2 tracking-widest">Change Details:</p>
                         <div class="grid grid-cols-1 gap-2">
                             @foreach($activity->changes['attributes'] as $key => $value)
                                 @php
@@ -45,7 +45,7 @@
                     </div>
                 @endif
                 
-                <p class="text-[10px] text-default-400 mt-1 italic">{{ $activity->created_at->format('d M Y, H:i') }} WIB</p>
+                <p class="text-[10px] text-default-400 mt-1 italic">{{ $activity->created_at->format('d M Y, H:i') }}</p>
             </div>
         </div>
     @empty
@@ -53,7 +53,7 @@
             <div class="size-16 bg-default-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-default-100">
                 <i class="size-8 text-default-300" data-lucide="history"></i>
             </div>
-            <p class="text-default-500 font-medium">Belum ada riwayat aktivitas untuk aset ini.</p>
+            <p class="text-default-500 font-medium">No activity history for this asset yet.</p>
         </div>
     @endforelse
 </div>

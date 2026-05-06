@@ -35,7 +35,7 @@ class DivisionController extends Controller
 
         Division::create($request->all());
 
-        return redirect()->route('divisions.index')->with('success', 'Divisi berhasil ditambahkan.');
+        return redirect()->route('divisions.index')->with('success', 'Division successfully added.');
     }
 
     /**
@@ -57,7 +57,7 @@ class DivisionController extends Controller
 
         $division->update($request->all());
 
-        return redirect()->route('divisions.index')->with('success', 'Divisi berhasil diperbarui.');
+        return redirect()->route('divisions.index')->with('success', 'Division successfully updated.');
     }
 
     /**
@@ -66,11 +66,11 @@ class DivisionController extends Controller
     public function destroy(Division $division)
     {
         if ($division->departments()->count() > 0) {
-            return redirect()->route('divisions.index')->with('error', 'Divisi tidak bisa dihapus karena masih memiliki departemen.');
+            return redirect()->route('divisions.index')->with('error', 'Cannot delete division because it still has registered departments.');
         }
 
         $division->delete();
 
-        return redirect()->route('divisions.index')->with('success', 'Divisi berhasil dihapus.');
+        return redirect()->route('divisions.index')->with('success', 'Division successfully removed.');
     }
 }

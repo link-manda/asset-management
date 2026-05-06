@@ -21,7 +21,7 @@
                         <span class="text-white/60">Intelligence.</span>
                     </h2>
                     <p class="text-white/80 text-xl max-w-lg leading-relaxed">
-                        Optimalkan pemeliharaan, lacak penyusutan fiskal, dan kelola inventaris fisik Anda dalam satu platform cerdas yang terintegrasi.
+                        Optimize maintenance, track fiscal depreciation, and manage your physical inventory in one integrated smart platform.
                     </p>
                 </div>
                 
@@ -31,7 +31,7 @@
                         <img class="inline-block size-10 rounded-full ring-2 ring-primary bg-default-100" src="https://ui-avatars.com/api/?name=Finance&background=random" alt="User">
                         <img class="inline-block size-10 rounded-full ring-2 ring-primary bg-default-100" src="https://ui-avatars.com/api/?name=IT&background=random" alt="User">
                     </div>
-                    <p class="text-white/60 text-sm font-medium">Dipercaya oleh berbagai divisi untuk akurasi data aset.</p>
+                    <p class="text-white/60 text-sm font-medium">Trusted by multiple divisions for asset data accuracy.</p>
                 </div>
             </div>
         </div>
@@ -51,8 +51,8 @@
                         <span class="text-2xl font-black tracking-tight text-default-900">ASSET<span class="text-primary">MGMT</span></span>
                     </a>
                     
-                    <h1 class="text-3xl font-bold text-default-900 mb-2">Selamat Datang Kembali</h1>
-                    <p class="text-default-500">Silakan masukkan akun Anda untuk mulai mengelola aset.</p>
+                    <h1 class="text-3xl font-bold text-default-900 mb-2">Welcome Back</h1>
+                    <p class="text-default-500">Please enter your credentials to start managing assets.</p>
                 </div>
 
                 @if($errors->any())
@@ -71,21 +71,21 @@
                 <form action="{{ route('login') }}" method="POST" class="space-y-5">
                     @csrf
                     <div>
-                        <label class="block font-bold text-default-700 text-xs uppercase tracking-widest mb-2" for="email">Email Perusahaan</label>
+                        <label class="block font-bold text-default-700 text-xs uppercase tracking-widest mb-2" for="email">Corporate Email</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none z-10">
                                 <i class="size-4 text-default-400" data-lucide="mail"></i>
                             </div>
                             <input class="form-input ps-11 py-3 border-default-200 focus:border-primary rounded-xl transition-all w-full" 
                                    id="email" name="email" value="{{ old('email') }}" 
-                                   placeholder="nama@perusahaan.com" type="email" required autofocus />
+                                   placeholder="name@company.com" type="email" required autofocus />
                         </div>
                     </div>
                     
                     <div>
                         <div class="flex justify-between items-center mb-2">
                             <label class="block font-bold text-default-700 text-xs uppercase tracking-widest" for="password">Password</label>
-                            <a href="#" class="text-xs font-semibold text-primary hover:underline">Lupa Password?</a>
+                            <a href="#" class="text-xs font-semibold text-primary hover:underline">Forgot Password?</a>
                         </div>
                         <div class="relative" x-data="{ show: false }">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-4 pointer-events-none z-10">
@@ -105,11 +105,11 @@
 
                     <div class="flex items-center mb-6">
                         <input type="checkbox" class="form-checkbox rounded text-primary border-default-300 size-4" id="remember" name="remember">
-                        <label class="ms-2 text-sm text-default-600 font-medium" for="remember">Ingat saya di perangkat ini</label>
+                        <label class="ms-2 text-sm text-default-600 font-medium" for="remember">Remember me on this device</label>
                     </div>
 
                     <button class="btn bg-primary hover:bg-primary-600 text-white w-full py-4 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2" type="submit">
-                        Sign In Ke Dashboard <i data-lucide="arrow-right" class="size-4"></i>
+                        Sign In to Dashboard <i data-lucide="arrow-right" class="size-4"></i>
                     </button>
                 </form>
 

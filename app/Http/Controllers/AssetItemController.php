@@ -84,7 +84,7 @@ class AssetItemController extends Controller
         $ids = $request->input('ids', []);
 
         if (empty($ids)) {
-            return back()->with('error', 'Pilih minimal satu item untuk dicetak.');
+            return back()->with('error', 'Please select at least one item to print.');
         }
 
         $items = AssetItem::whereIn('id', $ids)->with('asset')->get();
@@ -142,7 +142,7 @@ class AssetItemController extends Controller
             }
         });
 
-        return back()->with('success', $validated['quantity'] . ' Unit baru berhasil ditambahkan ke katalog.');
+        return back()->with('success', $validated['quantity'] . ' new units successfully added to catalog.');
     }
 
     /**
@@ -168,16 +168,17 @@ class AssetItemController extends Controller
             'location_id' => 'required|exists:locations,id',
             'status' => 'required|string|in:Available,Deployed,Maintenance,Broken,Disposed',
             'condition' => 'required|string',
-            'purchase_date' => 'required|date',
-            'purchase_price' => 'required|numeric|min:0',
-            'residual_value' => 'required|numeric|min:0',
-            'useful_life_months' => 'required|integer|min:0',
+            'purchase_date' => 'nullable|date',
+            'purchase_price' => 'nullable|numeric|min:0',
+            'residual_value' => 'nullable|numeric|min:0',
+            'useful_life_months' => 'nullable|integer|min:0',
             'fiscal_group' => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
+            'notes' => 'nullable|string',
         ]);
 
         $item->update($validated);
 
         return redirect()->route('inventory.show', $item)
-            ->with('success', 'Informasi unit aset berhasil diperbarui.');
+            ->with('success', 'Asset unit information successfully updated.');
     }
 }

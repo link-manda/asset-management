@@ -3,7 +3,7 @@
 @section('title', 'Dashboard Overview')
 
 @section('content')
-    @include('layouts.partials/page-title', ['subtitle' => 'Menu', 'title' => 'Executive Dashboard'])
+    @include('layouts.partials/page-title', ['subtitle' => 'Home', 'title' => 'Executive Dashboard'])
 
     <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-6 mb-6">
         {{-- Total Assets --}}
@@ -14,10 +14,10 @@
                         <i class="size-6" data-lucide="package"></i>
                     </div>
                     <div class="grow">
-                        <h6 class="text-[10px] text-default-500 font-bold uppercase tracking-widest mb-1">Total Unit Fisik</h6>
+                        <h6 class="text-[10px] text-default-500 font-bold uppercase tracking-widest mb-1">Total Units</h6>
                         <div class="flex items-baseline gap-1">
                             <h3 class="text-2xl font-black text-default-900">{{ number_format($totalAssets) }}</h3>
-                            <span class="text-[10px] text-default-400 font-medium">Unit</span>
+                            <span class="text-[10px] text-default-400 font-medium">Physical</span>
                         </div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                         <i class="size-6" data-lucide="circle-dollar-sign"></i>
                     </div>
                     <div class="grow">
-                        <h6 class="text-[10px] text-default-500 font-bold uppercase tracking-widest mb-1">Nilai Perolehan</h6>
+                        <h6 class="text-[10px] text-default-500 font-bold uppercase tracking-widest mb-1">Acquisition Cost</h6>
                         <h3 class="text-xl font-black text-default-900">Rp {{ number_format($totalValue, 0, ',', '.') }}</h3>
                     </div>
                 </div>
@@ -49,7 +49,7 @@
                         <i class="size-6" data-lucide="trending-down"></i>
                     </div>
                     <div class="grow">
-                        <h6 class="text-[10px] text-primary font-black uppercase tracking-widest mb-1">Nilai Buku (Est)</h6>
+                        <h6 class="text-[10px] text-primary font-black uppercase tracking-widest mb-1">Book Value (Est)</h6>
                         <h3 class="text-xl font-black text-primary">Rp {{ number_format($totalBookValue, 0, ',', '.') }}</h3>
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                         <i class="size-6" data-lucide="user-check"></i>
                     </div>
                     <div class="grow">
-                        <h6 class="text-[10px] text-default-500 font-bold uppercase tracking-widest mb-1">Distribusi Aktif</h6>
+                        <h6 class="text-[10px] text-default-500 font-bold uppercase tracking-widest mb-1">Active Deployed</h6>
                         <div class="flex items-baseline gap-1">
                             <h3 class="text-2xl font-black text-default-900">{{ number_format($stats['Deployed']) }}</h3>
                             <span class="text-[10px] text-default-400 font-medium">In Use</span>
@@ -78,10 +78,10 @@
     </div>
 
     <div class="grid lg:grid-cols-2 grid-cols-1 gap-6 mb-6">
-        {{-- Chart 1: Tren Investasi Aset (Line) --}}
+        {{-- Chart 1: Asset Investment Trend (Line) --}}
         <div class="card">
             <div class="card-header border-b border-default-200 flex justify-between items-center bg-default-50/50">
-                <h6 class="card-title text-sm font-bold">Tren Investasi Aset (6 Bulan Terakhir)</h6>
+                <h6 class="card-title text-sm font-bold">Asset Investment Trend (Last 6 Months)</h6>
                 <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold uppercase">Asset Growth</span>
             </div>
             <div class="card-body">
@@ -91,10 +91,10 @@
             </div>
         </div>
 
-        {{-- Chart 2: Biaya Maintenance (Bar) --}}
+        {{-- Chart 2: Maintenance Cost (Bar) --}}
         <div class="card">
             <div class="card-header border-b border-default-200 flex justify-between items-center bg-default-50/50">
-                <h6 class="card-title text-sm font-bold">Analisis Biaya Pemeliharaan</h6>
+                <h6 class="card-title text-sm font-bold">Maintenance Cost Analysis</h6>
                 <span class="text-[10px] bg-warning/10 text-warning px-2 py-0.5 rounded-full font-bold uppercase">Operational Cost</span>
             </div>
             <div class="card-body">
@@ -106,10 +106,10 @@
     </div>
 
     <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6 mb-6">
-        {{-- Chart 3: Proporsi Kategori (Donut) --}}
+        {{-- Chart 3: Category Proportion (Donut) --}}
         <div class="card">
             <div class="card-header border-b border-default-200 bg-default-50/50">
-                <h6 class="card-title text-sm font-bold">Nilai Per Kategori</h6>
+                <h6 class="card-title text-sm font-bold">Value Per Category</h6>
             </div>
             <div class="card-body">
                 <div class="h-[220px] w-full relative flex items-center justify-center">
@@ -123,10 +123,10 @@
             </div>
         </div>
 
-        {{-- Chart 4: Proporsi Status (Donut) --}}
+        {{-- Chart 4: Status Proportion (Donut) --}}
         <div class="card">
             <div class="card-header border-b border-default-200 bg-default-50/50">
-                <h6 class="card-title text-sm font-bold">Distribusi Status Unit</h6>
+                <h6 class="card-title text-sm font-bold">Unit Status Distribution</h6>
             </div>
             <div class="card-body">
                 <div class="h-[220px] w-full relative flex items-center justify-center">
@@ -142,29 +142,29 @@
 
         {{-- Quick Actions & Alerts --}}
         <div class="flex flex-col gap-6">
-            <div class="card bg-default-900 text-white overflow-hidden relative grow">
+            <div class="card overflow-hidden relative grow border-primary/20 border">
                 <div class="card-body z-10 relative">
                     <h6 class="text-xs font-bold uppercase tracking-widest text-primary mb-4 italic">Command Center</h6>
                     <div class="grid grid-cols-2 gap-2">
-                        <a href="{{ route('assets.create') }}" class="flex flex-col items-center justify-center p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group">
+                        <a href="{{ route('assets.create') }}" class="flex flex-col items-center justify-center p-3 bg-default-50 hover:bg-primary/10 border border-default-200 hover:border-primary/30 rounded-lg transition-all group">
                             <i class="size-5 text-primary mb-1 group-hover:scale-110 transition-transform" data-lucide="plus-circle"></i>
-                            <span class="text-[10px] font-bold">New Asset</span>
+                            <span class="text-[10px] font-bold text-default-700">New Asset</span>
                         </a>
-                        <a href="{{ route('inventory.index') }}" class="flex flex-col items-center justify-center p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group">
+                        <a href="{{ route('inventory.index') }}" class="flex flex-col items-center justify-center p-3 bg-default-50 hover:bg-success/10 border border-default-200 hover:border-success/30 rounded-lg transition-all group">
                             <i class="size-5 text-success mb-1 group-hover:scale-110 transition-transform" data-lucide="scan-barcode"></i>
-                            <span class="text-[10px] font-bold">Inventory</span>
+                            <span class="text-[10px] font-bold text-default-700">Inventory</span>
                         </a>
-                        <a href="{{ route('assignments.index') }}" class="flex flex-col items-center justify-center p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group">
+                        <a href="{{ route('assignments.index') }}" class="flex flex-col items-center justify-center p-3 bg-default-50 hover:bg-info/10 border border-default-200 hover:border-info/30 rounded-lg transition-all group">
                             <i class="size-5 text-info mb-1 group-hover:scale-110 transition-transform" data-lucide="users"></i>
-                            <span class="text-[10px] font-bold">Assignments</span>
+                            <span class="text-[10px] font-bold text-default-700">Assignments</span>
                         </a>
-                        <a href="{{ route('reports.depreciation') }}" class="flex flex-col items-center justify-center p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group">
+                        <a href="{{ route('reports.depreciation') }}" class="flex flex-col items-center justify-center p-3 bg-default-50 hover:bg-warning/10 border border-default-200 hover:border-warning/30 rounded-lg transition-all group">
                             <i class="size-5 text-warning mb-1 group-hover:scale-110 transition-transform" data-lucide="bar-chart-3"></i>
-                            <span class="text-[10px] font-bold">Reports</span>
+                            <span class="text-[10px] font-bold text-default-700">Reports</span>
                         </a>
                     </div>
                 </div>
-                <div class="absolute -bottom-10 -right-10 size-32 bg-primary/20 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -right-10 size-32 bg-primary/5 rounded-full blur-2xl"></div>
             </div>
 
             <div class="card border-warning/30 border bg-warning/5">
@@ -175,7 +175,7 @@
                         </div>
                         <div>
                             <h6 class="text-[11px] font-black text-default-800 uppercase">Audit Ready</h6>
-                            <p class="text-[10px] text-default-600 leading-tight">Seluruh log aktivitas aset kini tercatat dalam Audit Trail sistem.</p>
+                            <p class="text-[10px] text-default-600 leading-tight">All asset activity logs are now recorded in the system's Audit Trail.</p>
                         </div>
                     </div>
                 </div>
@@ -194,7 +194,7 @@
         // Helper for Currency
         const formatCurrency = (val) => 'Rp ' + val.toLocaleString('id-ID');
 
-        // Line Chart: Trend Investasi
+        // Line Chart: Investment Trend
         const trendCtx = document.getElementById('trendChart').getContext('2d');
         const trendGradient = trendCtx.createLinearGradient(0, 0, 0, 300);
         trendGradient.addColorStop(0, 'rgba(62, 96, 213, 0.2)');
@@ -205,7 +205,7 @@
             data: {
                 labels: @json($trendLabels),
                 datasets: [{
-                    label: 'Investasi',
+                    label: 'Investment',
                     data: @json($trendValues),
                     borderColor: '#3e60d5',
                     backgroundColor: trendGradient,
@@ -230,7 +230,7 @@
                     }
                 },
                 scales: {
-                    y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { callback: (v) => (v/1000000).toFixed(0) + 'jt' } },
+                    y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { callback: (v) => (v/1000000).toFixed(0) + 'M' } },
                     x: { grid: { display: false } }
                 }
             }
@@ -243,7 +243,7 @@
             data: {
                 labels: @json($maintLabels),
                 datasets: [{
-                    label: 'Biaya Servis',
+                    label: 'Service Cost',
                     data: @json($maintValues),
                     backgroundColor: '#ffbc00',
                     borderRadius: 6,
@@ -258,7 +258,7 @@
                     tooltip: { callbacks: { label: (c) => formatCurrency(c.parsed.y) } }
                 },
                 scales: {
-                    y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { callback: (v) => (v/1000).toFixed(0) + 'rb' } },
+                    y: { grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { callback: (v) => (v/1000).toFixed(0) + 'k' } },
                     x: { grid: { display: false } }
                 }
             }

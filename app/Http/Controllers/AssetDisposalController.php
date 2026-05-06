@@ -38,7 +38,7 @@ class AssetDisposalController extends Controller
             $item = AssetItem::where('item_code', $validated['barcode'])->firstOrFail();
 
             if ($item->status === 'Disposed') {
-                return back()->with('error', 'Unit ini sudah di-dispose sebelumnya.');
+                return back()->with('error', 'This unit has already been disposed of.');
             }
 
             // Ubah status unit menjadi Disposed
@@ -57,11 +57,12 @@ class AssetDisposalController extends Controller
             DB::commit();
 
             return redirect()->route('disposals.index')
-                ->with('success', 'Unit ' . $validated['barcode'] . ' berhasil di-dispose.');
+                ->with('success', 'Unit ' . $validated['barcode'] . ' has been successfully disposed of.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
+
     }
 }

@@ -13,6 +13,7 @@ class AssetMaintenance extends Model
     protected $fillable = [
         'asset_item_id',
         'maintenance_date',
+        'type',
         'description',
         'cost',
         'status',
