@@ -14,31 +14,19 @@ class AssignmentHistoryExport implements FromQuery, WithHeadings, WithMapping, W
 {
     use Exportable;
 
-    protected $request;
+    protected $searchTerm;
 
-    public function __construct($request)
+    public function __construct($searchTerm = null)
     {
-        $this->request = $request;
+        $this->searchTerm = $searchTerm;
     }
 
     public function query()
     {
         $query = AssetAssignment::with(['item.asset', 'user']);
 
-        if ($this->request->filled('search')) {
-            $search = $this->request->search;
-            $query->where(function($q) use ($search) {
-                $q->whereHas('item', function($sq) use ($search) {
-                    $sq->where('item_code', 'like', "%{$search}%");
-                })
-                ->orWhereHas('item.asset', function($sq) use ($search) {
-                    $sq->where('name', 'like', "%{$search}%")
-                      ->orWhere('asset_code', 'like', "%{$search}%");
-                })
-                ->orWhereHas('user', function($sq) use ($search) {
-                    $sq->where('name', 'like', "%{$search}%");
-                });
-            });
+        if (!empty($this->searchTerm)) {
+            $query->search($this->searchTerm);
         }
         
         return $query->latest();
@@ -67,8 +55,8 @@ class AssignmentHistoryExport implements FromQuery, WithHeadings, WithMapping, W
             $assignment->item->asset->asset_code ?? '-',
             $assignment->user->name ?? '-',
             $assignment->user->role ?? '-',
-            $assignment->assigned_date ? \Carbon\Carbon::parse($assignment->assigned_date)->format('Y-m-d') : '-',
-            $assignment->return_date ? \Carbon\Carbon::parse($assignment->return_date)->format('Y-m-d') : 'Currently Deployed',
+            $assignment->assigned_date ? $assignment->assigned_date->format('Y-m-d') : '-',
+            $assignment->return_date ? $assignment->return_date->format('Y-m-d') : 'Currently Deployed',
             $assignment->condition_on_checkout ?? '-',
             $assignment->condition_on_return ?? '-',
         ];

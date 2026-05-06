@@ -44,18 +44,29 @@ class AssetAssignment extends Model
     }
 
     /**
-     * Get the master asset through the item.
-     */
-    public function asset()
-    {
-        return $this->item->asset();
-    }
-
-    /**
      * Get the user that the asset is assigned to.
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    /**
+     * Scope a query to search assignments.
+     */
+    public function scopeSearch($query, $term)
+    {
+        return $query->where(function($q) use ($term) {
+            $q->whereHas('item', function($sq) use ($term) {
+                $sq->where('item_code', 'like', "%{$term}%");
+            })
+            ->orWhereHas('item.asset', function($sq) use ($term) {
+                $sq->where('name', 'like', "%{$term}%")
+                  ->orWhere('asset_code', 'like', "%{$term}%");
+            })
+            ->orWhereHas('user', function($sq) use ($term) {
+                $sq->where('name', 'like', "%{$term}%");
+            });
+        });
     }
 }

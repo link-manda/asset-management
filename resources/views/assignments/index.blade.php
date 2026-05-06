@@ -8,18 +8,37 @@
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
             <div class="card-header flex justify-between items-center">
-                <div class="flex gap-3 items-center">
+                <form action="{{ route('assignments.index') }}" method="GET" class="flex gap-3 items-center">
                     <div class="relative">
-                        <input class="ps-11 form-input form-input-sm w-64" placeholder="Cari log penugasan..." type="text" />
+                        <input name="search" value="{{ request('search') }}" class="ps-11 form-input form-input-sm w-64" placeholder="Cari log penugasan..." type="text" />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
                     </div>
-                </div>
+                    @if(request()->has('search') && request('search') != '')
+                        <a href="{{ route('assignments.index') }}" class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" title="Clear Search">
+                            <i class="size-4" data-lucide="x"></i>
+                        </a>
+                    @endif
+                    <button type="submit" class="hidden">Search</button>
+                </form>
+                
                 <div class="flex items-center gap-2">
-                    <button class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200">
-                        <i class="size-4 me-1" data-lucide="download"></i> Export
-                    </button>
+                    <div class="hs-dropdown relative inline-flex">
+                        <button class="hs-dropdown-toggle btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" type="button">
+                            <i class="size-4 me-1" data-lucide="download"></i> Export <i class="size-3.5 ms-1" data-lucide="chevron-down"></i>
+                        </button>
+                        <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-40 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200" role="menu">
+                            <a class="flex items-center gap-2 py-1.5 px-3 text-sm text-default-600 hover:bg-default-100 rounded-md font-medium" 
+                               href="{{ route('assignments.index', array_merge(request()->query(), ['export' => 'excel'])) }}">
+                                <i class="size-4 text-success" data-lucide="file-spreadsheet"></i> Export as Excel
+                            </a>
+                            <a class="flex items-center gap-2 py-1.5 px-3 text-sm text-default-600 hover:bg-default-100 rounded-md font-medium" 
+                               href="{{ route('assignments.index', array_merge(request()->query(), ['export' => 'pdf'])) }}">
+                                <i class="size-4 text-danger" data-lucide="file-text"></i> Export as PDF
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="flex flex-col">
@@ -46,12 +65,12 @@
                                                         <i class="size-5 text-primary" data-lucide="package"></i>
                                                     </div>
                                                     <div>
-                                                        <a href="{{ route('assets.show', $assignment->asset) }}" class="group block">
-                                                            <span class="text-sm font-bold text-default-800 group-hover:text-primary transition-all">{{ $assignment->asset->name }}</span>
+                                                        <a href="{{ route('assets.show', $assignment->item->asset) }}" class="group block">
+                                                            <span class="text-sm font-bold text-default-800 group-hover:text-primary transition-all">{{ $assignment->item->asset->name }}</span>
                                                         </a>
                                                         <div class="flex items-center gap-1.5 mt-0.5">
                                                             <span class="text-[10px] bg-primary/10 text-primary font-mono font-bold px-1 rounded">#{{ $assignment->item?->item_code ?? 'N/A' }}</span>
-                                                            <span class="text-[10px] text-default-400 uppercase">Master: {{ $assignment->asset->asset_code }}</span>
+                                                            <span class="text-[10px] text-default-400 uppercase">Master: {{ $assignment->item->asset->asset_code }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -121,7 +140,7 @@
                                                         <i class="size-4" data-lucide="more-vertical"></i>
                                                     </button>
                                                     <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200" role="menu">
-                                                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('assets.show', $assignment->asset) }}">
+                                                        <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('assets.show', $assignment->item->asset) }}">
                                                             <i class="size-3.5" data-lucide="eye"></i> View Asset Details
                                                         </a>
                                                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-info hover:bg-info/10 rounded" href="{{ route('inventory.show', $assignment->item) }}">

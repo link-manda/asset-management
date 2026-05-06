@@ -22,28 +22,16 @@ class AssetAssignmentController extends Controller
 
         // Filter Search
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->whereHas('item', function($sq) use ($search) {
-                    $sq->where('item_code', 'like', "%{$search}%");
-                })
-                ->orWhereHas('item.asset', function($sq) use ($search) {
-                    $sq->where('name', 'like', "%{$search}%")
-                      ->orWhere('asset_code', 'like', "%{$search}%");
-                })
-                ->orWhereHas('user', function($sq) use ($search) {
-                    $sq->where('name', 'like', "%{$search}%");
-                });
-            });
+            $query->search($request->search);
         }
 
         // Export Logic
         if ($request->export === 'excel') {
-            return Excel::download(new AssignmentHistoryExport($request), 'assignment_history_' . now()->format('YmdHis') . '.xlsx');
+            return Excel::download(new AssignmentHistoryExport($request->search), 'assignment_history_' . now()->format('YmdHis') . '.xlsx');
         }
 
         if ($request->export === 'pdf') {
-            $assignments = $query->latest()->get();
+            $assignments = $query->latest()->take(500)->get();
             $pdf = Pdf::loadView('assignments.export-pdf', compact('assignments'))
                       ->setPaper('a4', 'landscape');
             return $pdf->download('assignment_history_' . now()->format('YmdHis') . '.pdf');
