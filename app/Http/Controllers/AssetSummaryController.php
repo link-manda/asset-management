@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\AssetItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Exports\AssetSummaryExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AssetSummaryController extends Controller
 {
@@ -66,7 +69,26 @@ class AssetSummaryController extends Controller
         });
     }
 
-    public function exportExcel(Request $request) {}
-    public function exportCsv(Request $request) {}
-    public function exportPdf(Request $request) {}
+    public function exportExcel(Request $request)
+    {
+        $data = $this->getSummaryData($request);
+        $groupBy = $request->get('by', 'category');
+        return Excel::download(new AssetSummaryExport($data, $groupBy), 'asset_summary_' . $groupBy . '_' . now()->format('YmdHis') . '.xlsx');
+    }
+
+    public function exportCsv(Request $request)
+    {
+        $data = $this->getSummaryData($request);
+        $groupBy = $request->get('by', 'category');
+        return Excel::download(new AssetSummaryExport($data, $groupBy), 'asset_summary_' . $groupBy . '_' . now()->format('YmdHis') . '.csv', \Maatwebsite\Excel\Excel::CSV);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $data = $this->getSummaryData($request);
+        $groupBy = $request->get('by', 'category');
+        $pdf = Pdf::loadView('reports.summary-pdf', compact('data', 'groupBy'))
+                  ->setPaper('a4', 'landscape');
+        return $pdf->download('asset_summary_' . $groupBy . '_' . now()->format('YmdHis') . '.pdf');
+    }
 }
