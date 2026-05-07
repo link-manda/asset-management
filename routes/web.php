@@ -69,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/general/export/pdf', [ReportController::class, 'exportPdf'])->name('general.pdf');
         Route::get('/depreciation', [DepreciationReportController::class, 'index'])->name('depreciation');
         Route::get('/depreciation/export', [DepreciationReportController::class, 'export'])->name('depreciation.export');
+
+        Route::get('/summary', [\App\Http\Controllers\AssetSummaryController::class, 'index'])->name('summary');
+        Route::get('/summary/export/excel', [\App\Http\Controllers\AssetSummaryController::class, 'exportExcel'])->name('summary.excel');
+        Route::get('/summary/export/csv', [\App\Http\Controllers\AssetSummaryController::class, 'exportCsv'])->name('summary.csv');
+        Route::get('/summary/export/pdf', [\App\Http\Controllers\AssetSummaryController::class, 'exportPdf'])->name('summary.pdf');
     });
 });
 
