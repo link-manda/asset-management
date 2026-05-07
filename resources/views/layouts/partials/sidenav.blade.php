@@ -131,6 +131,13 @@
                     </a>
                 </li>
 
+                <li class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('reports.summary') ? 'active' : '' }}" href="{{ route('reports.summary') }}">
+                        <span class="menu-icon"><i data-lucide="bar-chart-3"></i></span>
+                        <div class="menu-text">Asset Summary</div>
+                    </a>
+                </li>
+
                 <li class="menu-title">
                     <span>System</span>
                 </li>
