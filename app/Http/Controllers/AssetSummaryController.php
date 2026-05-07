@@ -36,15 +36,31 @@ class AssetSummaryController extends Controller
             $query->join('locations', 'asset_items.location_id', '=', 'locations.id')
                   ->addSelect('locations.name as label')
                   ->groupBy('locations.name');
+        } elseif ($groupBy === 'department') {
+            $query->join('asset_assignments', function($join) {
+                        $join->on('asset_items.id', '=', 'asset_assignments.asset_item_id')
+                             ->whereNull('asset_assignments.return_date');
+                    })
+                  ->join('users', 'asset_assignments.assigned_to', '=', 'users.id')
+                  ->join('departments', 'users.department_id', '=', 'departments.id')
+                  ->addSelect('departments.name as label')
+                  ->groupBy('departments.name');
+        } elseif ($groupBy === 'division') {
+            $query->join('asset_assignments', function($join) {
+                        $join->on('asset_items.id', '=', 'asset_assignments.asset_item_id')
+                             ->whereNull('asset_assignments.return_date');
+                    })
+                  ->join('users', 'asset_assignments.assigned_to', '=', 'users.id')
+                  ->join('departments', 'users.department_id', '=', 'departments.id')
+                  ->join('divisions', 'departments.division_id', '=', 'divisions.id')
+                  ->addSelect('divisions.name as label')
+                  ->groupBy('divisions.name');
         } else {
-            // Fallback for empty/unimplemented groupings
-            $query->addSelect(DB::raw('"Unimplemented" as label'))
+            $query->addSelect(DB::raw('"Unknown" as label'))
                   ->groupBy('label');
         }
 
         return $query->get()->map(function($row) {
-            // Simplification: use total_investment as current_book_value for now
-            // In Task 5/6 we can refine this if needed
             $row->current_book_value = $row->total_investment;
             return $row;
         });
