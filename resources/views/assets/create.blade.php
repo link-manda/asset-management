@@ -18,7 +18,7 @@
 
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
-                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="name">Asset Name</label>
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="name">Asset Name <span class="text-danger">*</span></label>
                                 <input class="form-input @error('name') border-danger @enderror" id="name" name="name" placeholder="e.g.: Lenovo Thinkpad Laptop" type="text" value="{{ old('name') }}" required />
                                 @error('name')
                                     <p class="mt-1 text-danger text-xs">{{ $message }}</p>
@@ -26,14 +26,19 @@
                             </div>
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="asset_code">Master Code</label>
-                                <input class="form-input @error('asset_code') border-danger @enderror" id="asset_code" name="asset_code" placeholder="AST-..." type="text" value="{{ old('asset_code') }}" />
-                                <p class="mt-1 text-default-400 text-[10px] italic">Unique code for this model/catalog item.</p>
+                                <div class="flex shadow-sm rounded-md">
+                                    <input class="form-input @error('asset_code') border-danger @enderror rounded-e-none border-e-0" id="asset_code" name="asset_code" placeholder="AST-..." type="text" value="{{ old('asset_code') }}" />
+                                    <button type="button" id="btn-gen-code" class="btn bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-s-none transition-colors" title="Generate Random Code">
+                                        <i class="size-4" data-lucide="refresh-cw"></i>
+                                    </button>
+                                </div>
+                                <p class="mt-1 text-default-400 text-[10px] italic">Unique code for this model/catalog item. Leave blank for auto-gen.</p>
                             </div>
                         </div>
 
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
-                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="category_id">Category</label>
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="category_id">Category <span class="text-danger">*</span></label>
                                 <select class="form-input" id="category_id" name="category_id" required>
                                     <option value="">-- Select Category --</option>
                                     @foreach($categories as $category)
@@ -42,7 +47,7 @@
                                 </select>
                             </div>
                             <div class="col-span-1">
-                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="uom_id">Unit of Measurement (UoM)</label>
+                                <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="uom_id">Unit of Measurement (UoM) <span class="text-danger">*</span></label>
                                 <select class="form-input" id="uom_id" name="uom_id" required>
                                     @foreach($uoms as $uom)
                                         <option value="{{ $uom->id }}" {{ old('uom_id', 1) == $uom->id ? 'selected' : '' }}>{{ $uom->name }} ({{ $uom->symbol }})</option>
@@ -80,7 +85,7 @@
                                     <tr>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[150px]">Barcode/Item Code</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[180px]">Serial Number</th>
-                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[200px]">Location</th>
+                                        <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[200px]">Location <span class="text-danger">*</span></th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[120px]">Condition</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[130px]">Fiscal (Tax)</th>
                                         <th class="px-4 py-2 text-start text-xs font-bold text-default-600 uppercase min-w-[150px]">Residual Value</th>
@@ -99,6 +104,7 @@
                                         </td>
                                         <td class="px-4 py-3">
                                             <select name="items[0][location_id]" class="form-input form-input-sm" required>
+                                                <option value="">-- Select Location --</option>
                                                 @foreach($locations as $location)
                                                     <option value="{{ $location->id }}">{{ $location->name }}</option>
                                                 @endforeach
@@ -165,14 +171,14 @@
                             <i class="size-4 text-primary" data-lucide="dollar-sign"></i> Purchase Info (General)
                         </h6>
                         <div class="mb-4">
-                            <label class="text-sm font-medium text-default-800 mb-1 block">Price Per Unit (Est)</label>
+                            <label class="text-sm font-medium text-default-800 mb-1 block">Price Per Unit (Est) <span class="text-danger">*</span></label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-default-500">Rp</span>
                                 <input type="number" name="price" class="form-input ps-10" placeholder="0" required>
                             </div>
                         </div>
                         <div class="mb-6">
-                            <label class="text-sm font-medium text-default-800 mb-1 block">Purchase Date</label>
+                            <label class="text-sm font-medium text-default-800 mb-1 block">Purchase Date <span class="text-danger">*</span></label>
                             <input type="date" name="purchase_date" class="form-input" value="{{ date('Y-m-d') }}" required>
                         </div>
 
@@ -230,6 +236,21 @@
         categorySelect.addEventListener('change', updateAllItemsDefaults);
         priceInput.addEventListener('input', updateAllItemsDefaults);
 
+        // Generate Master Code
+        const btnGenCode = document.getElementById('btn-gen-code');
+        const assetCodeInput = document.getElementById('asset_code');
+
+        function generateMasterCode() {
+            const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            assetCodeInput.value = result;
+        }
+
+        btnGenCode.addEventListener('click', generateMasterCode);
+
         // Function to create a new row
         function createRow(index, defaultUsefulLife = 0, defaultResidualValue = 0) {
             const tr = document.createElement('tr');
@@ -243,6 +264,7 @@
                 </td>
                 <td class="px-4 py-3">
                     <select name="items[${index}][location_id]" class="form-input form-input-sm" required>
+                        <option value="">-- Select Location --</option>
                         @foreach($locations as $location)
                             <option value="{{ $location->id }}">{{ $location->name }}</option>
                         @endforeach
@@ -259,7 +281,7 @@
                     <select name="items[${index}][fiscal_group]" class="form-input form-input-sm">
                         <option value="">Default</option>
                         @foreach(\App\Models\AssetItem::FISCAL_GROUPS as $group => $months)
-                            <option value="${group}">${group}</option>
+                            <option value="{{ $group }}">{{ $group }}</option>
                         @endforeach
                     </select>
                 </td>

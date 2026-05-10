@@ -36,10 +36,11 @@ class AssignmentHistoryExportTest extends TestCase
             'asset_item_id' => $item->id,
             'assigned_to' => $user->id,
             'assigned_date' => now(),
+            'condition_on_checkout' => 'Good',
         ]);
 
         $request = new Request();
-        $export = new AssignmentHistoryExport($request);
+        $export = new AssignmentHistoryExport($request->search);
         
         $results = $export->query()->get();
         
@@ -59,6 +60,7 @@ class AssignmentHistoryExportTest extends TestCase
             'asset_item_id' => $itemMatch->id,
             'assigned_to' => $userMatch->id,
             'assigned_date' => now(),
+            'condition_on_checkout' => 'Good',
         ]);
 
         // Setup non-matching record
@@ -71,11 +73,12 @@ class AssignmentHistoryExportTest extends TestCase
             'asset_item_id' => $itemNoMatch->id,
             'assigned_to' => $userNoMatch->id,
             'assigned_date' => now(),
+            'condition_on_checkout' => 'Good',
         ]);
 
         // Search for 'MacBook'
         $request = new Request(['search' => 'MacBook']);
-        $export = new AssignmentHistoryExport($request);
+        $export = new AssignmentHistoryExport($request->search);
         
         $results = $export->query()->get();
         
@@ -84,7 +87,7 @@ class AssignmentHistoryExportTest extends TestCase
 
         // Search for 'John'
         $request2 = new Request(['search' => 'John']);
-        $export2 = new AssignmentHistoryExport($request2);
+        $export2 = new AssignmentHistoryExport($request2->search);
         
         $results2 = $export2->query()->get();
         
@@ -93,7 +96,7 @@ class AssignmentHistoryExportTest extends TestCase
         
         // Search for 'ITM-002'
         $request3 = new Request(['search' => 'ITM-002']);
-        $export3 = new AssignmentHistoryExport($request3);
+        $export3 = new AssignmentHistoryExport($request3->search);
         
         $results3 = $export3->query()->get();
         
