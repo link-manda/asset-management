@@ -41,12 +41,26 @@ class DemoSystemSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $admin->assignRole('Super Admin');
+
+        $manager = User::firstOrCreate(
+            ['email' => 'manager@demo.com'],
+            [
+                'name' => 'Manager Demo',
+                'password' => Hash::make('password'),
+                'role' => 'manager',
+                'email_verified_at' => now(),
+                'department_id' => $deptGA->id,
+            ]
+        );
+        $manager->assignRole('Manager');
 
         $staffs = [];
         $staffNames = ['Budi Santoso', 'Siti Aminah', 'Andi Wijaya', 'Dewi Lestari', 'Eko Prasetyo'];
         foreach ($staffNames as $name) {
-            $staffs[] = User::firstOrCreate(
-                ['email' => strtolower(str_replace(' ', '.', $name)) . '@demo.com'],
+            $email = strtolower(str_replace(' ', '.', $name)) . '@demo.com';
+            $staff = User::firstOrCreate(
+                ['email' => $email],
                 [
                     'name' => $name,
                     'password' => Hash::make('password'),
@@ -55,6 +69,8 @@ class DemoSystemSeeder extends Seeder
                     'department_id' => $deptSupport->id,
                 ]
             );
+            $staff->assignRole('Staff');
+            $staffs[] = $staff;
         }
 
         // 3. Create Locations
