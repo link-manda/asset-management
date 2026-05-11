@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 
@@ -24,6 +25,16 @@ class Asset extends Model
         'brand',
         'notes',
     ];
+
+    /**
+     * Interact with the asset's code.
+     */
+    protected function assetCode(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => strtoupper($value),
+        );
+    }
 
     protected $casts = [
         'price' => 'decimal:2',

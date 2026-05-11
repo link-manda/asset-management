@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
             OrgStructureSeeder::class,
             CategorySeeder::class,
             LocationSeeder::class,
+            UnitOfMeasurementSeeder::class, // Added
             AssetSeeder::class,
             UserSeeder::class,
-            DemoSystemSeeder::class,
         ]);
     }
 }

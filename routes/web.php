@@ -29,14 +29,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Manajemen Asset (Katalog)
-    Route::middleware(['permission:view assets'])->group(function () {
-        Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');
-        Route::get('/assets/{asset}', [AssetController::class, 'show'])->name('assets.show');
-    });
-
     Route::middleware(['permission:create assets'])->group(function () {
         Route::get('/assets/create', [AssetController::class, 'create'])->name('assets.create');
         Route::post('/assets', [AssetController::class, 'store'])->name('assets.store');
+    });
+
+    Route::middleware(['permission:view assets'])->group(function () {
+        Route::get('/assets', [AssetController::class, 'index'])->name('assets.index');
+        Route::get('/assets/{asset}', [AssetController::class, 'show'])->name('assets.show');
     });
 
     Route::middleware(['permission:edit assets'])->group(function () {

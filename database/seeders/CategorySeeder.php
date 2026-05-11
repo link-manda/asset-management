@@ -12,17 +12,36 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Category::firstOrCreate(
-            ['name' => 'IT Equipment'],
-            ['description' => 'Laptop, PC, Server, dan perangkat IT lainnya']
-        );
-        \App\Models\Category::firstOrCreate(
-            ['name' => 'Furniture'],
-            ['description' => 'Meja, kursi, lemari, dan perlengkapan kantor']
-        );
-        \App\Models\Category::firstOrCreate(
-            ['name' => 'Kendaraan'],
-            ['description' => 'Mobil, motor, dan armada operasional']
-        );
+        $categories = [
+            [
+                'name' => 'IT Equipment',
+                'description' => 'Laptops, Monitors, Servers, and Networking devices',
+                'fiscal_group' => 'Group 1', // 4 Years
+            ],
+            [
+                'name' => 'Office Furniture',
+                'description' => 'Chairs, Desks, and Storage units',
+                'fiscal_group' => 'Group 2', // 8 Years
+            ],
+            [
+                'name' => 'Vehicles',
+                'description' => 'Operational cars and motorcycles',
+                'fiscal_group' => 'Group 2', // 8 Years
+            ],
+            [
+                'name' => 'Office Electronics',
+                'description' => 'Printers, Scanners, and Projectors',
+                'fiscal_group' => 'Group 1',
+            ],
+            [
+                'name' => 'Tools & Equipment',
+                'description' => 'Maintenance tools and field gear',
+                'fiscal_group' => 'Group 1',
+            ],
+        ];
+
+        foreach ($categories as $cat) {
+            \App\Models\Category::updateOrCreate(['name' => $cat['name']], $cat);
+        }
     }
 }
