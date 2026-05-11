@@ -8,6 +8,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\AssetMaintenanceController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\DivisionController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\UnitOfMeasurementController;
@@ -58,6 +59,9 @@ Route::middleware(['auth'])->group(function () {
 
     // User Management
     Route::resource('users', UserController::class);
+    Route::middleware(['role:Super Admin'])->group(function () {
+        Route::resource('roles', RoleController::class);
+    });
     Route::get('/activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('activity-logs.index');
     Route::get('/settings', fn() => redirect()->route('dashboard'))->name('settings.index');
 

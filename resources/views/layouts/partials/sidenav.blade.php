@@ -149,6 +149,15 @@
                     </a>
                 </li>
 
+                @role('Super Admin')
+                <li class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
+                        <span class="menu-icon"><i data-lucide="shield-check"></i></span>
+                        <div class="menu-text">Role Management</div>
+                    </a>
+                </li>
+                @endrole
+
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
                         <span class="menu-icon"><i data-lucide="history"></i></span>
