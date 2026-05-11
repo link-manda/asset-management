@@ -38,11 +38,11 @@
                                             </td>
                                             <td class="px-4 py-3 whitespace-nowrap">
                                                 <span class="inline-flex items-center py-0.5 px-2 rounded-full text-xs font-medium bg-info/10 text-info">
-                                                    {{ $role->permissions->count() }} Permissions
+                                                    {{ $role->permissions_count }} Permissions
                                                 </span>
                                             </td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm text-default-600">
-                                                {{ $role->users->count() }} Users
+                                                {{ $role->users_count }} Users
                                             </td>
                                             <td class="px-4 py-3 text-center">
                                                 <div class="hs-dropdown relative inline-flex">

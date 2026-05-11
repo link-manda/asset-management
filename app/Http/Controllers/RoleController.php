@@ -9,12 +9,15 @@ use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
+    private const SUPER_ADMIN = 'Super Admin';
+    private const CORE_ROLES = ['Super Admin', 'Staff', 'Manager'];
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $roles = Role::with('permissions')->get();
+        $roles = Role::withCount(['users', 'permissions'])->get();
         return view('roles.index', compact('roles'));
     }
 
@@ -23,12 +26,7 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::all();
-        $groupedPermissions = $permissions->groupBy(function ($permission) {
-            $parts = explode(' ', $permission->name);
-            return count($parts) > 1 ? $parts[1] : 'other';
-        });
-
+        $groupedPermissions = $this->getGroupedPermissions();
         return view('roles.create', compact('groupedPermissions'));
     }
 
@@ -39,12 +37,12 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'required|array',
+            'permissions' => 'sometimes|array',
             'permissions.*' => 'exists:permissions,name',
         ]);
 
         $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
+        $role->syncPermissions($request->input('permissions', []));
 
         return redirect()->route('roles.index')->with('success', 'Role created successfully.');
     }
@@ -55,16 +53,11 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         // Prevent editing Super Admin to avoid lockouts
-        if ($role->name === 'Super Admin') {
+        if ($role->name === self::SUPER_ADMIN) {
             return redirect()->route('roles.index')->with('error', 'Super Admin role cannot be modified.');
         }
 
-        $permissions = Permission::all();
-        $groupedPermissions = $permissions->groupBy(function ($permission) {
-            $parts = explode(' ', $permission->name);
-            return count($parts) > 1 ? $parts[1] : 'other';
-        });
-
+        $groupedPermissions = $this->getGroupedPermissions();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
 
         return view('roles.edit', compact('role', 'groupedPermissions', 'rolePermissions'));
@@ -76,18 +69,18 @@ class RoleController extends Controller
     public function update(Request $request, Role $role)
     {
         // Prevent editing Super Admin
-        if ($role->name === 'Super Admin') {
+        if ($role->name === self::SUPER_ADMIN) {
             return redirect()->route('roles.index')->with('error', 'Super Admin role cannot be modified.');
         }
 
         $request->validate([
             'name' => ['required', 'string', 'max:255', Rule::unique('roles', 'name')->ignore($role->id)],
-            'permissions' => 'required|array',
+            'permissions' => 'sometimes|array',
             'permissions.*' => 'exists:permissions,name',
         ]);
 
         $role->update(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
+        $role->syncPermissions($request->input('permissions', []));
 
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
@@ -98,12 +91,23 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         // Prevent deleting core roles
-        if (in_array($role->name, ['Super Admin', 'Staff', 'Manager'])) {
+        if (in_array($role->name, self::CORE_ROLES)) {
             return redirect()->route('roles.index')->with('error', 'Core system roles cannot be deleted.');
         }
 
         $role->delete();
 
         return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
+    }
+
+    /**
+     * Get permissions grouped by module.
+     */
+    private function getGroupedPermissions()
+    {
+        return Permission::all()->groupBy(function ($permission) {
+            $parts = explode(' ', $permission->name);
+            return count($parts) > 1 ? $parts[1] : 'other';
+        });
     }
 }
