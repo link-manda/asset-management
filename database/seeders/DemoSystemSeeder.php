@@ -166,14 +166,14 @@ class DemoSystemSeeder extends Seeder
                     $staff = $staffs[array_rand($staffs)];
                     $isReturned = ($i == 1); // Unit pertama anggap sudah dikembalikan
                     
-                    AssetAssignment::create([
-                        'asset_item_id' => $item->id,
-                        'assigned_to' => $staff->id,
-                        'assigned_date' => $purchaseDate->copy()->addDays(5),
-                        'return_date' => $isReturned ? $purchaseDate->copy()->addMonths(3) : null,
-                        'condition_on_checkout' => 'Good',
-                        'condition_on_return' => $isReturned ? 'Good' : null,
-                    ]);
+                    AssetAssignment::firstOrCreate(
+                        ['asset_item_id' => $item->id, 'assigned_to' => $staff->id, 'assigned_date' => $purchaseDate->copy()->addDays(5)->toDateString()],
+                        [
+                            'return_date' => $isReturned ? $purchaseDate->copy()->addMonths(3) : null,
+                            'condition_on_checkout' => 'Good',
+                            'condition_on_return' => $isReturned ? 'Good' : null,
+                        ]
+                    );
 
                     if (!$isReturned) {
                         $item->update(['status' => 'Deployed']);
@@ -182,26 +182,29 @@ class DemoSystemSeeder extends Seeder
 
                 // 8. Create Maintenance (Simulasi Servis)
                 if ($i == 4) {
-                    AssetMaintenance::create([
-                        'asset_item_id' => $item->id,
-                        'maintenance_date' => Carbon::now()->subDays(15),
-                        'cost' => 1500000,
-                        'description' => 'Upgrade RAM & Cleaning Service oleh Vendor IT Solution',
-                        'status' => 'Completed',
-                    ]);
+                    AssetMaintenance::firstOrCreate(
+                        ['asset_item_id' => $item->id, 'maintenance_date' => Carbon::now()->subDays(15)->toDateString()],
+                        [
+                            'cost' => 1500000,
+                            'description' => 'Upgrade RAM & Cleaning Service oleh Vendor IT Solution',
+                            'status' => 'Completed',
+                        ]
+                    );
                     $item->update(['status' => 'Maintenance']);
                 }
 
                 // 9. Create Disposal (Aset Keluar/Dijual)
                 if ($i == 5) {
-                    AssetDisposal::create([
-                        'asset_item_id' => $item->id,
-                        'disposal_date' => Carbon::now()->subDays(5),
-                        'reason' => 'Sold',
-                        'selling_price' => $asset->price * 0.4,
-                        'notes' => 'Aset dijual karena upgrade hardware massal.',
-                        'created_by' => $admin->id,
-                    ]);
+                    AssetDisposal::firstOrCreate(
+                        ['asset_item_id' => $item->id],
+                        [
+                            'disposal_date' => Carbon::now()->subDays(5),
+                            'reason' => 'Sold',
+                            'selling_price' => $asset->price * 0.4,
+                            'notes' => 'Aset dijual karena upgrade hardware massal.',
+                            'created_by' => $admin->id,
+                        ]
+                    );
                     $item->update(['status' => 'Disposed']);
                 }
             }

@@ -17,25 +17,26 @@ return new class extends Migration
             Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
         }
 
-        $users = User::all();
-        foreach ($users as $user) {
-            $roleName = $user->role;
-            
-            if (empty($roleName)) {
-                continue;
-            }
+        User::query()->chunk(200, function ($users) {
+            foreach ($users as $user) {
+                $roleName = $user->role;
+                
+                if (empty($roleName)) {
+                    continue;
+                }
 
-            // Map existing roles to Spatie roles
-            $mappedRole = match(strtolower($roleName)) {
-                'admin' => 'Super Admin',
-                'staff' => 'Staff',
-                default => ucwords(str_replace('_', ' ', $roleName)),
-            };
+                // Map existing roles to Spatie roles
+                $mappedRole = match(strtolower($roleName)) {
+                    'admin' => 'Super Admin',
+                    'staff' => 'Staff',
+                    default => ucwords(str_replace('_', ' ', $roleName)),
+                };
 
-            if (Role::where('name', $mappedRole)->exists()) {
-                $user->assignRole($mappedRole);
+                if (Role::where('name', $mappedRole)->exists()) {
+                    $user->assignRole($mappedRole);
+                }
             }
-        }
+        });
     }
 
     /**
