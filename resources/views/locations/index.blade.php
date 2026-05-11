@@ -9,9 +9,11 @@
         <div class="card">
             <div class="card-header flex justify-between items-center">
                 <h6 class="card-title">Location List</h6>
+                @can('create locations')
                 <button data-hs-overlay="#modal-add-location" class="btn btn-sm bg-primary text-white">
                     <i class="size-4 me-1" data-lucide="plus"></i>Add Location
                 </button>
+                @endcan
             </div>
             <div class="card-body p-0">
                 <div class="overflow-x-auto">
@@ -55,9 +57,13 @@
                                                 <i class="size-4" data-lucide="more-vertical"></i>
                                             </button>
                                             <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200" role="menu">
+                                                @can('edit locations')
                                                 <button data-hs-overlay="#modal-edit-{{ $location->id }}" class="w-full flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded">
                                                     <i class="size-3.5" data-lucide="edit-3"></i> Edit
                                                 </button>
+                                                @endcan
+                                                
+                                                @can('delete locations')
                                                 <hr class="my-1 border-default-200">
                                                 <form action="{{ route('locations.destroy', $location) }}" method="POST" class="block">
                                                     @csrf
@@ -66,6 +72,7 @@
                                                         <i class="size-3.5" data-lucide="trash-2"></i> Delete
                                                     </button>
                                                 </form>
+                                                @endcan
                                             </div>
                                         </div>
                                     </td>

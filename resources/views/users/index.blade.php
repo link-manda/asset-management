@@ -17,9 +17,11 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
+                    @can('create users')
                     <a href="{{ route('users.create') }}" class="btn btn-sm bg-primary text-white">
                         <i class="size-4 me-1" data-lucide="user-plus"></i> Add User
                     </a>
+                    @endcan
                 </div>
             </div>
             <div class="flex flex-col">
@@ -65,17 +67,19 @@
                                                 </div>
                                             </td>
                                             <td class="px-4 py-3 whitespace-nowrap">
-                                                @php
-                                                    $roleClasses = [
-                                                        'admin' => 'bg-danger/10 text-danger border-danger/20',
-                                                        'manager' => 'bg-primary/10 text-primary border-primary/20',
-                                                        'staff' => 'bg-success/10 text-success border-success/20',
-                                                    ];
-                                                    $class = $roleClasses[$user->role] ?? 'bg-default-100 text-default-500';
-                                                @endphp
-                                                <span class="inline-flex items-center gap-x-1.5 py-1 px-2.5 rounded border text-xs font-bold uppercase tracking-wider {{ $class }}">
-                                                    {{ $user->role }}
-                                                </span>
+                                                @foreach($user->roles as $role)
+                                                    @php
+                                                        $class = match($role->name) {
+                                                            'Super Admin' => 'bg-danger/10 text-danger border-danger/20',
+                                                            'Manager' => 'bg-primary/10 text-primary border-primary/20',
+                                                            'Staff' => 'bg-success/10 text-success border-success/20',
+                                                            default => 'bg-default-100 text-default-500',
+                                                        };
+                                                    @endphp
+                                                    <span class="inline-flex items-center gap-x-1.5 py-1 px-2.5 rounded border text-[10px] font-bold uppercase tracking-wider {{ $class }}">
+                                                        {{ $role->name }}
+                                                    </span>
+                                                @endforeach
                                             </td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm text-default-600">
                                                 {{ $user->created_at->format('d M Y') }}
@@ -88,10 +92,14 @@
                                                         <i class="size-4" data-lucide="more-horizontal"></i>
                                                     </button>
                                                     <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-lg rounded-lg p-2 mt-2 border border-default-200 dark:bg-default-50" role="menu">
+                                                        @can('edit users')
                                                         <a class="flex items-center gap-2 py-2 px-3 text-sm text-default-600 hover:bg-default-100 rounded-md font-medium"
                                                             href="{{ route('users.edit', $user) }}">
                                                             <i class="size-4" data-lucide="user-cog"></i> Edit Account
                                                         </a>
+                                                        @endcan
+                                                        
+                                                        @can('delete users')
                                                         <div class="h-px bg-default-200 my-1"></div>
                                                         <form action="{{ route('users.destroy', $user) }}" method="POST">
                                                             @csrf
@@ -102,6 +110,7 @@
                                                                 <i class="size-4" data-lucide="user-minus"></i> Delete User
                                                             </button>
                                                         </form>
+                                                        @endcan
                                                     </div>
                                                 </div>
                                             </td>
