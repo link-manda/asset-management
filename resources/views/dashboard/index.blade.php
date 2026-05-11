@@ -146,10 +146,12 @@
                 <div class="card-body z-10 relative">
                     <h6 class="text-xs font-bold uppercase tracking-widest text-primary mb-4 italic">Command Center</h6>
                     <div class="grid grid-cols-2 gap-2">
+                        @can('create assets')
                         <a href="{{ route('assets.create') }}" class="flex flex-col items-center justify-center p-3 bg-default-50 hover:bg-primary/10 border border-default-200 hover:border-primary/30 rounded-lg transition-all group">
                             <i class="size-5 text-primary mb-1 group-hover:scale-110 transition-transform" data-lucide="plus-circle"></i>
                             <span class="text-[10px] font-bold text-default-700">New Asset</span>
                         </a>
+                        @endcan
                         <a href="{{ route('inventory.index') }}" class="flex flex-col items-center justify-center p-3 bg-default-50 hover:bg-success/10 border border-default-200 hover:border-success/30 rounded-lg transition-all group">
                             <i class="size-5 text-success mb-1 group-hover:scale-110 transition-transform" data-lucide="scan-barcode"></i>
                             <span class="text-[10px] font-bold text-default-700">Inventory</span>

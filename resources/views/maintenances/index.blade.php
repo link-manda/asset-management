@@ -17,9 +17,11 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
+                    @can('create assets')
                     <a href="{{ route('maintenances.create') }}" class="btn btn-sm bg-primary text-white">
                         <i class="size-4 me-1" data-lucide="wrench"></i> Ajukan Perbaikan
                     </a>
+                    @endcan
                 </div>
             </div>
             <div class="flex flex-col">
@@ -85,10 +87,14 @@
                                                         <i class="size-4" data-lucide="more-horizontal"></i>
                                                     </button>
                                                     <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-lg rounded-lg p-2 mt-2 border border-default-200 dark:bg-default-50" role="menu">
+                                                        @can('edit assets')
                                                         <a class="flex items-center gap-2 py-2 px-3 text-sm text-default-600 hover:bg-default-100 rounded-md font-medium"
                                                             href="{{ route('maintenances.edit', $item) }}">
                                                             <i class="size-4" data-lucide="edit-3"></i> Edit Record
                                                         </a>
+                                                        @endcan
+                                                        
+                                                        @can('delete assets')
                                                         <div class="h-px bg-default-200 my-1"></div>
                                                         <form action="{{ route('maintenances.destroy', $item) }}" method="POST">
                                                             @csrf
@@ -97,6 +103,7 @@
                                                                 <i class="size-4" data-lucide="trash-2"></i> Delete Log
                                                             </button>
                                                         </form>
+                                                        @endcan
                                                     </div>
                                                 </div>
                                             </td>

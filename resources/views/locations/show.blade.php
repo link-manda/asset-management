@@ -17,7 +17,9 @@
                         <p class="text-default-500 text-sm mb-4">Total Assets: {{ $location->items->count() }} Units</p>
 
                         <div class="flex flex-col gap-2">
+                            @can('edit locations')
                             <a href="{{ route('locations.edit', $location) }}" class="btn btn-sm bg-primary text-white w-full uppercase font-bold text-xs tracking-wider">Edit Location</a>
+                            @endcan
                             <a href="{{ route('locations.index') }}" class="btn btn-sm border-default-200 text-default-600 w-full">Back to List</a>
                         </div>
                     </div>

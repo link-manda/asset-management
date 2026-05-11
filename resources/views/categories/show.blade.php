@@ -17,7 +17,9 @@
                         <p class="text-default-500 text-sm mb-4">Total Assets: {{ $category->assets->count() }}</p>
 
                         <div class="flex flex-col gap-2">
+                            @can('edit categories')
                             <a href="{{ route('categories.edit', $category) }}" class="btn btn-sm bg-primary text-white w-full uppercase font-bold text-xs tracking-wider">Edit Category</a>
+                            @endcan
                             <a href="{{ route('categories.index') }}" class="btn btn-sm border-default-200 text-default-600 w-full">Back to List</a>
                         </div>
                     </div>
@@ -40,7 +42,9 @@
             <div class="card">
                 <div class="card-header flex justify-between items-center">
                     <h6 class="card-title">Assets in this Category</h6>
+                    @can('create assets')
                     <a href="{{ route('assets.create', ['category_id' => $category->id]) }}" class="btn btn-sm bg-primary text-white">Add Asset</a>
+                    @endcan
                 </div>
                 <div class="card-body p-0">
                     <div class="overflow-x-auto">

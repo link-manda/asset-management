@@ -24,12 +24,14 @@
         </div>
         <div class="flex items-center gap-3">
             <!-- Quick Add Button -->
+            @can('create assets')
             <div class="topbar-item hidden sm:flex">
-                <a href="{{ route('assets.index') }}" class="btn btn-sm bg-primary text-white rounded-full flex items-center gap-1.5 px-3 shadow-sm hover:shadow-md transition-all">
+                <a href="{{ route('assets.create') }}" class="btn btn-sm bg-primary text-white rounded-full flex items-center gap-1.5 px-3 shadow-sm hover:shadow-md transition-all">
                     <i class="size-4" data-lucide="plus"></i>
                     <span class="hidden md:inline-block font-medium">New Asset</span>
                 </a>
             </div>
+            @endcan
             
             <!-- Light/Dark Mode Button -->
             <div class="topbar-item">

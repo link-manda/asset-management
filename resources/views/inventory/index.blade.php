@@ -111,9 +111,11 @@
                                                             <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('inventory.show', $item) }}">
                                                                 <i class="size-3.5" data-lucide="eye"></i> View Details
                                                             </a>
+                                                            @can('edit assets')
                                                             <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-info hover:bg-info/10 rounded" href="{{ route('inventory.edit', $item) }}">
                                                                 <i class="size-3.5" data-lucide="edit-3"></i> Edit Specs
                                                             </a>
+                                                            @endcan
                                                             <form action="{{ route('inventory.bulk-print') }}" method="POST" target="_blank" class="block">
                                                                 @csrf
                                                                 <input type="hidden" name="ids[]" value="{{ $item->id }}">

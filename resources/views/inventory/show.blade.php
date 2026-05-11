@@ -45,9 +45,11 @@
                                 <i class="size-3.5" data-lucide="printer"></i> Cetak Label
                             </button>
                         </form>
+                        @can('edit assets')
                         <a href="{{ route('inventory.edit', $item) }}" class="btn btn-sm bg-default-100 text-default-700 w-full py-1.5 flex items-center justify-center gap-1.5 hover:bg-default-200 transition-all text-[11px] font-bold">
                             <i class="size-3.5" data-lucide="edit-3"></i> Edit Spesifikasi
                         </a>
+                        @endcan
                     </div>
                 </div>
             </div>
