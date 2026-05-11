@@ -30,7 +30,7 @@ class AssignmentHistoryExportTest extends TestCase
         // Generate some test data
         $user = User::factory()->create();
         $asset = Asset::factory()->create();
-        $item = $asset->items()->first();
+        $item = AssetItem::factory()->create(['asset_id' => $asset->id]);
         
         $assignment = AssetAssignment::create([
             'asset_item_id' => $item->id,
@@ -53,8 +53,10 @@ class AssignmentHistoryExportTest extends TestCase
         // Setup matching record
         $userMatch = User::factory()->create(['name' => 'John Doe']);
         $assetMatch = Asset::factory()->create(['name' => 'MacBook Pro']);
-        $itemMatch = $assetMatch->items()->first();
-        $itemMatch->update(['item_code' => 'ITM-001']);
+        $itemMatch = AssetItem::factory()->create([
+            'asset_id' => $assetMatch->id,
+            'item_code' => 'ITM-001'
+        ]);
         
         $assignmentMatch = AssetAssignment::create([
             'asset_item_id' => $itemMatch->id,
@@ -66,8 +68,10 @@ class AssignmentHistoryExportTest extends TestCase
         // Setup non-matching record
         $userNoMatch = User::factory()->create(['name' => 'Jane Smith']);
         $assetNoMatch = Asset::factory()->create(['name' => 'ThinkPad']);
-        $itemNoMatch = $assetNoMatch->items()->first();
-        $itemNoMatch->update(['item_code' => 'ITM-002']);
+        $itemNoMatch = AssetItem::factory()->create([
+            'asset_id' => $assetNoMatch->id,
+            'item_code' => 'ITM-002'
+        ]);
         
         $assignmentNoMatch = AssetAssignment::create([
             'asset_item_id' => $itemNoMatch->id,

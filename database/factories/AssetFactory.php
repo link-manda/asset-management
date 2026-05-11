@@ -28,4 +28,15 @@ class AssetFactory extends Factory
             'notes' => $this->faker->sentence(),
         ];
     }
+
+    /**
+     * Configure the model factory.
+     */
+    public function configure()
+    {
+        return $this->afterCreating(function (Asset $asset) {
+            // No automatic item creation here to keep tests predictable.
+            // Items should be created explicitly using AssetItem::factory() or via store method.
+        });
+    }
 }

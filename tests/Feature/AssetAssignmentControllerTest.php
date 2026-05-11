@@ -17,7 +17,9 @@ class AssetAssignmentControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
         $this->user = User::factory()->create();
+        $this->user->assignRole('Super Admin');
     }
 
     public function test_index_displays_assignments()
