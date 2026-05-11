@@ -16,10 +16,19 @@ class AssetController extends Controller
     /**
      * index: Display asset list (Master) with pagination.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $assets = Asset::with(['category', 'uom', 'items'])->latest()->paginate(10);
-        return view('assets.index', compact('assets'));
+        $assets = Asset::with(['category', 'uom', 'items'])
+            ->filter($request->all())
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $categories = Category::orderBy('name')->get();
+        $locations = Location::orderBy('name')->get();
+        $statuses = ['Available', 'Deployed', 'Maintenance', 'Broken', 'Disposed'];
+
+        return view('assets.index', compact('assets', 'categories', 'locations', 'statuses'));
     }
 
     /**
