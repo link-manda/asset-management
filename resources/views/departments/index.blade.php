@@ -23,7 +23,9 @@
                                 <th class="px-3.5 py-3 text-start" scope="col">Department Name</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Division</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Total Users</th>
+                                @canany(['edit departments', 'delete departments'])
                                 <th class="px-3.5 py-3 text-center" scope="col">Actions</th>
+                                @endcanany
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-default-200">
@@ -38,6 +40,7 @@
                                     <td class="px-3.5 py-4 text-sm text-default-600">
                                         <span class="text-xs font-semibold text-default-500">{{ $department->users_count }} Members</span>
                                     </td>
+                                    @canany(['edit departments', 'delete departments'])
                                     <td class="px-3.5 py-4 text-center">
                                         <div class="hs-dropdown relative inline-flex">
                                             <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
@@ -63,6 +66,7 @@
                                             </div>
                                         </div>
                                     </td>
+                                    @endcanany
                                 </tr>
                             @endforeach
                         </tbody>

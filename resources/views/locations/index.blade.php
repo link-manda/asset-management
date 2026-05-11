@@ -23,9 +23,12 @@
                                 <th class="px-3.5 py-3 text-start" scope="col">Location Name</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Parent Location</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Address</th>
-                                <th class="px-3.5 py-3 text-start" scope="col">Total Items</th>
+                                <th class="px-3.5 py-3 text-start" scope="col">Total Units</th>
+                                @canany(['edit locations', 'delete locations'])
                                 <th class="px-3.5 py-3 text-center" scope="col">Actions</th>
-                            </tr>
+                                @endcanany
+                                </tr>
+
                         </thead>
                         <tbody class="divide-y divide-default-200">
                             @foreach ($locations as $location)
@@ -51,6 +54,7 @@
                                             {{ $location->items_count }} Units
                                         </span>
                                     </td>
+                                    @canany(['edit locations', 'delete locations'])
                                     <td class="px-3.5 py-4 text-center">
                                         <div class="hs-dropdown relative inline-flex">
                                             <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
@@ -76,6 +80,7 @@
                                             </div>
                                         </div>
                                     </td>
+                                    @endcanany
                                 </tr>
 
                                 {{-- MODAL EDIT --}}

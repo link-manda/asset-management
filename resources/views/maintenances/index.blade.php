@@ -36,7 +36,9 @@
                                         <th class="px-4 py-3 text-start">Repair Description</th>
                                         <th class="px-4 py-3 text-start">Actual Cost</th>
                                         <th class="px-4 py-3 text-start">Service Status</th>
+                                        @can('edit assets')
                                         <th class="px-4 py-3 text-center">Actions</th>
+                                        @endcan
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
@@ -79,6 +81,7 @@
                                                     {{ $item->status }}
                                                 </span>
                                             </td>
+                                            @can('edit assets')
                                             <td class="px-4 py-3 text-center">
                                                 <div class="hs-dropdown relative inline-flex">
                                                     <button aria-expanded="false" aria-haspopup="menu" aria-label="Dropdown"
@@ -87,13 +90,10 @@
                                                         <i class="size-4" data-lucide="more-horizontal"></i>
                                                     </button>
                                                     <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-lg rounded-lg p-2 mt-2 border border-default-200 dark:bg-default-50" role="menu">
-                                                        @can('edit assets')
                                                         <a class="flex items-center gap-2 py-2 px-3 text-sm text-default-600 hover:bg-default-100 rounded-md font-medium"
                                                             href="{{ route('maintenances.edit', $item) }}">
                                                             <i class="size-4" data-lucide="edit-3"></i> Edit Record
                                                         </a>
-                                                        @endcan
-                                                        
                                                         @can('delete assets')
                                                         <div class="h-px bg-default-200 my-1"></div>
                                                         <form action="{{ route('maintenances.destroy', $item) }}" method="POST">
@@ -107,10 +107,11 @@
                                                     </div>
                                                 </div>
                                             </td>
+                                            @endcan
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="px-4 py-10 text-center">
+                                            <td colspan="{{ auth()->user()->can('edit assets') ? 6 : 5 }}" class="px-4 py-10 text-center">
                                                 <div class="flex flex-col items-center">
                                                     <i class="size-12 text-default-300 mb-3" data-lucide="clipboard-list"></i>
                                                     <p class="text-default-500 font-medium">No maintenance history found.</p>

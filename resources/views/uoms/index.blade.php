@@ -23,7 +23,9 @@
                                 <th class="px-3.5 py-3 text-start" scope="col">Unit Name</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Symbol / Initial</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Used In</th>
+                                @canany(['edit uoms', 'delete uoms'])
                                 <th class="px-3.5 py-3 text-center" scope="col">Actions</th>
+                                @endcanany
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-default-200">
@@ -38,6 +40,7 @@
                                             {{ $uom->assets_count }} Assets
                                         </span>
                                     </td>
+                                    @canany(['edit uoms', 'delete uoms'])
                                     <td class="px-3.5 py-4 text-center">
                                         <div class="hs-dropdown relative inline-flex">
                                             <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
@@ -63,6 +66,7 @@
                                             </div>
                                         </div>
                                     </td>
+                                    @endcanany
                                 </tr>
 
                                 {{-- MODAL EDIT --}}

@@ -37,7 +37,9 @@
                                         <th class="px-3.5 py-3 text-start" scope="col">Total Stock</th>
                                         <th class="px-3.5 py-3 text-start" scope="col">Estimated Value</th>
                                         <th class="px-3.5 py-3 text-start" scope="col">Distribution</th>
+                                        @can('edit assets')
                                         <th class="px-3.5 py-3 text-center" scope="col">Actions</th>
+                                        @endcan
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
@@ -90,6 +92,7 @@
                                                     @endforeach
                                                 </div>
                                             </td>
+                                            @can('edit assets')
                                             <td class="px-3.5 py-4 text-center">
                                                 <div class="hs-dropdown relative inline-flex">
                                                     <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
@@ -99,18 +102,17 @@
                                                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('assets.show', $asset) }}">
                                                             <i class="size-3.5" data-lucide="eye"></i> View Details
                                                         </a>
-                                                        @can('edit assets')
                                                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-warning hover:bg-warning/10 rounded" href="{{ route('assets.edit', $asset) }}">
                                                             <i class="size-3.5" data-lucide="edit-3"></i> Edit Asset
                                                         </a>
-                                                        @endcan
                                                     </div>
                                                 </div>
                                             </td>
+                                            @endcan
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="7" class="px-3.5 py-12 text-center text-default-400 italic">
+                                            <td colspan="{{ auth()->user()->can('edit assets') ? 7 : 6 }}" class="px-3.5 py-12 text-center text-default-400 italic">
                                                 No asset catalog registered yet.
                                             </td>
                                         </tr>

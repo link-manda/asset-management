@@ -45,9 +45,12 @@
                                             <th class="px-4 py-3 text-start">Asset Name</th>
                                             <th class="px-4 py-3 text-start">Location</th>
                                             <th class="px-4 py-3 text-start">Status</th>
-                                            <th class="px-4 py-3 text-start">Borrower / User</th>
+                                            <th class="px-4 py-3 text-start">Depreciation</th>
+                                            @can('edit assets')
                                             <th class="px-4 py-3 text-center">Actions</th>
-                                        </tr>
+                                            @endcan
+                                            </tr>
+
                                     </thead>
                                     <tbody class="divide-y divide-default-200">
                                         @forelse ($items as $item)
@@ -102,6 +105,7 @@
                                                         <span class="text-default-300 italic">-</span>
                                                     @endif
                                                 </td>
+                                                @can('edit assets')
                                                 <td class="px-4 py-2 text-center">
                                                     <div class="hs-dropdown relative inline-flex">
                                                         <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
@@ -111,11 +115,9 @@
                                                             <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('inventory.show', $item) }}">
                                                                 <i class="size-3.5" data-lucide="eye"></i> View Details
                                                             </a>
-                                                            @can('edit assets')
                                                             <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-info hover:bg-info/10 rounded" href="{{ route('inventory.edit', $item) }}">
                                                                 <i class="size-3.5" data-lucide="edit-3"></i> Edit Specs
                                                             </a>
-                                                            @endcan
                                                             <form action="{{ route('inventory.bulk-print') }}" method="POST" target="_blank" class="block">
                                                                 @csrf
                                                                 <input type="hidden" name="ids[]" value="{{ $item->id }}">
@@ -126,10 +128,11 @@
                                                         </div>
                                                     </div>
                                                 </td>
+                                                @endcan
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="px-4 py-12 text-center">
+                                                <td colspan="{{ auth()->user()->can('edit assets') ? 7 : 6 }}" class="px-4 py-12 text-center">
                                                     <div class="flex flex-col items-center">
                                                         <i class="size-12 text-default-200 mb-3" data-lucide="package-search"></i>
                                                         <p class="text-default-500 font-medium">Tidak ada item fisik ditemukan.</p>

@@ -35,9 +35,12 @@
                                         <th class="px-4 py-3 text-start">Email Address</th>
                                         <th class="px-4 py-3 text-start">Org. Structure</th>
                                         <th class="px-4 py-3 text-start">Role</th>
-                                        <th class="px-4 py-3 text-start">Joined Date</th>
-                                        <th class="px-4 py-3 text-center">Actions</th>
-                                    </tr>
+                                        <th class="px-4 py-3 text-start" scope="col">Joined Date</th>
+                                        @canany(['edit users', 'delete users'])
+                                        <th class="px-4 py-3 text-center" scope="col">Actions</th>
+                                        @endcanany
+                                        </tr>
+
                                 </thead>
                                 <tbody class="divide-y divide-default-200">
                                     @foreach ($users as $user)
@@ -84,6 +87,7 @@
                                             <td class="px-4 py-3 whitespace-nowrap text-sm text-default-600">
                                                 {{ $user->created_at->format('d M Y') }}
                                             </td>
+                                            @canany(['edit users', 'delete users'])
                                             <td class="px-4 py-3 text-center">
                                                 <div class="hs-dropdown relative inline-flex">
                                                     <button aria-expanded="false" aria-haspopup="menu" aria-label="Dropdown"
@@ -114,6 +118,7 @@
                                                     </div>
                                                 </div>
                                             </td>
+                                            @endcanany
                                         </tr>
                                     @endforeach
                                 </tbody>

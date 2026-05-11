@@ -22,7 +22,9 @@
                             <tr class="text-sm text-default-800 uppercase tracking-wider text-[11px] font-bold">
                                 <th class="px-3.5 py-3 text-start" scope="col">Division Name</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Total Departments</th>
+                                @canany(['edit divisions', 'delete divisions'])
                                 <th class="px-3.5 py-3 text-center" scope="col">Actions</th>
+                                @endcanany
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-default-200">
@@ -34,6 +36,7 @@
                                             {{ $division->departments_count }} Departments
                                         </span>
                                     </td>
+                                    @canany(['edit divisions', 'delete divisions'])
                                     <td class="px-3.5 py-4 text-center">
                                         <div class="hs-dropdown relative inline-flex">
                                             <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
@@ -59,6 +62,7 @@
                                             </div>
                                         </div>
                                     </td>
+                                    @endcanany
                                 </tr>
                             @endforeach
                         </tbody>

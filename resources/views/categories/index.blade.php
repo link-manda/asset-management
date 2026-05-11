@@ -24,9 +24,12 @@
                                 <th class="px-3.5 py-3 text-start" scope="col">Fiscal Group</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Life (Months)</th>
                                 <th class="px-3.5 py-3 text-start" scope="col">Residual (%)</th>
-                                <th class="px-3.5 py-3 text-start" scope="col">Total Assets</th>
+                                <th class="px-3.5 py-3 text-start" scope="col">Last Updated</th>
+                                @canany(['edit categories', 'delete categories'])
                                 <th class="px-3.5 py-3 text-center" scope="col">Actions</th>
-                            </tr>
+                                @endcanany
+                                </tr>
+
                         </thead>
                         <tbody class="divide-y divide-default-200">
                             @foreach ($categories as $category)
@@ -46,6 +49,7 @@
                                             {{ $category->assets_count }} Items
                                         </span>
                                     </td>
+                                    @canany(['edit categories', 'delete categories'])
                                     <td class="px-3.5 py-4 text-center">
                                         <div class="hs-dropdown relative inline-flex">
                                             <button class="hs-dropdown-toggle btn size-8 bg-default-100 hover:bg-default-600 text-default-500 hover:text-white rounded-full transition-all" type="button">
@@ -71,6 +75,7 @@
                                             </div>
                                         </div>
                                     </td>
+                                    @endcanany
                                 </tr>
 
                                 {{-- MODAL EDIT --}}
