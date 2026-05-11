@@ -91,9 +91,11 @@
                                 <i class="size-4" data-lucide="more-vertical"></i>
                             </button>
                             <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-32 z-50 bg-white shadow-md rounded-lg p-2 mt-2 dark:bg-default-50 dark:border dark:border-default-200" role="menu">
+                                @can('edit assets')
                                 <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('assets.edit', $asset) }}">
                                     <i class="size-3" data-lucide="edit-3"></i> Edit Master
                                 </a>
+                                @endcan
                             </div>
                         </div>
                     </div>
@@ -106,9 +108,11 @@
                             <i class="size-4 text-primary" data-lucide="box"></i>
                             Physical Units List
                         </h6>
+                        @can('create assets')
                         <button type="button" data-hs-overlay="#modal-add-item" class="btn btn-sm bg-primary text-white py-1">
                             <i class="size-3.5 me-1" data-lucide="plus"></i> Add Unit
                         </button>
+                        @endcan
                     </div>
 
                     <div class="overflow-x-auto border rounded-lg border-default-200">
@@ -164,6 +168,7 @@
                                                     <a href="{{ route('inventory.show', $item) }}" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded">
                                                         <i class="size-3.5" data-lucide="eye"></i> View Specs
                                                     </a>
+                                                    @can('edit assets')
                                                     <a href="{{ route('inventory.edit', $item) }}" class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-info hover:bg-info/10 rounded">
                                                         <i class="size-3.5" data-lucide="edit-3"></i> Edit Unit
                                                     </a>
@@ -185,8 +190,10 @@
                                                             <i class="size-3.5" data-lucide="log-in"></i> Check-in
                                                         </button>
                                                     @endif
+                                                    @endcan
 
                                                     @if($item->status != 'Disposed')
+                                                        @can('delete assets')
                                                         <hr class="my-1 border-default-200">
                                                         <button type="button"
                                                             data-hs-overlay="#modal-disposal"
@@ -194,6 +201,7 @@
                                                             class="btn-disposal w-full text-start flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-danger hover:bg-danger/10 rounded">
                                                             <i class="size-3.5" data-lucide="trash-2"></i> Disposal
                                                         </button>
+                                                        @endcan
                                                     @endif
                                                 </div>
                                             </div>

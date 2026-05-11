@@ -23,13 +23,22 @@
                             </div>
                         </div>
 
+                        @php
+                            $currentRole = $user->getRoleNames()->first();
+                            $roleValue = match($currentRole) {
+                                'Super Admin' => 'admin',
+                                'Manager' => 'manager',
+                                'Staff' => 'staff',
+                                default => ''
+                            };
+                        @endphp
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="role">User Role</label>
                                 <select class="form-input" id="role" name="role" required>
-                                    <option value="staff" {{ old('role', $user->role) == 'staff' ? 'selected' : '' }}>Staff</option>
-                                    <option value="manager" {{ old('role', $user->role) == 'manager' ? 'selected' : '' }}>Manager</option>
-                                    <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Administrator</option>
+                                    <option value="staff" {{ old('role', $roleValue) == 'staff' ? 'selected' : '' }}>Staff</option>
+                                    <option value="manager" {{ old('role', $roleValue) == 'manager' ? 'selected' : '' }}>Manager</option>
+                                    <option value="admin" {{ old('role', $roleValue) == 'admin' ? 'selected' : '' }}>Administrator</option>
                                 </select>
                             </div>
                             <div class="col-span-1">

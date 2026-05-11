@@ -20,7 +20,6 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password'),
-                'role' => 'admin',
             ]
         );
         $admin1->assignRole('Super Admin');
@@ -30,7 +29,6 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Bram Asset Manager',
                 'password' => Hash::make('password'),
-                'role' => 'admin',
             ]
         );
         $admin2->assignRole('Super Admin');
@@ -41,7 +39,6 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Andi Staff IT',
                 'password' => Hash::make('password'),
-                'role' => 'staff',
             ]
         );
         $staff1->assignRole('Staff');
@@ -51,7 +48,6 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Budi Staff Ops',
                 'password' => Hash::make('password'),
-                'role' => 'staff',
             ]
         );
         $staff2->assignRole('Staff');

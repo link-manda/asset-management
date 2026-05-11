@@ -54,7 +54,7 @@ class AssignmentHistoryExport implements FromQuery, WithHeadings, WithMapping, W
             $assignment->item->item_code ?? '-',
             $assignment->item->asset->asset_code ?? '-',
             $assignment->user->name ?? '-',
-            $assignment->user->role ?? '-',
+            $assignment->user->getRoleNames()->first() ?? '-',
             $assignment->assigned_date ? $assignment->assigned_date->format('Y-m-d') : '-',
             $assignment->return_date ? $assignment->return_date->format('Y-m-d') : 'Currently Deployed',
             $assignment->condition_on_checkout ?? '-',

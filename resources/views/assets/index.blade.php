@@ -17,9 +17,11 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
+                    @can('create assets')
                     <a href="{{ route('assets.create') }}" class="btn btn-sm bg-primary text-white">
                         <i class="size-4 me-1" data-lucide="plus"></i> Add New Asset
                     </a>
+                    @endcan
                 </div>
             </div>
             <div class="flex flex-col">
@@ -97,9 +99,11 @@
                                                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-default-500 hover:bg-default-150 rounded" href="{{ route('assets.show', $asset) }}">
                                                             <i class="size-3.5" data-lucide="eye"></i> View Details
                                                         </a>
+                                                        @can('edit assets')
                                                         <a class="flex items-center gap-1.5 py-1.5 font-medium px-3 text-sm text-warning hover:bg-warning/10 rounded" href="{{ route('assets.edit', $asset) }}">
                                                             <i class="size-3.5" data-lucide="edit-3"></i> Edit Asset
                                                         </a>
+                                                        @endcan
                                                     </div>
                                                 </div>
                                             </td>

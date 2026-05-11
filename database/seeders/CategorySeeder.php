@@ -12,8 +12,17 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Category::create(['name' => 'IT Equipment', 'description' => 'Laptop, PC, Server, dan perangkat IT lainnya']);
-        \App\Models\Category::create(['name' => 'Furniture', 'description' => 'Meja, kursi, lemari, dan perlengkapan kantor']);
-        \App\Models\Category::create(['name' => 'Kendaraan', 'description' => 'Mobil, motor, dan armada operasional']);
+        \App\Models\Category::firstOrCreate(
+            ['name' => 'IT Equipment'],
+            ['description' => 'Laptop, PC, Server, dan perangkat IT lainnya']
+        );
+        \App\Models\Category::firstOrCreate(
+            ['name' => 'Furniture'],
+            ['description' => 'Meja, kursi, lemari, dan perlengkapan kantor']
+        );
+        \App\Models\Category::firstOrCreate(
+            ['name' => 'Kendaraan'],
+            ['description' => 'Mobil, motor, dan armada operasional']
+        );
     }
 }

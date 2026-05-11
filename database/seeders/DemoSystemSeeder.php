@@ -37,7 +37,6 @@ class DemoSystemSeeder extends Seeder
             [
                 'name' => 'Super Admin Demo',
                 'password' => Hash::make('password'),
-                'role' => 'admin',
                 'email_verified_at' => now(),
             ]
         );
@@ -48,7 +47,6 @@ class DemoSystemSeeder extends Seeder
             [
                 'name' => 'Manager Demo',
                 'password' => Hash::make('password'),
-                'role' => 'manager',
                 'email_verified_at' => now(),
                 'department_id' => $deptGA->id,
             ]
@@ -64,7 +62,6 @@ class DemoSystemSeeder extends Seeder
                 [
                     'name' => $name,
                     'password' => Hash::make('password'),
-                    'role' => 'staff',
                     'email_verified_at' => now(),
                     'department_id' => $deptSupport->id,
                 ]

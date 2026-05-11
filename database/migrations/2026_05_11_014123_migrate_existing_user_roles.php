@@ -17,7 +17,9 @@ return new class extends Migration
             Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
         }
 
-        User::query()->chunk(200, function ($users) {
+        $allRoles = Role::pluck('name')->toArray();
+
+        User::query()->chunk(200, function ($users) use ($allRoles) {
             foreach ($users as $user) {
                 $roleName = $user->role;
                 
@@ -32,7 +34,7 @@ return new class extends Migration
                     default => ucwords(str_replace('_', ' ', $roleName)),
                 };
 
-                if (Role::where('name', $mappedRole)->exists()) {
+                if (in_array($mappedRole, $allRoles)) {
                     $user->assignRole($mappedRole);
                 }
             }

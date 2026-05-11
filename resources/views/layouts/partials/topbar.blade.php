@@ -146,7 +146,7 @@
                                 </div>
                                 <div>
                                     <h6 class="mb-1 text-sm font-semibold text-default-800">{{ auth()->user()->name }}</h6>
-                                    <p class="text-xs text-default-500 uppercase font-bold">{{ auth()->user()->role }}</p>
+                                    <p class="text-xs text-default-500 uppercase font-bold">{{ auth()->user()->getRoleNames()->first() ?? 'User' }}</p>
                                 </div>
                             </div>
                         </div>

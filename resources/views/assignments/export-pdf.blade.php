@@ -38,7 +38,7 @@
                     <td>{{ $assignment->item->asset->name ?? '-' }}<br><small>{{ $assignment->item->asset->asset_code ?? '' }}</small></td>
                     <td>{{ $assignment->item->item_code ?? '-' }}</td>
                     <td>{{ $assignment->user->name ?? '-' }}</td>
-                    <td>{{ $assignment->user->role ?? '-' }}</td>
+                    <td>{{ $assignment->user->getRoleNames()->first() ?? '-' }}</td>
                     <td>{{ $assignment->assigned_date ? \Carbon\Carbon::parse($assignment->assigned_date)->format('d M Y') : '-' }}</td>
                     <td>
                         @if($assignment->return_date)

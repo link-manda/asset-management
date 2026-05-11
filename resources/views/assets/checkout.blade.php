@@ -27,7 +27,7 @@
                                 <option value="" disabled selected>-- Select Recipient --</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}" {{ old('assigned_to') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }} ({{ strtoupper($user->role) }})
+                                        {{ $user->name }} ({{ strtoupper($user->getRoleNames()->first() ?? '-') }})
                                     </option>
                                 @endforeach
                             </select>

@@ -142,12 +142,14 @@
                     <span>System</span>
                 </li>
 
+                @can('view users')
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
                         <span class="menu-icon"><i data-lucide="users"></i></span>
                         <div class="menu-text">User Management</div>
                     </a>
                 </li>
+                @endcan
 
                 @role('Super Admin')
                 <li class="menu-item">

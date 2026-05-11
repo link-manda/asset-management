@@ -86,7 +86,7 @@
                                                     </div>
                                                     <div>
                                                         <h6 class="text-sm font-semibold text-default-800">{{ $assignment->user->name }}</h6>
-                                                        <p class="text-[10px] text-default-400 uppercase tracking-wider font-bold">{{ $assignment->user->role }}</p>
+                                                        <p class="text-[10px] text-default-400 uppercase tracking-wider font-bold">{{ $assignment->user->getRoleNames()->first() ?? '-' }}</p>
                                                     </div>
                                                 </div>
                                             </td>

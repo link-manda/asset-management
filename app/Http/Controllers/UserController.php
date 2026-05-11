@@ -42,13 +42,23 @@ class UserController extends Controller
             'department_id' => 'required|exists:departments,id',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
             'department_id' => $request->department_id,
         ]);
+
+        // Map form role to Spatie role names
+        $roleMap = [
+            'admin' => 'Super Admin',
+            'manager' => 'Manager',
+            'staff' => 'Staff'
+        ];
+
+        if (isset($roleMap[$request->role])) {
+            $user->assignRole($roleMap[$request->role]);
+        }
 
         return redirect()->route('users.index')->with('success', 'User successfully added.');
     }
@@ -78,7 +88,6 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
             'department_id' => $request->department_id,
         ];
 
@@ -87,6 +96,17 @@ class UserController extends Controller
         }
 
         $user->update($data);
+
+        // Map form role to Spatie role names
+        $roleMap = [
+            'admin' => 'Super Admin',
+            'manager' => 'Manager',
+            'staff' => 'Staff'
+        ];
+
+        if (isset($roleMap[$request->role])) {
+            $user->syncRoles($roleMap[$request->role]);
+        }
 
         return redirect()->route('users.index')->with('success', 'User account successfully updated.');
     }

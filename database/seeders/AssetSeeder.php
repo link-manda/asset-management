@@ -12,6 +12,8 @@ class AssetSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Asset::factory()->count(50)->create();
+        if (\App\Models\Asset::count() === 0) {
+            \App\Models\Asset::factory()->count(50)->create();
+        }
     }
 }
