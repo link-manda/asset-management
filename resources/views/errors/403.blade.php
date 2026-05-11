@@ -1,42 +1,42 @@
 @extends('layouts.base', ['title' => 'Access Denied'])
 
 @section('content')
-<div class="flex items-center justify-center min-h-screen p-6 bg-default-50/50 dark:bg-default-50/10">
-    <div class="max-w-xl w-full text-center">
-        <div class="mb-6">
-            <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-[10px] font-black bg-danger/10 text-danger uppercase tracking-widest border border-danger/20">
-                Error 403
-            </span>
+<div class="relative flex items-center justify-center min-h-screen p-6 overflow-hidden bg-white dark:bg-default-50">
+    {{-- Decorative Background Elements --}}
+    <div class="absolute top-0 start-0 -translate-x-1/2 -translate-y-1/2 size-96 bg-danger/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 end-0 translate-x-1/2 translate-y-1/2 size-96 bg-danger/5 rounded-full blur-3xl"></div>
+
+    <div class="relative max-w-lg w-full text-center z-10">
+        <div class="mb-8 flex justify-center">
+            <div class="inline-flex items-center justify-center size-20 bg-danger/10 rounded-2xl -rotate-6">
+                <i data-lucide="shield-off" class="size-10 text-danger rotate-6"></i>
+            </div>
         </div>
 
-        <h1 class="text-4xl md:text-5xl font-black text-default-900 mb-4 tracking-tight">Access Denied</h1>
+        <h1 class="text-8xl font-black text-danger/20 mb-[-2rem] select-none tracking-tighter">403</h1>
+        <h2 class="text-4xl font-bold text-default-900 mb-4 relative">Access Denied</h2>
         
-        <p class="text-base text-default-500 mb-10 max-w-md mx-auto leading-relaxed">
-            Sorry, you don't have permission to access this area. Your activity has been logged. Please contact your administrator for assistance.
+        <p class="text-base text-default-500 mb-12 max-w-sm mx-auto leading-relaxed">
+            Sorry, you don't have permission to access this area. Your activity has been logged for security purposes.
         </p>
 
         <div class="mb-12 flex justify-center">
-            <div class="relative">
-                <div class="size-32 md:size-40 bg-danger/10 text-danger rounded-2xl flex items-center justify-center rotate-12 hover:rotate-0 transition-transform duration-500">
-                    <i data-lucide="shield-off" class="size-16 md:size-20"></i>
-                </div>
-                <div class="absolute -top-3 -right-3 size-10 bg-white dark:bg-default-50 border-4 border-danger rounded-full flex items-center justify-center text-danger font-black text-lg shadow-lg">
-                    !
-                </div>
+            <div class="size-48 bg-danger/5 rounded-full flex items-center justify-center border-4 border-danger/10 animate-pulse">
+                <i data-lucide="lock-keyhole" class="size-24 text-danger/20"></i>
             </div>
         </div>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href="{{ route('dashboard') }}" class="btn bg-primary hover:bg-primary-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
+            <a href="{{ route('dashboard') }}" class="btn bg-primary hover:bg-primary-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2">
                 <i data-lucide="home" class="size-4"></i> Dashboard
             </a>
-            <button onclick="window.history.back()" class="btn border border-default-200 text-default-600 px-8 py-3 rounded-lg font-bold hover:bg-default-100 transition-all flex items-center gap-2">
+            <button onclick="window.history.back()" class="btn border-2 border-default-100 text-default-600 hover:bg-default-100 px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2">
                 <i data-lucide="arrow-left" class="size-4"></i> Back to Safety
             </button>
         </div>
 
-        <div class="mt-16 pt-8 border-t border-default-200/50 text-center text-xs text-default-400 font-bold uppercase tracking-widest">
-            © {{ date('Y') }} Asset Management System • Security Protocol
+        <div class="mt-16 text-[10px] font-bold uppercase tracking-widest text-default-400 italic">
+            <span class="text-danger">●</span> Security Protocol Active
         </div>
     </div>
 </div>
