@@ -68,6 +68,11 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        // Allow user to edit their own profile or if they have permission
+        if ($user->id !== auth()->id() && !auth()->user()->can('edit users')) {
+            abort(403);
+        }
+
         $divisions = Division::with('departments')->get();
         return view('users.edit', compact('user', 'divisions'));
     }
@@ -77,19 +82,34 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        $request->validate([
+        // Allow user to update their own profile or if they have permission
+        if ($user->id !== auth()->id() && !auth()->user()->can('edit users')) {
+            abort(403);
+        }
+
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:admin,manager,staff',
-            'department_id' => 'required|exists:departments,id',
-        ]);
+        ];
+
+        // Only validate role and department if the user has 'edit users' permission
+        // (Prevents users from changing their own role/dept if they are just editing profile)
+        if (auth()->user()->can('edit users')) {
+            $rules['role'] = 'required|in:admin,manager,staff';
+            $rules['department_id'] = 'required|exists:departments,id';
+        }
+
+        $request->validate($rules);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'department_id' => $request->department_id,
         ];
+
+        if (auth()->user()->can('edit users') && $request->has('department_id')) {
+            $data['department_id'] = $request->department_id;
+        }
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
@@ -97,15 +117,22 @@ class UserController extends Controller
 
         $user->update($data);
 
-        // Map form role to Spatie role names
-        $roleMap = [
-            'admin' => 'Super Admin',
-            'manager' => 'Manager',
-            'staff' => 'Staff'
-        ];
+        // Only update roles if authorized
+        if (auth()->user()->can('edit users') && $request->has('role')) {
+            // Map form role to Spatie role names
+            $roleMap = [
+                'admin' => 'Super Admin',
+                'manager' => 'Manager',
+                'staff' => 'Staff'
+            ];
 
-        if (isset($roleMap[$request->role])) {
-            $user->syncRoles($roleMap[$request->role]);
+            if (isset($roleMap[$request->role])) {
+                $user->syncRoles($roleMap[$request->role]);
+            }
+        }
+
+        if ($user->id === auth()->id() && !auth()->user()->can('edit users')) {
+            return back()->with('success', 'Your profile has been updated.');
         }
 
         return redirect()->route('users.index')->with('success', 'User account successfully updated.');

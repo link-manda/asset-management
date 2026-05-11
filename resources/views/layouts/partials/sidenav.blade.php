@@ -38,7 +38,10 @@
 
                 @php
                     $isAssetActive = request()->is('assets*', 'inventory*', 'maintenances*', 'assignments*', 'disposals*');
+                    $canViewAssets = auth()->user()->can('view assets');
                 @endphp
+
+                @if($canViewAssets)
                 <li class="menu-item hs-accordion {{ $isAssetActive ? 'active' : '' }}">
                     <a class="hs-accordion-toggle menu-link {{ $isAssetActive ? 'active' : '' }}" href="javascript:void(0)">
                         <span class="menu-icon"><i data-lucide="package"></i></span>
@@ -73,46 +76,64 @@
                         </li>
                     </ul>
                 </li>
+                @endif
 
+                @php
+                    $canViewMaster = auth()->user()->hasAnyPermission(['view categories', 'view locations', 'view uoms', 'view divisions', 'view departments']);
+                @endphp
+
+                @if($canViewMaster)
                 <li class="menu-title">
                     <span>Master Data</span>
                 </li>
 
+                @can('view categories')
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">
                         <span class="menu-icon"><i data-lucide="tags"></i></span>
                         <div class="menu-text">Asset Categories</div>
                     </a>
                 </li>
+                @endcan
 
+                @can('view locations')
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('locations.*') ? 'active' : '' }}" href="{{ route('locations.index') }}">
                         <span class="menu-icon"><i data-lucide="map-pin"></i></span>
                         <div class="menu-text">Locations</div>
                     </a>
                 </li>
+                @endcan
 
+                @can('view uoms')
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('uoms.*') ? 'active' : '' }}" href="{{ route('uoms.index') }}">
                         <span class="menu-icon"><i data-lucide="box"></i></span>
                         <div class="menu-text">Units of Measurement</div>
                     </a>
                 </li>
+                @endcan
 
+                @can('view divisions')
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('divisions.*') ? 'active' : '' }}" href="{{ route('divisions.index') }}">
                         <span class="menu-icon"><i data-lucide="building-2"></i></span>
                         <div class="menu-text">Divisions</div>
                     </a>
                 </li>
+                @endcan
 
+                @can('view departments')
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('departments.*') ? 'active' : '' }}" href="{{ route('departments.index') }}">
                         <span class="menu-icon"><i data-lucide="network"></i></span>
                         <div class="menu-text">Departments</div>
                     </a>
                 </li>
+                @endcan
+                @endif
 
+                @if($canViewAssets)
                 <li class="menu-title">
                     <span>Reports</span>
                 </li>
@@ -137,7 +158,13 @@
                         <div class="menu-text">Asset Summary</div>
                     </a>
                 </li>
+                @endif
 
+                @php
+                    $canViewSystem = auth()->user()->hasAnyPermission(['view users', 'view roles', 'view activity logs']);
+                @endphp
+
+                @if($canViewSystem)
                 <li class="menu-title">
                     <span>System</span>
                 </li>
@@ -160,12 +187,14 @@
                 </li>
                 @endrole
 
+                @can('view activity logs')
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('activity-logs.*') ? 'active' : '' }}" href="{{ route('activity-logs.index') }}">
                         <span class="menu-icon"><i data-lucide="history"></i></span>
                         <div class="menu-text">Audit Trail (Log)</div>
                     </a>
                 </li>
+                @endcan
 
                 <li class="menu-item">
                     <a class="menu-link {{ request()->routeIs('settings.*') ? 'active' : '' }}" href="{{ route('settings.index') }}">
@@ -173,6 +202,7 @@
                         <div class="menu-text">Settings</div>
                     </a>
                 </li>
+                @endif
             </ul>
         </div>
     </div>

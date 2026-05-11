@@ -161,7 +161,9 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/uoms/{uom}', [UnitOfMeasurementController::class, 'destroy'])->name('uoms.destroy');
     });
 
-    // User Management
+    // User Management & Profile
+    Route::get('/profile', fn() => redirect()->route('users.edit', auth()->id()))->name('profile');
+
     Route::middleware(['permission:view users'])->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
@@ -170,10 +172,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
     });
-    Route::middleware(['permission:edit users'])->group(function () {
-        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-    });
+    
+    // Edit/Update handled by controller logic for 'self' access
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+
     Route::middleware(['permission:delete users'])->group(function () {
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
