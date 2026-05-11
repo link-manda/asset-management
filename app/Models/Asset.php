@@ -104,6 +104,37 @@ class Asset extends Model
         return $this->hasMany(AssetImage::class);
     }
 
+    /**
+     * Scope a query to filter assets based on various criteria.
+     */
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('asset_code', 'like', '%' . $search . '%');
+            });
+        });
+
+        $query->when($filters['category_id'] ?? null, function ($query, $categoryId) {
+            $query->where('category_id', $categoryId);
+        });
+
+        $query->when($filters['location_id'] ?? null, function ($query, $locationId) {
+            $query->whereHas('items', function ($q) use ($locationId) {
+                $q->where('location_id', $locationId);
+            });
+        });
+
+        $query->when($filters['status'] ?? null, function ($query, $status) {
+            $query->whereHas('items', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
+        });
+
+        return $query;
+    }
+
     public function getPrimaryImageUrlAttribute(): string
     {
         $image = $this->images()->where('is_primary', true)->first() ?? $this->images()->first();
