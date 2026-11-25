@@ -322,7 +322,7 @@
 
                         <div>
                             <label class="block text-sm font-medium mb-2">Disposal Reason</label>
-                            <select name="reason" class="form-select" required>
+                            <select name="reason" class="form-input" required>
                                 <option value="Broken">Heavy Damage (Broken)</option>
                                 <option value="Sold">Sold</option>
                                 <option value="Lost">Lost</option>

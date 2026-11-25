@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         // Using raw SQL because modifying ENUM is not directly supported by Blueprint in some Laravel versions without doctrine/dbal
         DB::statement("ALTER TABLE assets MODIFY COLUMN status ENUM('Available', 'Deployed', 'Maintenance', 'Broken', 'Lost', 'Disposed') DEFAULT 'Available'");
     }
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::statement("ALTER TABLE assets MODIFY COLUMN status ENUM('Available', 'Deployed', 'Maintenance', 'Broken', 'Lost') DEFAULT 'Available'");
     }
 };

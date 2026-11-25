@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -17,7 +18,7 @@ class AssetSummaryExport implements FromCollection, WithHeadings, WithMapping
         $this->groupBy = $groupBy;
     }
 
-    public function collection()
+    public function collection(): Collection
     {
         return $this->data;
     }

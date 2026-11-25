@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\AssetAssignment;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -21,7 +22,7 @@ class AssignmentHistoryExport implements FromQuery, WithHeadings, WithMapping, W
         $this->searchTerm = $searchTerm;
     }
 
-    public function query()
+    public function query(): Builder
     {
         $query = AssetAssignment::with(['item.asset', 'user']);
 
@@ -62,7 +63,7 @@ class AssignmentHistoryExport implements FromQuery, WithHeadings, WithMapping, W
         ];
     }
 
-    public function styles(Worksheet $sheet)
+    public function styles(Worksheet $sheet): array
     {
         return [
             1 => ['font' => ['bold' => true]],

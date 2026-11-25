@@ -10,9 +10,20 @@ class UnitOfMeasurementController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $uoms = UnitOfMeasurement::withCount('assets')->latest()->paginate(10);
+        $uoms = UnitOfMeasurement::withCount('assets')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('symbol', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('uoms.index', compact('uoms'));
     }
 
@@ -54,7 +65,7 @@ class UnitOfMeasurementController extends Controller
     public function update(Request $request, UnitOfMeasurement $uom)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:unit_of_measurements,name,' . $uom->id,
+            'name' => 'required|string|max:255|unique:unit_of_measurements,name,'.$uom->id,
             'symbol' => 'nullable|string|max:50',
         ]);
 

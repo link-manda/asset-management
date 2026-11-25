@@ -7,25 +7,11 @@
 
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
-            <div class="card-header flex justify-between items-center">
-                <form action="{{ route('assignments.index') }}" method="GET" class="flex gap-3 items-center">
-                    <div class="relative">
-                        <input name="search" value="{{ request('search') }}" class="ps-11 form-input form-input-sm w-64" placeholder="Cari log penugasan..." type="text" />
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3">
-                            <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
-                        </div>
-                    </div>
-                    @if(request()->has('search') && request('search') != '')
-                        <a href="{{ route('assignments.index') }}" class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" title="Clear Search">
-                            <i class="size-4" data-lucide="x"></i>
-                        </a>
-                    @endif
-                    <button type="submit" class="hidden">Search</button>
-                </form>
-                
+            <div class="card-header">
+                <h6 class="card-title">Assignment History</h6>
                 <div class="flex items-center gap-2">
                     <div class="hs-dropdown relative inline-flex">
-                        <button class="hs-dropdown-toggle btn btn-sm bg-default-100 text-default-600 hover:bg-default-200" type="button">
+                        <button class="hs-dropdown-toggle btn btn-sm border-default-200 text-default-600 hover:bg-default-50" type="button">
                             <i class="size-4 me-1" data-lucide="download"></i> Export <i class="size-3.5 ms-1" data-lucide="chevron-down"></i>
                         </button>
                         <div class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-40 z-50 bg-white shadow-md rounded-lg p-2 mt-2 border border-default-200" role="menu">
@@ -40,6 +26,22 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="card-header">
+                <form action="{{ route('assignments.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center gap-3 w-full">
+                    <div class="relative w-full md:w-64">
+                        <input name="search" value="{{ request('search') }}" class="ps-9 form-input form-input-sm w-full" placeholder="Cari log penugasan..." type="text" />
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+                            <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
+                        </div>
+                    </div>
+                    @if(request()->filled('search'))
+                        <a href="{{ route('assignments.index') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50" title="Clear Search">
+                            <i class="size-4 me-1" data-lucide="x"></i> Clear
+                        </a>
+                    @endif
+                    <button type="submit" class="hidden">Search</button>
+                </form>
             </div>
             <div class="flex flex-col">
                 <div class="overflow-x-auto">

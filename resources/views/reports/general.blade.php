@@ -10,7 +10,7 @@
 
     <!-- Data Table Section -->
     <div class="card">
-        <div class="card-header border-b border-default-200 flex flex-wrap items-center justify-between gap-4">
+        <div class="card-header">
             <h6 class="card-title text-base">Asset Item Details</h6>
             <div class="flex gap-2">
                 <a href="{{ route('reports.general.excel', request()->all()) }}" class="btn btn-sm bg-success/10 text-success border border-success/20 hover:bg-success hover:text-white transition-all">
@@ -26,10 +26,10 @@
         </div>
 
         <!-- Filters -->
-        <div class="p-4 border-b border-default-200 bg-default-50/50">
+        <div class="card-body">
             <form action="{{ route('reports.general') }}" method="GET" class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-4">
                 <div>
-                    <label class="text-xs font-black text-default-600 uppercase mb-1 block">Category</label>
+                    <label class="text-xs font-medium text-default-600 mb-1 block">Category</label>
                     <select name="category_id" class="form-input form-input-sm w-full">
                         <option value="">All Categories</option>
                         @foreach($categories as $category)
@@ -40,7 +40,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="text-xs font-black text-default-600 uppercase mb-1 block">Location</label>
+                    <label class="text-xs font-medium text-default-600 mb-1 block">Location</label>
                     <select name="location_id" class="form-input form-input-sm w-full">
                         <option value="">All Locations</option>
                         @foreach($locations as $location)
@@ -51,7 +51,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="text-xs font-black text-default-600 uppercase mb-1 block">Status</label>
+                    <label class="text-xs font-medium text-default-600 mb-1 block">Status</label>
                     <select name="status" class="form-input form-input-sm w-full">
                         <option value="">All Statuses</option>
                         <option value="Available" {{ request('status') == 'Available' ? 'selected' : '' }}>Available</option>
@@ -62,13 +62,13 @@
                 </div>
                 <div class="flex items-end gap-2">
                     <div class="relative flex-grow">
-                        <input type="text" name="search" value="{{ request('search') }}" class="form-input form-input-sm ps-8 w-full" placeholder="Search assets...">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-2.5">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-input form-input-sm ps-9 w-full" placeholder="Search assets...">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 text-default-500" data-lucide="search"></i>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-sm bg-primary text-white px-4">Filter</button>
-                    <a href="{{ route('reports.general') }}" class="btn btn-sm bg-default-200 text-default-700">Reset</a>
+                    <button type="submit" class="btn btn-sm bg-primary text-white">Filter</button>
+                    <a href="{{ route('reports.general') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">Reset</a>
                 </div>
             </form>
         </div>

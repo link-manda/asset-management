@@ -10,9 +10,14 @@ class DivisionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $divisions = Division::withCount('departments')->latest()->paginate(10);
+        $divisions = Division::withCount('departments')
+            ->when($request->filled('search'), fn ($query) => $query->where('name', 'like', '%'.$request->search.'%'))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('divisions.index', compact('divisions'));
     }
 
@@ -52,7 +57,7 @@ class DivisionController extends Controller
     public function update(Request $request, Division $division)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:divisions,name,' . $division->id,
+            'name' => 'required|string|max:255|unique:divisions,name,'.$division->id,
         ]);
 
         $division->update($request->all());

@@ -58,8 +58,30 @@
         <!-- Main Content: History List -->
         <div class="lg:col-span-3">
             <div class="card">
-                <div class="card-header flex justify-between items-center">
+                <div class="card-header">
                     <h6 class="card-title">Disposal History</h6>
+                </div>
+                <div class="card-header">
+                    <form action="{{ route('disposals.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center gap-3 w-full">
+                        <div class="relative w-full md:w-64">
+                            <input name="search" value="{{ request('search') }}" class="ps-9 form-input form-input-sm w-full" placeholder="Search asset or barcode..." type="text" />
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+                                <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
+                            </div>
+                        </div>
+                        <select name="reason" class="form-input form-input-sm w-full md:w-auto">
+                            <option value="">All Reasons</option>
+                            @foreach (['Sold', 'Broken', 'Lost', 'Scrapped', 'Donated'] as $reason)
+                                <option value="{{ $reason }}" {{ request('reason') == $reason ? 'selected' : '' }}>{{ $reason }}</option>
+                            @endforeach
+                        </select>
+                        <div class="flex gap-2">
+                            <button type="submit" class="btn btn-sm bg-primary text-white">Filter</button>
+                            @if (request()->anyFilled(['search', 'reason']))
+                                <a href="{{ route('disposals.index') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">Reset</a>
+                            @endif
+                        </div>
+                    </form>
                 </div>
                 <div class="card-body p-0">
                     <div class="overflow-x-auto">

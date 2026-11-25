@@ -8,7 +8,7 @@
 
     <div class="grid grid-cols-1 gap-6">
         <div class="card">
-            <div class="card-header flex justify-between items-center">
+            <div class="card-header">
                 <h6 class="card-title text-base text-default-800">Report Filter</h6>
                 <div class="flex gap-2">
                     <a href="{{ route('reports.depreciation.export', array_merge(request()->all(), ['format' => 'xlsx'])) }}" class="btn btn-sm bg-success/10 text-success border border-success/20 hover:bg-success hover:text-white transition-all">
@@ -47,11 +47,11 @@
                         </select>
                     </div>
                     <div class="flex items-end gap-2">
-                        <button type="submit" class="btn btn-sm bg-primary text-white w-full">
-                            <i class="size-4 me-1" data-lucide="search"></i> Filter
+                        <button type="submit" class="btn btn-sm bg-primary text-white">
+                            Filter
                         </button>
-                        <a href="{{ route('reports.depreciation') }}" class="btn btn-sm border-default-200 text-default-600">
-                            <i class="size-4 me-1" data-lucide="rotate-ccw"></i> Reset
+                        <a href="{{ route('reports.depreciation') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">
+                            Reset
                         </a>
                     </div>
                 </form>
@@ -59,7 +59,7 @@
         </div>
 
         <div class="card">
-            <div class="card-header border-b border-default-200">
+            <div class="card-header">
                 <div class="flex flex-wrap justify-between items-center gap-4">
                     <h6 class="card-title text-base uppercase tracking-wider text-[11px] font-bold">Depreciation Calculation Results</h6>
                     

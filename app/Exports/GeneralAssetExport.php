@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\AssetItem;
+use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -21,7 +22,7 @@ class GeneralAssetExport implements FromQuery, WithHeadings, WithMapping, WithSt
         $this->request = $request;
     }
 
-    public function query()
+    public function query(): Builder
     {
         return AssetItem::with(['asset.category', 'location'])
             ->when($this->request->category_id, function ($q) {
@@ -78,7 +79,7 @@ class GeneralAssetExport implements FromQuery, WithHeadings, WithMapping, WithSt
         ];
     }
 
-    public function styles(Worksheet $sheet)
+    public function styles(Worksheet $sheet): array
     {
         return [
             1 => ['font' => ['bold' => true]],

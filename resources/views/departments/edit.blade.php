@@ -17,7 +17,7 @@
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
                                 <label for="division_id" class="inline-block mb-2 text-sm text-default-800 font-medium">Division</label>
-                                <select name="division_id" id="division_id" class="form-select @error('division_id') border-danger @enderror" required>
+                                <select name="division_id" id="division_id" class="form-input @error('division_id') border-danger @enderror" required>
                                     @foreach ($divisions as $division)
                                         <option value="{{ $division->id }}" {{ old('division_id', $department->division_id) == $division->id ? 'selected' : '' }}>{{ $division->name }}</option>
                                     @endforeach

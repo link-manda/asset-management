@@ -11,9 +11,21 @@ class DepartmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::with('division')->withCount('users')->latest()->paginate(10);
+        $departments = Department::with('division')
+            ->withCount('users')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('division', fn ($sq) => $sq->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('departments.index', compact('departments'));
     }
 
@@ -23,6 +35,7 @@ class DepartmentController extends Controller
     public function create()
     {
         $divisions = Division::orderBy('name')->get();
+
         return view('departments.create', compact('divisions'));
     }
 
@@ -47,6 +60,7 @@ class DepartmentController extends Controller
     public function edit(Department $department)
     {
         $divisions = Division::orderBy('name')->get();
+
         return view('departments.edit', compact('department', 'divisions'));
     }
 

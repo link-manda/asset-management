@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AssetItem;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
@@ -10,9 +11,14 @@ class CategoryController extends Controller
     /**
      * Menampilkan daftar kategori.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::withCount('assets')->latest()->paginate(10);
+        $categories = Category::withCount('assets')
+            ->when($request->filled('search'), fn ($query) => $query->where('name', 'like', '%'.$request->search.'%'))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('categories.index', compact('categories'));
     }
 
@@ -34,7 +40,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string|max:500',
             'default_useful_life_months' => 'nullable|integer|min:1',
             'default_residual_percentage' => 'nullable|numeric|min:0|max:100',
-            'fiscal_group' => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
+            'fiscal_group' => 'nullable|string|in:'.implode(',', array_keys(AssetItem::FISCAL_GROUPS)),
         ]);
 
         Category::create($validated);
@@ -49,6 +55,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category->load('assets');
+
         return view('categories.show', compact('category'));
     }
 
@@ -66,11 +73,11 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'name' => 'required|string|max:255|unique:categories,name,'.$category->id,
             'description' => 'nullable|string|max:500',
             'default_useful_life_months' => 'nullable|integer|min:1',
             'default_residual_percentage' => 'nullable|numeric|min:0|max:100',
-            'fiscal_group' => 'nullable|string|in:' . implode(',', array_keys(\App\Models\AssetItem::FISCAL_GROUPS)),
+            'fiscal_group' => 'nullable|string|in:'.implode(',', array_keys(AssetItem::FISCAL_GROUPS)),
         ]);
 
         $category->update($validated);

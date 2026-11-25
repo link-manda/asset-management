@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('barcode')->nullable()->unique()->after('asset_id');
         });
 
-        // Add Disposed to status enum in asset_stocks
-        DB::statement("ALTER TABLE asset_stocks MODIFY COLUMN status ENUM('Available', 'Deployed', 'Maintenance', 'Broken', 'Lost', 'Disposed') DEFAULT 'Available'");
+        // Add Disposed to status enum in asset_stocks (MySQL only; SQLite stores it as a string)
+        if (DB::connection()->getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE asset_stocks MODIFY COLUMN status ENUM('Available', 'Deployed', 'Maintenance', 'Broken', 'Lost', 'Disposed') DEFAULT 'Available'");
+        }
     }
 
     /**
@@ -29,6 +31,8 @@ return new class extends Migration
             $table->dropColumn('barcode');
         });
         
-        DB::statement("ALTER TABLE asset_stocks MODIFY COLUMN status ENUM('Available', 'Deployed', 'Maintenance', 'Broken', 'Lost') DEFAULT 'Available'");
+        if (DB::connection()->getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE asset_stocks MODIFY COLUMN status ENUM('Available', 'Deployed', 'Maintenance', 'Broken', 'Lost') DEFAULT 'Available'");
+        }
     }
 };

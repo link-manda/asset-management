@@ -9,9 +9,23 @@ use Illuminate\Support\Facades\DB;
 
 class AssetMaintenanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $maintenances = AssetMaintenance::with('item.asset')->latest()->paginate(10);
+        $maintenances = AssetMaintenance::with('item.asset')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('description', 'like', "%{$search}%")
+                        ->orWhereHas('item', function ($sq) use ($search) {
+                            $sq->where('item_code', 'like', "%{$search}%")
+                                ->orWhereHas('asset', fn ($aq) => $aq->where('name', 'like', "%{$search}%"));
+                        });
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('maintenances.index', compact('maintenances'));
     }
 
@@ -20,7 +34,7 @@ class AssetMaintenanceController extends Controller
         $items = AssetItem::whereIn('status', ['Available', 'Deployed'])
             ->with(['asset.category', 'location'])
             ->get();
-            
+
         return view('maintenances.create', compact('items'));
     }
 
@@ -52,6 +66,7 @@ class AssetMaintenanceController extends Controller
     public function edit(AssetMaintenance $maintenance)
     {
         $items = AssetItem::with('asset')->get();
+
         return view('maintenances.edit', compact('maintenance', 'items'));
     }
 
@@ -75,8 +90,8 @@ class AssetMaintenanceController extends Controller
                     ->where('id', '!=', $maintenance->id)
                     ->where('status', '!=', 'Completed')
                     ->exists();
-                
-                if (!$hasOtherActive) {
+
+                if (! $hasOtherActive) {
                     $maintenance->item->update(['status' => 'Available']);
                 }
             } else {
@@ -94,7 +109,7 @@ class AssetMaintenanceController extends Controller
             $maintenance->delete();
 
             // Reset item status if no other active maintenance
-            if ($item->status == 'Maintenance' && !$item->maintenances()->where('status', '!=', 'Completed')->exists()) {
+            if ($item->status == 'Maintenance' && ! $item->maintenances()->where('status', '!=', 'Completed')->exists()) {
                 $item->update(['status' => 'Available']);
             }
         });

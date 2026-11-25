@@ -7,7 +7,7 @@
 
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
-            <div class="card-header flex justify-between items-center">
+            <div class="card-header">
                 <div class="flex gap-3 items-center">
                     <h4 class="card-title">User Roles</h4>
                 </div>

@@ -4,7 +4,7 @@
     @include('layouts.partials/page-title', ['subtitle' => 'Reports', 'title' => 'Asset Summary'])
 
     <div class="card">
-        <div class="card-header border-b border-default-200 flex flex-wrap items-center justify-between gap-4">
+        <div class="card-header">
             <h6 class="card-title text-base">Summary Table</h6>
             <div class="flex gap-2">
                 <a href="{{ route('reports.summary.excel', request()->all()) }}" class="btn btn-sm bg-success/10 text-success border border-success/20 hover:bg-success hover:text-white transition-all">
@@ -19,10 +19,10 @@
             </div>
         </div>
 
-        <div class="p-4 border-b border-default-200 bg-default-50/50">
+        <div class="card-body">
             <form action="{{ route('reports.summary') }}" method="GET" id="summaryForm">
                 <div class="max-w-xs">
-                    <label class="text-xs font-black text-default-600 uppercase mb-1 block">Summarize By</label>
+                    <label class="text-xs font-medium text-default-600 mb-1 block">Summarize By</label>
                     <select name="by" class="form-input form-input-sm w-full" onchange="this.form.submit()">
                         <option value="category" {{ $groupBy == 'category' ? 'selected' : '' }}>Category</option>
                         <option value="division" {{ $groupBy == 'division' ? 'selected' : '' }}>Division</option>

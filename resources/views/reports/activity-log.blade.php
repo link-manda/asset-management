@@ -33,8 +33,8 @@
                         <input type="text" name="subject_type" class="form-input form-input-sm" placeholder="e.g.: Asset" value="{{ request('subject_type') }}">
                     </div>
                     <div class="flex items-end gap-2">
-                        <button type="submit" class="btn btn-sm bg-primary text-white w-full font-bold uppercase tracking-wider">Filter</button>
-                        <a href="{{ route('activity-logs.index') }}" class="btn btn-sm border-default-200 text-default-600">Reset</a>
+                        <button type="submit" class="btn btn-sm bg-primary text-white">Filter</button>
+                        <a href="{{ route('activity-logs.index') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">Reset</a>
                     </div>
                 </form>
             </div>

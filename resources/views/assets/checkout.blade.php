@@ -23,7 +23,7 @@
                         
                         <div class="mb-5">
                             <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="assigned_to">Assign To (User)</label>
-                            <select class="form-select @error('assigned_to') border-danger @enderror" id="assigned_to" name="assigned_to" required>
+                            <select class="form-input @error('assigned_to') border-danger @enderror" id="assigned_to" name="assigned_to" required>
                                 <option value="" disabled selected>-- Select Recipient --</option>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}" {{ old('assigned_to') == $user->id ? 'selected' : '' }}>

@@ -7,22 +7,29 @@
 
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
-            <div class="card-header flex justify-between items-center">
-                <div class="flex gap-3 items-center">
-                    <div class="relative">
-                        <input class="ps-11 form-input form-input-sm w-64" placeholder="Search maintenance..." type="text" />
+            <div class="card-header">
+                <h6 class="card-title">Maintenance History</h6>
+                @can('create assets')
+                <a href="{{ route('maintenances.create') }}" class="btn btn-sm bg-primary text-white">
+                    <i class="size-4 me-1" data-lucide="wrench"></i> Ajukan Perbaikan
+                </a>
+                @endcan
+            </div>
+            <div class="card-header">
+                <form action="{{ route('maintenances.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center gap-3 w-full">
+                    <div class="relative w-full md:w-64">
+                        <input name="search" value="{{ request('search') }}" class="ps-9 form-input form-input-sm w-full" placeholder="Search maintenance..." type="text" />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
                     </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    @can('create assets')
-                    <a href="{{ route('maintenances.create') }}" class="btn btn-sm bg-primary text-white">
-                        <i class="size-4 me-1" data-lucide="wrench"></i> Ajukan Perbaikan
-                    </a>
-                    @endcan
-                </div>
+                    <button type="submit" class="hidden">Search</button>
+                    @if(request()->filled('search'))
+                        <a href="{{ route('maintenances.index') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">
+                            <i class="size-4 me-1" data-lucide="x"></i> Clear
+                        </a>
+                    @endif
+                </form>
             </div>
             <div class="flex flex-col">
                 <div class="overflow-x-auto">

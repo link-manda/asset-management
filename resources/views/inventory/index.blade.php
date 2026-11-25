@@ -7,25 +7,30 @@
 
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
-            <div class="card-header flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex gap-3 items-center w-full md:w-auto">
+            <div class="card-header">
+                <div class="flex flex-col md:flex-row md:items-center gap-3 w-full">
                     <form action="{{ route('inventory.index') }}" method="GET" class="relative w-full md:w-80">
-                        <input class="ps-11 form-input form-input-sm w-full" name="search" value="{{ request('search') }}" placeholder="Scan barcode atau cari item..." type="text" autofocus />
+                        <input class="ps-9 form-input form-input-sm w-full" name="search" value="{{ request('search') }}" placeholder="Scan barcode atau cari item..." type="text" autofocus />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
-                            <i class="size-4 text-default-500" data-lucide="search"></i>
+                            <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
+                        @foreach (['status', 'category_id', 'location_id'] as $filter)
+                            @if (request()->filled($filter))
+                                <input type="hidden" name="{{ $filter }}" value="{{ request($filter) }}">
+                            @endif
+                        @endforeach
                     </form>
 
                     {{-- Filter Modal Trigger --}}
-                    <button data-hs-overlay="#modal-filters" class="btn btn-sm bg-default-100 text-default-600">
+                    <button data-hs-overlay="#modal-filters" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">
                         <i class="size-4 me-1" data-lucide="filter"></i> Filter
                     </button>
-                </div>
 
-                <div class="flex items-center gap-2">
-                    <button id="btn-bulk-print" class="btn btn-sm bg-primary text-white hidden">
-                        <i class="size-4 me-1" data-lucide="printer"></i> Print Selected (<span id="selected-count">0</span>)
-                    </button>
+                    <div class="flex items-center gap-2 md:ms-auto">
+                        <button id="btn-bulk-print" class="btn btn-sm bg-primary text-white hidden">
+                            <i class="size-4 me-1" data-lucide="printer"></i> Print Selected (<span id="selected-count">0</span>)
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -158,16 +163,19 @@
         <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto flex items-center min-h-[calc(100%-3.5rem)]">
             <div class="flex flex-col bg-white border border-default-200 shadow-sm rounded-md pointer-events-auto w-full">
                 <div class="flex justify-between items-center py-3 px-4 border-b border-default-200">
-                    <h3 class="font-bold text-default-800">Inventory Filter</h3>
+                    <h3 class="text-base font-semibold text-default-800">Inventory Filter</h3>
                     <button type="button" class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-default-100 text-default-800 hover:bg-default-200" data-hs-overlay="#modal-filters">
                         <i class="size-4" data-lucide="x"></i>
                     </button>
                 </div>
                 <form action="{{ route('inventory.index') }}" method="GET">
+                    @if (request()->filled('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
                     <div class="p-5 space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-default-700 mb-1">Item Status</label>
-                            <select name="status" class="form-select">
+                            <label class="block text-xs font-medium text-default-600 mb-1">Item Status</label>
+                            <select name="status" class="form-input form-input-sm w-full">
                                 <option value="">All Statuses</option>
                                 @foreach($statuses as $status)
                                     <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>{{ $status }}</option>
@@ -175,8 +183,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-default-700 mb-1">Category</label>
-                            <select name="category_id" class="form-select">
+                            <label class="block text-xs font-medium text-default-600 mb-1">Category</label>
+                            <select name="category_id" class="form-input form-input-sm w-full">
                                 <option value="">All Categories</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -184,8 +192,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-default-700 mb-1">Location</label>
-                            <select name="location_id" class="form-select">
+                            <label class="block text-xs font-medium text-default-600 mb-1">Location</label>
+                            <select name="location_id" class="form-input form-input-sm w-full">
                                 <option value="">All Locations</option>
                                 @foreach($locations as $location)
                                     <option value="{{ $location->id }}" {{ request('location_id') == $location->id ? 'selected' : '' }}>{{ $location->name }}</option>
@@ -194,8 +202,8 @@
                         </div>
                     </div>
                     <div class="flex justify-end items-center gap-2 py-3 px-4 border-t border-default-200">
-                        <a href="{{ route('inventory.index') }}" class="btn border-default-200 text-default-600">Reset</a>
-                        <button type="submit" class="btn bg-primary text-white">Apply Filter</button>
+                        <a href="{{ route('inventory.index') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">Reset</a>
+                        <button type="submit" class="btn btn-sm bg-primary text-white">Apply Filter</button>
                     </div>
                 </form>
             </div>

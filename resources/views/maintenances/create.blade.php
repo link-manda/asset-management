@@ -53,7 +53,7 @@
                             </div>
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="type">Service Type</label>
-                                <select class="form-select @error('type') border-danger @enderror" id="type" name="type" required>
+                                <select class="form-input @error('type') border-danger @enderror" id="type" name="type" required>
                                     <option value="Repair" {{ old('type') == 'Repair' ? 'selected' : '' }}>Repair</option>
                                     <option value="Routine" {{ old('type') == 'Routine' ? 'selected' : '' }}>Routine</option>
                                     <option value="Upgrade" {{ old('type') == 'Upgrade' ? 'selected' : '' }}>Upgrade</option>
@@ -74,7 +74,7 @@
                             </div>
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium" for="status">Initial Status</label>
-                                <select class="form-select @error('status') border-danger @enderror" id="status" name="status" required>
+                                <select class="form-input @error('status') border-danger @enderror" id="status" name="status" required>
                                     <option value="Scheduled" {{ old('status') == 'Scheduled' ? 'selected' : '' }}>Scheduled</option>
                                     <option value="In Progress" {{ old('status') == 'In Progress' ? 'selected' : '' }}>In Progress</option>
                                     <option value="Completed" {{ old('status') == 'Completed' ? 'selected' : '' }}>Completed</option>

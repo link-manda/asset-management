@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Division;
 use App\Models\Department;
+use App\Models\Division;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -14,9 +14,20 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('department.division')->latest()->paginate(10);
+        $users = User::with('department.division')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         return view('users.index', compact('users'));
     }
 
@@ -26,6 +37,7 @@ class UserController extends Controller
     public function create()
     {
         $divisions = Division::with('departments')->get();
+
         return view('users.create', compact('divisions'));
     }
 
@@ -53,7 +65,7 @@ class UserController extends Controller
         $roleMap = [
             'admin' => 'Super Admin',
             'manager' => 'Manager',
-            'staff' => 'Staff'
+            'staff' => 'Staff',
         ];
 
         if (isset($roleMap[$request->role])) {
@@ -69,11 +81,12 @@ class UserController extends Controller
     public function edit(User $user)
     {
         // Allow user to edit their own profile or if they have permission
-        if ($user->id !== auth()->id() && !auth()->user()->can('edit users')) {
+        if ($user->id !== auth()->id() && ! auth()->user()->can('edit users')) {
             abort(403);
         }
 
         $divisions = Division::with('departments')->get();
+
         return view('users.edit', compact('user', 'divisions'));
     }
 
@@ -83,7 +96,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         // Allow user to update their own profile or if they have permission
-        if ($user->id !== auth()->id() && !auth()->user()->can('edit users')) {
+        if ($user->id !== auth()->id() && ! auth()->user()->can('edit users')) {
             abort(403);
         }
 
@@ -123,7 +136,7 @@ class UserController extends Controller
             $roleMap = [
                 'admin' => 'Super Admin',
                 'manager' => 'Manager',
-                'staff' => 'Staff'
+                'staff' => 'Staff',
             ];
 
             if (isset($roleMap[$request->role])) {
@@ -131,7 +144,7 @@ class UserController extends Controller
             }
         }
 
-        if ($user->id === auth()->id() && !auth()->user()->can('edit users')) {
+        if ($user->id === auth()->id() && ! auth()->user()->can('edit users')) {
             return back()->with('success', 'Your profile has been updated.');
         }
 

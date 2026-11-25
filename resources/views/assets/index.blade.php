@@ -7,16 +7,24 @@
 
     <div class="grid grid-cols-1 gap-5 mb-5">
         <div class="card">
-            <div class="card-header border-b border-default-200">
-                <form action="{{ route('assets.index') }}" method="GET" class="flex flex-wrap gap-3 items-center w-full">
-                    <div class="relative flex-1 min-w-[200px]">
-                        <input name="search" value="{{ request('search') }}" class="ps-11 form-input form-input-sm w-full" placeholder="Search name or asset code..." type="text" />
+            <div class="card-header">
+                <h6 class="card-title">Asset List</h6>
+                @can('create assets')
+                <a href="{{ route('assets.create') }}" class="btn btn-sm bg-primary text-white">
+                    <i class="size-4 me-1" data-lucide="plus"></i> Add New Asset
+                </a>
+                @endcan
+            </div>
+            <div class="card-header">
+                <form action="{{ route('assets.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center gap-3 w-full">
+                    <div class="relative w-full md:w-64">
+                        <input name="search" value="{{ request('search') }}" class="ps-9 form-input form-input-sm w-full" placeholder="Search name or asset code..." type="text" />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
                     </div>
-                    
-                    <select name="category_id" class="form-select form-select-sm min-w-[150px]">
+
+                    <select name="category_id" class="form-input form-input-sm w-full md:w-auto min-w-[150px]">
                         <option value="">All Categories</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>
@@ -25,7 +33,7 @@
                         @endforeach
                     </select>
 
-                    <select name="location_id" class="form-select form-select-sm min-w-[150px]">
+                    <select name="location_id" class="form-input form-input-sm w-full md:w-auto min-w-[150px]">
                         <option value="">All Locations</option>
                         @foreach($locations as $location)
                             <option value="{{ $location->id }}" {{ request('location_id') == $location->id ? 'selected' : '' }}>
@@ -34,7 +42,7 @@
                         @endforeach
                     </select>
 
-                    <select name="status" class="form-select form-select-sm min-w-[130px]">
+                    <select name="status" class="form-input form-input-sm w-full md:w-auto min-w-[130px]">
                         <option value="">All Status</option>
                         @foreach($statuses as $status)
                             <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
@@ -44,22 +52,14 @@
                     </select>
 
                     <div class="flex gap-2">
-                        <button type="submit" class="btn btn-sm bg-primary text-white px-4">
+                        <button type="submit" class="btn btn-sm bg-primary text-white">
                             Filter
                         </button>
                         @if(request()->anyFilled(['search', 'category_id', 'location_id', 'status']))
-                            <a href="{{ route('assets.index') }}" class="btn btn-sm bg-default-150 text-default-700">
+                            <a href="{{ route('assets.index') }}" class="btn btn-sm border-default-200 text-default-600 hover:bg-default-50">
                                 Reset
                             </a>
                         @endif
-                    </div>
-                    
-                    <div class="ms-auto">
-                        @can('create assets')
-                        <a href="{{ route('assets.create') }}" class="btn btn-sm bg-primary text-white">
-                            <i class="size-4 me-1" data-lucide="plus"></i> Add New Asset
-                        </a>
-                        @endcan
                     </div>
                 </form>
             </div>

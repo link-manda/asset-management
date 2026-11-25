@@ -10,10 +10,23 @@ class LocationController extends Controller
     /**
      * Menampilkan daftar lokasi.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $locations = Location::with(['parent'])->withCount('items')->latest()->paginate(10);
+        $locations = Location::with(['parent'])
+            ->withCount('items')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('address', 'like', "%{$search}%");
+                });
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
         $allLocations = Location::whereNull('parent_id')->get(); // For parent selection (only top level to keep it simple)
+
         return view('locations.index', compact('locations', 'allLocations'));
     }
 
@@ -48,6 +61,7 @@ class LocationController extends Controller
     public function show(Location $location)
     {
         $location->load('items.asset');
+
         return view('locations.show', compact('location'));
     }
 
@@ -57,6 +71,7 @@ class LocationController extends Controller
     public function edit(Location $location)
     {
         $allLocations = Location::whereNull('parent_id')->get();
+
         return view('locations.edit', compact('location', 'allLocations'));
     }
 
@@ -66,9 +81,9 @@ class LocationController extends Controller
     public function update(Request $request, Location $location)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:locations,name,' . $location->id,
+            'name' => 'required|string|max:255|unique:locations,name,'.$location->id,
             'address' => 'required|string|max:1000',
-            'parent_id' => 'nullable|exists:locations,id|not_in:' . $location->id,
+            'parent_id' => 'nullable|exists:locations,id|not_in:'.$location->id,
         ]);
 
         $location->update($validated);
