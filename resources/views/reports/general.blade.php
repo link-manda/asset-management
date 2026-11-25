@@ -124,7 +124,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-8 text-center text-default-500 italic">Data aset tidak ditemukan.</td>
+                            <td colspan="7" class="px-4 py-8 text-center text-default-500 italic">No asset data found.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -10,7 +10,7 @@
             <div class="card-header">
                 <div class="flex flex-col md:flex-row md:items-center gap-3 w-full">
                     <form action="{{ route('inventory.index') }}" method="GET" class="relative w-full md:w-80">
-                        <input class="ps-9 form-input form-input-sm w-full" name="search" value="{{ request('search') }}" placeholder="Scan barcode atau cari item..." type="text" autofocus />
+                        <input class="ps-9 form-input form-input-sm w-full" name="search" value="{{ request('search') }}" placeholder="Scan barcode or search item..." type="text" autofocus />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
@@ -140,7 +140,7 @@
                                                 <td colspan="{{ auth()->user()->can('edit assets') ? 7 : 6 }}" class="px-4 py-12 text-center">
                                                     <div class="flex flex-col items-center">
                                                         <i class="size-12 text-default-200 mb-3" data-lucide="package-search"></i>
-                                                        <p class="text-default-500 font-medium">Tidak ada item fisik ditemukan.</p>
+                                                        <p class="text-default-500 font-medium">No physical items found.</p>
                                                     </div>
                                                 </td>
                                             </tr>

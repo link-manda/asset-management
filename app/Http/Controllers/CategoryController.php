@@ -46,7 +46,7 @@ class CategoryController extends Controller
         Category::create($validated);
 
         return redirect()->route('categories.index')
-            ->with('success', 'Kategori berhasil ditambahkan.');
+            ->with('success', 'Category successfully added.');
     }
 
     /**

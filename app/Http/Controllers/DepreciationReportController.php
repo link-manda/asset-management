@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DepreciationExport;
 use App\Models\AssetItem;
 use App\Models\Category;
-use App\Exports\DepreciationExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DepreciationReportController extends Controller
 {
@@ -22,7 +21,7 @@ class DepreciationReportController extends Controller
 
         // Filter Kategori
         if ($request->filled('category_id')) {
-            $query->whereHas('asset', function($q) use ($request) {
+            $query->whereHas('asset', function ($q) use ($request) {
                 $q->where('category_id', $request->category_id);
             });
         }
@@ -37,17 +36,17 @@ class DepreciationReportController extends Controller
         // Filter Pencarian
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('item_code', 'like', "%{$search}%")
-                  ->orWhere('serial_number', 'like', "%{$search}%")
-                  ->orWhereHas('asset', function($sq) use ($search) {
-                      $sq->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('serial_number', 'like', "%{$search}%")
+                    ->orWhereHas('asset', function ($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
         $items = $query->latest('purchase_date')->paginate(20)->withQueryString();
-        
+
         $categories = Category::all();
         $statuses = ['Available', 'Deployed', 'Maintenance', 'Broken'];
 
@@ -61,10 +60,10 @@ class DepreciationReportController extends Controller
     {
         $format = $request->get('format', 'csv');
         $mode = $request->get('mode', 'commercial');
-        $fileName = 'Laporan_Penyusutan_' . date('Ymd_His');
-        
+        $fileName = 'depreciation_report_'.date('Ymd_His');
+
         if ($format == 'xlsx') {
-            return Excel::download(new DepreciationExport($request), $fileName . '.xlsx');
+            return Excel::download(new DepreciationExport($request), $fileName.'.xlsx');
         }
 
         if ($format == 'pdf') {
@@ -72,7 +71,7 @@ class DepreciationReportController extends Controller
 
             // Filter Kategori
             if ($request->filled('category_id')) {
-                $query->whereHas('asset', function($q) use ($request) {
+                $query->whereHas('asset', function ($q) use ($request) {
                     $q->where('category_id', $request->category_id);
                 });
             }
@@ -87,23 +86,23 @@ class DepreciationReportController extends Controller
             // Filter Pencarian
             if ($request->filled('search')) {
                 $search = $request->search;
-                $query->where(function($q) use ($search) {
+                $query->where(function ($q) use ($search) {
                     $q->where('item_code', 'like', "%{$search}%")
-                      ->orWhere('serial_number', 'like', "%{$search}%")
-                      ->orWhereHas('asset', function($sq) use ($search) {
-                          $sq->where('name', 'like', "%{$search}%");
-                      });
+                        ->orWhere('serial_number', 'like', "%{$search}%")
+                        ->orWhereHas('asset', function ($sq) use ($search) {
+                            $sq->where('name', 'like', "%{$search}%");
+                        });
                 });
             }
 
             $items = $query->latest('purchase_date')->get();
 
             $pdf = Pdf::loadView('reports.depreciation-pdf', compact('items', 'mode'))
-                      ->setPaper('a4', 'landscape');
+                ->setPaper('a4', 'landscape');
 
-            return $pdf->download($fileName . '.pdf');
+            return $pdf->download($fileName.'.pdf');
         }
-        
-        return Excel::download(new DepreciationExport($request), $fileName . '.csv', \Maatwebsite\Excel\Excel::CSV);
+
+        return Excel::download(new DepreciationExport($request), $fileName.'.csv', \Maatwebsite\Excel\Excel::CSV);
     }
 }

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\GeneralAssetExport;
 use App\Models\Asset;
 use App\Models\AssetItem;
 use App\Models\Category;
 use App\Models\Location;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Exports\GeneralAssetExport;
 use Maatwebsite\Excel\Facades\Excel;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
@@ -55,11 +55,11 @@ class ReportController extends Controller
                 $q->where('status', $request->status);
             })
             ->when($request->search, function ($q) use ($request) {
-                $q->where('item_code', 'like', '%' . $request->search . '%')
-                  ->orWhere('serial_number', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('asset', function ($sq) use ($request) {
-                      $sq->where('name', 'like', '%' . $request->search . '%');
-                  });
+                $q->where('item_code', 'like', '%'.$request->search.'%')
+                    ->orWhere('serial_number', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('asset', function ($sq) use ($request) {
+                        $sq->where('name', 'like', '%'.$request->search.'%');
+                    });
             });
 
         $items = $query->latest()->paginate(15)->withQueryString();
@@ -68,9 +68,9 @@ class ReportController extends Controller
         $locations = Location::all();
 
         return view('reports.general', compact(
-            'stats', 
-            'statusDistribution', 
-            'categoryDistribution', 
+            'stats',
+            'statusDistribution',
+            'categoryDistribution',
             'items',
             'categories',
             'locations'
@@ -79,12 +79,12 @@ class ReportController extends Controller
 
     public function exportExcel(Request $request)
     {
-        return Excel::download(new GeneralAssetExport($request), 'laporan_aset_umum_' . now()->format('YmdHis') . '.xlsx');
+        return Excel::download(new GeneralAssetExport($request), 'general_asset_report_'.now()->format('YmdHis').'.xlsx');
     }
 
     public function exportCsv(Request $request)
     {
-        return Excel::download(new GeneralAssetExport($request), 'laporan_aset_umum_' . now()->format('YmdHis') . '.csv', \Maatwebsite\Excel\Excel::CSV);
+        return Excel::download(new GeneralAssetExport($request), 'general_asset_report_'.now()->format('YmdHis').'.csv', \Maatwebsite\Excel\Excel::CSV);
     }
 
     public function exportPdf(Request $request)
@@ -102,18 +102,18 @@ class ReportController extends Controller
                 $q->where('status', $request->status);
             })
             ->when($request->search, function ($q) use ($request) {
-                $q->where('item_code', 'like', '%' . $request->search . '%')
-                  ->orWhere('serial_number', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('asset', function ($sq) use ($request) {
-                      $sq->where('name', 'like', '%' . $request->search . '%');
-                  });
+                $q->where('item_code', 'like', '%'.$request->search.'%')
+                    ->orWhere('serial_number', 'like', '%'.$request->search.'%')
+                    ->orWhereHas('asset', function ($sq) use ($request) {
+                        $sq->where('name', 'like', '%'.$request->search.'%');
+                    });
             });
 
         $items = $query->latest()->get();
 
         $pdf = Pdf::loadView('reports.general-pdf', compact('items'))
-                  ->setPaper('a4', 'landscape');
+            ->setPaper('a4', 'landscape');
 
-        return $pdf->download('laporan_aset_umum_' . now()->format('YmdHis') . '.pdf');
+        return $pdf->download('general_asset_report_'.now()->format('YmdHis').'.pdf');
     }
 }

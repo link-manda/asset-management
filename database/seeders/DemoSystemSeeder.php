@@ -13,15 +13,20 @@ use App\Models\Division;
 use App\Models\Location;
 use App\Models\UnitOfMeasurement;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class DemoSystemSeeder extends Seeder
 {
     public function run(): void
     {
+        $configuredPassword = env('SEED_DEFAULT_PASSWORD');
+        $isProduction = app()->environment('production');
+        $defaultPassword = $configuredPassword ?: ($isProduction ? Str::password(16) : 'password');
+        $hashedPassword = Hash::make($defaultPassword);
+
         // 1. Create Organization Structure
         $divIT = Division::firstOrCreate(['name' => 'Information Technology']);
         $divOps = Division::firstOrCreate(['name' => 'Operations']);
@@ -36,7 +41,7 @@ class DemoSystemSeeder extends Seeder
             ['email' => 'admin@demo.com'],
             [
                 'name' => 'Super Admin Demo',
-                'password' => Hash::make('password'),
+                'password' => $hashedPassword,
                 'email_verified_at' => now(),
             ]
         );
@@ -46,7 +51,7 @@ class DemoSystemSeeder extends Seeder
             ['email' => 'manager@demo.com'],
             [
                 'name' => 'Manager Demo',
-                'password' => Hash::make('password'),
+                'password' => $hashedPassword,
                 'email_verified_at' => now(),
                 'department_id' => $deptGA->id,
             ]
@@ -56,12 +61,12 @@ class DemoSystemSeeder extends Seeder
         $staffs = [];
         $staffNames = ['Budi Santoso', 'Siti Aminah', 'Andi Wijaya', 'Dewi Lestari', 'Eko Prasetyo'];
         foreach ($staffNames as $name) {
-            $email = strtolower(str_replace(' ', '.', $name)) . '@demo.com';
+            $email = strtolower(str_replace(' ', '.', $name)).'@demo.com';
             $staff = User::firstOrCreate(
                 ['email' => $email],
                 [
                     'name' => $name,
-                    'password' => Hash::make('password'),
+                    'password' => $hashedPassword,
                     'email_verified_at' => now(),
                     'department_id' => $deptSupport->id,
                 ]
@@ -81,18 +86,18 @@ class DemoSystemSeeder extends Seeder
 
         $catIT = Category::firstOrCreate(['name' => 'IT Equipment'], [
             'default_useful_life_months' => 48,
-            'fiscal_group' => 'Kelompok 1',
-            'default_residual_percentage' => 10
+            'fiscal_group' => 'Group 1',
+            'default_residual_percentage' => 10,
         ]);
         $catFurniture = Category::firstOrCreate(['name' => 'Office Furniture'], [
             'default_useful_life_months' => 96,
-            'fiscal_group' => 'Kelompok 2',
-            'default_residual_percentage' => 5
+            'fiscal_group' => 'Group 2',
+            'default_residual_percentage' => 5,
         ]);
         $catVehicles = Category::firstOrCreate(['name' => 'Vehicles'], [
             'default_useful_life_months' => 96,
-            'fiscal_group' => 'Kelompok 2',
-            'default_residual_percentage' => 20
+            'fiscal_group' => 'Group 2',
+            'default_residual_percentage' => 20,
         ]);
 
         // 5. Create Assets (Master Catalog)
@@ -137,11 +142,11 @@ class DemoSystemSeeder extends Seeder
             // 6. Create Asset Items (Physical Units)
             $count = ($assetData['asset_code'] == 'CAR-TOY') ? 2 : 5;
             for ($i = 1; $i <= $count; $i++) {
-                $itemCode = $asset->asset_code . '-' . str_pad($i, 3, '0', STR_PAD_LEFT);
-                
+                $itemCode = $asset->asset_code.'-'.str_pad($i, 3, '0', STR_PAD_LEFT);
+
                 // Variasi tanggal perolehan (antara 2 tahun lalu s/d 1 bulan lalu)
                 $purchaseDate = Carbon::now()->subMonths(rand(1, 24));
-                
+
                 $item = AssetItem::firstOrCreate(
                     ['item_code' => $itemCode],
                     [
@@ -162,7 +167,7 @@ class DemoSystemSeeder extends Seeder
                 if ($i <= 3 && $assetData['asset_code'] != 'CAR-TOY') {
                     $staff = $staffs[array_rand($staffs)];
                     $isReturned = ($i == 1); // Unit pertama anggap sudah dikembalikan
-                    
+
                     AssetAssignment::firstOrCreate(
                         ['asset_item_id' => $item->id, 'assigned_to' => $staff->id, 'assigned_date' => $purchaseDate->copy()->addDays(5)->toDateString()],
                         [
@@ -172,7 +177,7 @@ class DemoSystemSeeder extends Seeder
                         ]
                     );
 
-                    if (!$isReturned) {
+                    if (! $isReturned) {
                         $item->update(['status' => 'Deployed']);
                     }
                 }
@@ -198,7 +203,7 @@ class DemoSystemSeeder extends Seeder
                             'disposal_date' => Carbon::now()->subDays(5),
                             'reason' => 'Sold',
                             'selling_price' => $asset->price * 0.4,
-                            'notes' => 'Aset dijual karena upgrade hardware massal.',
+                            'notes' => 'Asset sold due to a mass hardware upgrade.',
                             'created_by' => $admin->id,
                         ]
                     );
@@ -208,6 +213,11 @@ class DemoSystemSeeder extends Seeder
         }
 
         $this->command->info('Demo System Seeder completed successfully!');
-        $this->command->info('Admin Login: admin@demo.com / password');
+
+        if ($isProduction && ! $configuredPassword) {
+            $this->command->warn('Generated one-time demo password: '.$defaultPassword);
+        } else {
+            $this->command->info('Admin Login: admin@demo.com / '.$defaultPassword);
+        }
     }
 }

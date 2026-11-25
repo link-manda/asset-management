@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Item: ' . $item->item_code)
+@section('title', 'Item Detail: ' . $item->item_code)
 
 @section('content')
     @include('layouts.partials/page-title', [
@@ -56,7 +56,7 @@
 
             <div class="card">
                 <div class="card-header border-b border-default-200 py-2 px-4 bg-default-50/50">
-                    <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Status & Lokasi</h6>
+                    <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Status & Location</h6>
                 </div>
                 <div class="card-body p-3 space-y-3">
                     <div class="flex items-center gap-2.5">
@@ -64,7 +64,7 @@
                             <i class="size-3.5" data-lucide="map-pin"></i>
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[9px] text-default-400 font-bold uppercase tracking-wider mb-0.5 leading-none">Lokasi</p>
+                            <p class="text-[9px] text-default-400 font-bold uppercase tracking-wider mb-0.5 leading-none">Location</p>
                             <p class="text-[11px] text-default-800 font-bold truncate leading-none">{{ $item->location?->name ?? 'N/A' }}</p>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                             <i class="size-3.5" data-lucide="activity"></i>
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[9px] text-default-400 font-bold uppercase tracking-wider mb-0.5 leading-none">Kondisi</p>
+                            <p class="text-[9px] text-default-400 font-bold uppercase tracking-wider mb-0.5 leading-none">Condition</p>
                             <p class="text-[11px] text-default-800 font-bold leading-none">{{ $item->condition }}</p>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
                             <i class="size-3.5" data-lucide="calendar"></i>
                         </div>
                         <div class="min-w-0">
-                            <p class="text-[9px] text-default-400 font-bold uppercase tracking-wider mb-0.5 leading-none">Perolehan</p>
+                            <p class="text-[9px] text-default-400 font-bold uppercase tracking-wider mb-0.5 leading-none">Acquisition</p>
                             <p class="text-[11px] text-default-800 font-bold leading-none">{{ \Carbon\Carbon::parse($item->purchase_date)->format('d M Y') }}</p>
                         </div>
                     </div>
@@ -112,8 +112,8 @@
                 {{-- Master Profile (7/12) --}}
                 <div class="lg:col-span-7 card overflow-hidden">
                     <div class="card-header border-b border-default-200 py-2 px-4 flex justify-between items-center bg-default-50/50">
-                        <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Profil Katalog</h6>
-                        <a href="{{ route('assets.show', $item->asset_id) }}" class="text-primary text-[9px] font-black hover:underline flex items-center gap-1 uppercase">DETAIL KATALOG <i class="size-3" data-lucide="arrow-right"></i></a>
+                        <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Catalog Profile</h6>
+                        <a href="{{ route('assets.show', $item->asset_id) }}" class="text-primary text-[9px] font-black hover:underline flex items-center gap-1 uppercase">CATALOG DETAIL <i class="size-3" data-lucide="arrow-right"></i></a>
                     </div>
                     <div class="card-body p-0">
                         <div class="flex flex-col sm:flex-row">
@@ -129,19 +129,19 @@
                                 <p class="text-primary font-mono text-[10px] font-bold mb-2.5">{{ $item->asset?->asset_code }}</p>
                                 <div class="grid grid-cols-2 gap-x-3 gap-y-2">
                                     <div>
-                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Kategori</p>
+                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Category</p>
                                         <p class="text-[11px] font-bold text-default-700 truncate leading-none">{{ $item->asset?->category?->name }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Satuan</p>
+                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Unit</p>
                                         <p class="text-[11px] font-bold text-default-700 leading-none">{{ $item->asset?->uom?->name ?? 'Unit' }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Harga Master</p>
+                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Master Price</p>
                                         <p class="text-[11px] font-bold text-default-700 leading-none">Rp {{ number_format($item->asset?->price, 0, ',', '.') }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Brand/Merk</p>
+                                        <p class="text-[8px] text-default-400 uppercase font-black tracking-widest mb-0.5">Brand/Model</p>
                                         <p class="text-[11px] font-bold text-default-700 leading-none truncate">{{ $item->asset?->brand ?? '-' }}</p>
                                     </div>
                                 </div>
@@ -153,27 +153,27 @@
                 {{-- Financial Summary (5/12) --}}
                 <div class="lg:col-span-5 card h-full">
                     <div class="card-header border-b border-default-200 py-2 px-4 bg-default-50/50">
-                        <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Ringkasan Finansial</h6>
+                        <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Financial Summary</h6>
                     </div>
                     <div class="card-body p-3 h-full flex flex-col justify-between">
                         <div class="grid grid-cols-2 gap-2.5">
                             <div class="bg-primary/5 p-2 rounded-lg border border-primary/10">
-                                <p class="text-[8px] text-primary font-black uppercase mb-0.5 tracking-widest leading-none">Nilai Buku</p>
+                                <p class="text-[8px] text-primary font-black uppercase mb-0.5 tracking-widest leading-none">Book Value</p>
                                 <p class="text-sm font-black text-default-900 leading-tight">Rp {{ number_format($item->current_value, 0, ',', '.') }}</p>
                             </div>
                             <div class="bg-danger/5 p-2 rounded-lg border border-danger/10">
-                                <p class="text-[8px] text-danger font-black uppercase mb-0.5 tracking-widest leading-none">Depresiasi</p>
+                                <p class="text-[8px] text-danger font-black uppercase mb-0.5 tracking-widest leading-none">Depreciation</p>
                                 <p class="text-sm font-black text-danger leading-tight">{{ number_format($item->depreciation_percentage, 1) }}%</p>
                             </div>
                         </div>
                         <div class="mt-3 flex items-center justify-between text-[9px] font-bold tracking-tight">
                             <div class="flex items-center gap-1">
-                                <span class="text-default-400">UMUR TERPAKAI:</span>
-                                <span class="text-default-800">{{ round($item->purchase_date->diffInMonths(now()), 1) }} BLN</span>
+                                <span class="text-default-400">USED LIFE:</span>
+                                <span class="text-default-800">{{ round($item->purchase_date->diffInMonths(now()), 1) }} MOS</span>
                             </div>
                             <div class="flex items-center gap-1 text-success">
-                                <span class="text-default-400">SISA UMUR:</span>
-                                <span>{{ max(0, $item->useful_life_months - round($item->purchase_date->diffInMonths(now()), 1)) }} BLN</span>
+                                <span class="text-default-400">REMAINING LIFE:</span>
+                                <span>{{ max(0, $item->useful_life_months - round($item->purchase_date->diffInMonths(now()), 1)) }} MOS</span>
                             </div>
                         </div>
                     </div>
@@ -184,7 +184,7 @@
                 {{-- Assignment History (4/12) --}}
                 <div class="lg:col-span-4 card flex flex-col">
                     <div class="card-header border-b border-default-200 py-2 px-4 flex justify-between items-center bg-default-50/50">
-                        <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Riwayat Penugasan</h6>
+                        <h6 class="card-title text-[11px] font-bold uppercase tracking-widest text-default-600">Assignment History</h6>
                         <i class="size-3.5 text-default-400" data-lucide="history"></i>
                     </div>
                     <div class="card-body p-0 overflow-hidden grow">
@@ -193,7 +193,7 @@
                                 <thead class="bg-default-50">
                                     <tr>
                                         <th class="px-3 py-2 text-start font-black uppercase tracking-wider text-default-500">User</th>
-                                        <th class="px-3 py-2 text-start font-black uppercase tracking-wider text-default-500">Periode</th>
+                                        <th class="px-3 py-2 text-start font-black uppercase tracking-wider text-default-500">Period</th>
                                         <th class="px-3 py-2 text-center font-black uppercase tracking-wider text-default-500">Status</th>
                                     </tr>
                                 </thead>
@@ -318,7 +318,6 @@
     </div>
 
     @push('js')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function zoomImage(url) {
             Swal.fire({

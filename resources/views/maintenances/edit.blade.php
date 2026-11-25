@@ -26,40 +26,55 @@
                             </div>
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium">Service Date</label>
-                                <input class="form-input" name="maintenance_date" type="date" value="{{ old('maintenance_date', $maintenance->maintenance_date->format('Y-m-d')) }}" required />
+                                <input class="form-input @error('maintenance_date') border-danger @enderror" name="maintenance_date" type="date" value="{{ old('maintenance_date', $maintenance->maintenance_date->format('Y-m-d')) }}" required />
+                                @error('maintenance_date')
+                                    <p class="mt-1 text-danger text-xs">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium">Maintenance Type</label>
-                                <select class="form-input" name="type" required>
+                                <select class="form-input @error('type') border-danger @enderror" name="type" required>
                                     <option value="Repair" {{ old('type', $maintenance->type) == 'Repair' ? 'selected' : '' }}>Repair</option>
                                     <option value="Routine" {{ old('type', $maintenance->type) == 'Routine' ? 'selected' : '' }}>Routine</option>
                                     <option value="Upgrade" {{ old('type', $maintenance->type) == 'Upgrade' ? 'selected' : '' }}>Upgrade</option>
                                 </select>
+                                @error('type')
+                                    <p class="mt-1 text-danger text-xs">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div class="col-span-1">
                                 <label class="inline-block mb-2 text-sm text-default-800 font-medium">Actual Cost</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 start-0 flex items-center ps-3 text-default-500">Rp</span>
-                                    <input type="number" name="cost" class="form-input ps-10" value="{{ old('cost', (int)$maintenance->cost) }}" required>
+                                    <input type="number" name="cost" class="form-input ps-10 @error('cost') border-danger @enderror" value="{{ old('cost', (int)$maintenance->cost) }}" required>
                                 </div>
+                                @error('cost')
+                                    <p class="mt-1 text-danger text-xs">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="mb-5">
                             <label class="inline-block mb-2 text-sm text-default-800 font-medium">Service Description</label>
-                            <textarea class="form-input" name="description" rows="4" required>{{ old('description', $maintenance->description) }}</textarea>
+                            <textarea class="form-input @error('description') border-danger @enderror" name="description" rows="4" required>{{ old('description', $maintenance->description) }}</textarea>
+                            @error('description')
+                                <p class="mt-1 text-danger text-xs">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="mb-5">
                             <label class="inline-block mb-2 text-sm text-default-800 font-medium">Current Status</label>
-                            <select class="form-input" name="status" required>
+                            <select class="form-input @error('status') border-danger @enderror" name="status" required>
                                 <option value="Scheduled" {{ old('status', $maintenance->status) == 'Scheduled' ? 'selected' : '' }}>Scheduled</option>
                                 <option value="In Progress" {{ old('status', $maintenance->status) == 'In Progress' ? 'selected' : '' }}>In Progress</option>
                                 <option value="Completed" {{ old('status', $maintenance->status) == 'Completed' ? 'selected' : '' }}>Completed</option>
                             </select>
+                            @error('status')
+                                <p class="mt-1 text-danger text-xs">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="flex justify-end gap-3">

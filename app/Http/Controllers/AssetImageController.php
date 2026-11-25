@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssetImage;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class AssetImageController extends Controller
@@ -17,6 +16,6 @@ class AssetImageController extends Controller
 
         $image->delete();
 
-        return back()->with('success', 'Gambar berhasil dihapus.');
+        return back()->with('success', 'Image successfully deleted.');
     }
 }

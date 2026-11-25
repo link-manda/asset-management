@@ -9,9 +9,9 @@
         <div class="card">
             <div class="card-header">
                 <h6 class="card-title">Maintenance History</h6>
-                @can('create assets')
+                @can('edit assets')
                 <a href="{{ route('maintenances.create') }}" class="btn btn-sm bg-primary text-white">
-                    <i class="size-4 me-1" data-lucide="wrench"></i> Ajukan Perbaikan
+                    <i class="size-4 me-1" data-lucide="wrench"></i> Request Repair
                 </a>
                 @endcan
             </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
@@ -22,8 +22,8 @@
 </head>
 <body>
     <div class="header">
-        <h2>Laporan Penyusutan Aset ({{ ucfirst($mode) }})</h2>
-        <p>Dicetak pada: {{ now()->format('d F Y H:i') }}</p>
+        <h2>Asset Depreciation Report ({{ ucfirst($mode) }})</h2>
+        <p>Generated on: {{ now()->format('d F Y H:i') }}</p>
         <div class="badge-mode">Mode: {{ $mode }}</div>
     </div>
 
@@ -31,27 +31,27 @@
         <thead>
             @if($mode == 'comparison')
                 <tr>
-                    <th style="width: 20%;" rowspan="2">Aset / Barcode</th>
-                    <th colspan="2" class="text-center">Komersial</th>
-                    <th colspan="2" class="text-center">Fiskal</th>
-                    <th style="width: 15%;" rowspan="2" class="text-end">Selisih</th>
+                    <th style="width: 20%;" rowspan="2">Asset / Barcode</th>
+                    <th colspan="2" class="text-center">Commercial</th>
+                    <th colspan="2" class="text-center">Fiscal</th>
+                    <th style="width: 15%;" rowspan="2" class="text-end">Difference</th>
                 </tr>
                 <tr>
-                    <th class="text-end">Nilai Buku</th>
-                    <th class="text-center">Umur</th>
-                    <th class="text-end">Nilai Buku</th>
-                    <th class="text-center">Umur</th>
+                    <th class="text-end">Book Value</th>
+                    <th class="text-center">Life</th>
+                    <th class="text-end">Book Value</th>
+                    <th class="text-center">Life</th>
                 </tr>
             @else
                 <tr>
                     <th style="width: 12%;">Barcode</th>
-                    <th style="width: 20%;">Nama Aset</th>
-                    <th style="width: 12%;">Kategori</th>
-                    <th style="width: 10%;">Tgl Beli</th>
-                    <th style="width: 13%;" class="text-end">Harga Perolehan</th>
-                    <th style="width: 8%;" class="text-center">Umur</th>
-                    <th style="width: 12%;" class="text-end">Akumulasi</th>
-                    <th style="width: 13%;" class="text-end">Nilai Buku</th>
+                    <th style="width: 20%;">Asset Name</th>
+                    <th style="width: 12%;">Category</th>
+                    <th style="width: 10%;">Purchase Date</th>
+                    <th style="width: 13%;" class="text-end">Acquisition Cost</th>
+                    <th style="width: 8%;" class="text-center">Life</th>
+                    <th style="width: 12%;" class="text-end">Accumulated</th>
+                    <th style="width: 13%;" class="text-end">Book Value</th>
                 </tr>
             @endif
         </thead>
@@ -80,9 +80,9 @@
                     
                     @if($mode == 'comparison')
                         <td class="text-end">Rp {{ number_format($commValue, 0, ',', '.') }}</td>
-                        <td class="text-center">{{ $item->useful_life_months }} bln</td>
+                        <td class="text-center">{{ $item->useful_life_months }} mos</td>
                         <td class="text-end">Rp {{ number_format($fiscalValue, 0, ',', '.') }}</td>
-                        <td class="text-center">{{ $item->fiscal_useful_life }} bln</td>
+                        <td class="text-center">{{ $item->fiscal_useful_life }} mos</td>
                         <td class="text-end font-bold">Rp {{ number_format($commValue - $fiscalValue, 0, ',', '.') }}</td>
                     @else
                         <td>{{ $item->asset->name }}</td>
@@ -110,7 +110,7 @@
     </table>
 
     <div class="footer">
-        Halaman 1 dari 1 - Sistem Manajemen Aset
+        Page 1 of 1 - Asset Management System
     </div>
 </body>
 </html>

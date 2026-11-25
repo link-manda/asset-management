@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class AssetMaintenance extends Model
 {
@@ -17,6 +17,7 @@ class AssetMaintenance extends Model
         'description',
         'cost',
         'status',
+        'previous_status',
     ];
 
     protected $casts = [

@@ -9,7 +9,7 @@
         <div class="lg:col-span-9 col-span-1">
             <div class="card">
                 <div class="card-body">
-                    <h6 class="mb-4 card-title text-base">Service Request Details</h6>
+                    <h6 class="mb-4 card-title">Service Request Details</h6>
 
                     <form action="{{ route('maintenances.store') }}" method="POST">
                         @csrf
@@ -34,7 +34,7 @@
                                         <span class="text-default-400 italic text-sm">Please select a unit to repair...</span>
                                     </template>
                                 </div>
-                                <button type="button" data-hs-overlay="#modal-asset-picker" class="btn bg-default-200 text-default-800 px-4 hover:bg-default-300 transition-all font-bold text-xs uppercase tracking-wider">
+                                <button type="button" data-hs-overlay="#modal-asset-picker" class="btn btn-sm bg-default-100 text-default-600 hover:bg-default-150">
                                     <i class="size-4 me-1" data-lucide="search"></i> Search Unit
                                 </button>
                             </div>
@@ -90,9 +90,9 @@
                             @enderror
                         </div>
 
-                        <div class="mt-6 flex gap-3 md:justify-end border-t border-default-200 pt-5">
-                            <a href="{{ route('maintenances.index') }}" class="btn border-default-200 text-default-600 hover:bg-default-100">Cancel</a>
-                            <button type="submit" class="text-white btn bg-primary px-10">Submit Request</button>
+                        <div class="mt-5 flex gap-2 md:justify-end border-t border-default-200 pt-5">
+                            <a href="{{ route('maintenances.index') }}" class="btn border-default-200 text-default-600 hover:bg-default-50">Cancel</a>
+                            <button type="submit" class="btn bg-primary text-white">Submit Request</button>
                         </div>
                     </form>
                 </div>
@@ -103,24 +103,24 @@
         <div id="modal-asset-picker" class="hs-overlay hidden size-full fixed top-0 start-0 z-80 overflow-x-hidden overflow-y-auto pointer-events-none">
             <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-2xl sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
                 <div class="flex flex-col bg-white border border-default-200 shadow-sm rounded-md pointer-events-auto w-full max-h-[80vh]">
-                    <div class="flex justify-between items-center py-3 px-4 border-b border-default-200 bg-default-50">
-                        <h3 class="font-bold text-default-800">Select Unit for Maintenance</h3>
+                    <div class="flex justify-between items-center py-3 px-4 border-b border-default-200">
+                        <h3 class="text-base font-semibold text-default-800">Select Unit for Maintenance</h3>
                         <button type="button" class="size-8 inline-flex justify-center items-center gap-x-2 rounded-full border border-transparent bg-default-100 text-default-800 hover:bg-default-200" data-hs-overlay="#modal-asset-picker">
                             <i class="size-4" data-lucide="x"></i>
                         </button>
                     </div>
                     <div class="p-4 border-b border-default-200">
                         <div class="relative">
-                            <input type="text" x-model="searchQuery" class="form-input ps-10" placeholder="Search by name, code or serial number...">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5">
-                                <i class="size-4 text-default-400" data-lucide="search"></i>
+                            <input type="text" x-model="searchQuery" class="ps-9 form-input form-input-sm w-full" placeholder="Search by name, code or serial number...">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3">
+                                <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                             </div>
                         </div>
                     </div>
                     <div class="overflow-y-auto grow p-0">
                         <table class="min-w-full divide-y divide-default-200">
                             <thead class="bg-default-100 sticky top-0">
-                                <tr class="text-xs text-default-600 uppercase font-bold">
+                                <tr class="text-sm font-normal text-default-700">
                                     <th class="px-4 py-3 text-start">Code / Name</th>
                                     <th class="px-4 py-3 text-start">Serial Number</th>
                                     <th class="px-4 py-3 text-start">Location</th>
@@ -139,7 +139,7 @@
                                         <td class="px-4 py-3 text-xs text-default-600" x-text="item.serial_number || '-'"></td>
                                         <td class="px-4 py-3 text-xs text-default-600" x-text="item.location ? item.location.name : 'N/A'"></td>
                                         <td class="px-4 py-3 text-center">
-                                            <button type="button" class="btn btn-sm bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all text-[10px] font-bold uppercase">Select</button>
+                                            <button type="button" class="btn btn-sm bg-primary text-white">Select</button>
                                         </td>
                                     </tr>
                                 </template>
@@ -151,24 +151,24 @@
         </div>
 
         <div class="lg:col-span-3 col-span-1">
-            {{-- Help Card --}}
-            <div class="space-y-5">
-                <div class="card border-primary/20 border relative overflow-hidden">
-                    <div class="card-body relative z-10">
+            <div class="sticky top-20">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="card-title">Need Help?</h6>
+                    </div>
+                    <div class="card-body">
                         <div class="flex items-center gap-3 mb-4">
                             <div class="size-10 bg-primary/10 text-primary rounded flex items-center justify-center">
                                 <i class="size-6" data-lucide="help-circle"></i>
                             </div>
-                            <h6 class="font-bold text-default-800">Need Help?</h6>
+                            <p class="text-xs text-default-500 leading-relaxed">
+                                If the asset is completely broken, change the asset status to "Broken" on the edit asset page instead of filing a maintenance request.
+                            </p>
                         </div>
-                        <p class="text-xs text-default-500 leading-relaxed mb-4">
-                            If the asset is completely broken, please change the asset status to "Broken" in the edit asset page instead of filing a maintenance request.
-                        </p>
                         <a href="{{ route('assets.index') }}" class="text-xs font-bold text-primary hover:underline flex items-center gap-1 uppercase tracking-wider">
                             Asset List <i class="size-3" data-lucide="arrow-right"></i>
                         </a>
                     </div>
-                    <div class="absolute -bottom-6 -right-6 size-24 bg-primary/5 rounded-full blur-xl"></div>
                 </div>
             </div>
         </div>

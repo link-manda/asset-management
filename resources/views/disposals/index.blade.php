@@ -8,6 +8,7 @@
     <div class="grid lg:grid-cols-4 grid-cols-1 gap-6">
         <!-- Sidebar: Scan Barcode -->
         <div class="lg:col-span-1">
+            @can('edit assets')
             <div class="card sticky top-24">
                 <div class="card-body">
                     <h6 class="mb-4 card-title flex items-center gap-2 text-primary font-bold uppercase tracking-wider text-xs">
@@ -53,6 +54,13 @@
                     </form>
                 </div>
             </div>
+            @else
+            <div class="card">
+                <div class="card-body">
+                    <p class="text-sm text-default-500">You do not have permission to process asset disposals.</p>
+                </div>
+            </div>
+            @endcan
         </div>
 
         <!-- Main Content: History List -->
@@ -147,7 +155,7 @@
                                 @empty
                                     <tr>
                                         <td colspan="6" class="px-4 py-8 text-center text-default-500 italic">
-                                            Belum ada riwayat disposal.
+                                            No disposal history found.
                                         </td>
                                     </tr>
                                 @endforelse

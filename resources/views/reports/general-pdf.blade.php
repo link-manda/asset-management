@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
@@ -22,8 +22,8 @@
 </head>
 <body>
     <div class="header">
-        <h2>Laporan Aset Umum</h2>
-        <p>Dicetak pada: {{ now()->format('d F Y H:i') }}</p>
+        <h2>General Asset Report</h2>
+        <p>Generated on: {{ now()->format('d F Y H:i') }}</p>
     </div>
 
     <table>
@@ -31,12 +31,12 @@
             <tr>
                 <th>No</th>
                 <th>Item Code</th>
-                <th>Nama Aset</th>
+                <th>Asset Name</th>
                 <th>SN</th>
-                <th>Kategori</th>
-                <th>Lokasi</th>
+                <th>Category</th>
+                <th>Location</th>
                 <th>Status</th>
-                <th class="text-end">Nilai Buku</th>
+                <th class="text-end">Book Value</th>
             </tr>
         </thead>
         <tbody>
@@ -59,14 +59,14 @@
         </tbody>
         <tfoot>
             <tr style="background-color: #f9f9f9; font-weight: bold;">
-                <td colspan="7" class="text-end">TOTAL NILAI BUKU</td>
+                <td colspan="7" class="text-end">TOTAL BOOK VALUE</td>
                 <td class="text-end">Rp {{ number_format($totalValue, 0, ',', '.') }}</td>
             </tr>
         </tfoot>
     </table>
 
     <div class="footer">
-        Halaman 1 dari 1 - Sistem Manajemen Aset
+        Page 1 of 1 - Asset Management System
     </div>
 </body>
 </html>

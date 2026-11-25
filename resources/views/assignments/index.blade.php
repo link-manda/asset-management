@@ -30,7 +30,7 @@
             <div class="card-header">
                 <form action="{{ route('assignments.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center gap-3 w-full">
                     <div class="relative w-full md:w-64">
-                        <input name="search" value="{{ request('search') }}" class="ps-9 form-input form-input-sm w-full" placeholder="Cari log penugasan..." type="text" />
+                        <input name="search" value="{{ request('search') }}" class="ps-9 form-input form-input-sm w-full" placeholder="Search assignment logs..." type="text" />
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3">
                             <i class="size-3.5 flex items-center text-default-500" data-lucide="search"></i>
                         </div>
@@ -157,7 +157,7 @@
                                             <td colspan="6" class="px-3.5 py-12 text-center">
                                                 <div class="flex flex-col items-center">
                                                     <i class="size-12 text-default-200 mb-3" data-lucide="history"></i>
-                                                    <p class="text-default-500 font-medium">Belum ada riwayat penugasan.</p>
+                                                    <p class="text-default-500 font-medium">No assignment history found.</p>
                                                 </div>
                                             </td>
                                         </tr>

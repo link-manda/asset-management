@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -14,12 +14,17 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        $configuredPassword = env('SEED_DEFAULT_PASSWORD');
+        $isProduction = app()->environment('production');
+        $defaultPassword = $configuredPassword ?: ($isProduction ? Str::password(16) : 'password');
+        $hashedPassword = Hash::make($defaultPassword);
+
         // Admin Accounts
         $admin1 = User::firstOrCreate(
             ['email' => 'admin@admin.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password'),
+                'password' => $hashedPassword,
             ]
         );
         $admin1->assignRole('Super Admin');
@@ -28,7 +33,7 @@ class UserSeeder extends Seeder
             ['email' => 'bram@asset.com'],
             [
                 'name' => 'Bram Asset Manager',
-                'password' => Hash::make('password'),
+                'password' => $hashedPassword,
             ]
         );
         $admin2->assignRole('Super Admin');
@@ -38,7 +43,7 @@ class UserSeeder extends Seeder
             ['email' => 'andi@staff.com'],
             [
                 'name' => 'Andi Staff IT',
-                'password' => Hash::make('password'),
+                'password' => $hashedPassword,
             ]
         );
         $staff1->assignRole('Staff');
@@ -47,11 +52,16 @@ class UserSeeder extends Seeder
             ['email' => 'budi@staff.com'],
             [
                 'name' => 'Budi Staff Ops',
-                'password' => Hash::make('password'),
+                'password' => $hashedPassword,
             ]
         );
         $staff2->assignRole('Staff');
-        
-        $this->command->info('Default users created: admin@admin.com, bram@asset.com (Admin) and andi@staff.com, budi@staff.com (Staff). Pass: password');
+
+        if ($isProduction && ! $configuredPassword) {
+            $this->command->warn('Generated one-time seed password: '.$defaultPassword);
+            $this->command->warn('Store this password securely and change it after the first login.');
+        } else {
+            $this->command->info('Default users created: admin@admin.com, bram@asset.com (Admin) and andi@staff.com, budi@staff.com (Staff). Pass: '.$defaultPassword);
+        }
     }
 }

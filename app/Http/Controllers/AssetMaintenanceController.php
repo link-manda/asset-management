@@ -6,6 +6,8 @@ use App\Models\AssetItem;
 use App\Models\AssetMaintenance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class AssetMaintenanceController extends Controller
 {
@@ -40,23 +42,42 @@ class AssetMaintenanceController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'asset_item_id' => 'required|exists:asset_items,id',
+        $validated = $request->validate([
+            'asset_item_id' => [
+                'required',
+                Rule::exists('asset_items', 'id')->whereIn('status', ['Available', 'Deployed']),
+            ],
             'maintenance_date' => 'required|date',
-            'type' => 'required|string',
+            'type' => 'required|in:Repair,Routine,Upgrade',
             'description' => 'required|string',
             'cost' => 'required|numeric|min:0',
             'status' => 'required|in:Scheduled,In Progress,Completed',
+        ], [
+            'asset_item_id.exists' => 'The selected unit is not available for maintenance.',
         ]);
 
-        DB::transaction(function () use ($request) {
-            $maintenance = AssetMaintenance::create($request->all());
+        DB::transaction(function () use ($validated) {
+            $item = AssetItem::lockForUpdate()->findOrFail($validated['asset_item_id']);
 
-            // Update item status based on maintenance status
-            if ($request->status == 'Completed') {
-                $maintenance->item->update(['status' => 'Available']);
-            } else {
-                $maintenance->item->update(['status' => 'Maintenance']);
+            if (! in_array($item->status, ['Available', 'Deployed'], true)) {
+                throw ValidationException::withMessages([
+                    'asset_item_id' => 'The selected unit is not available for maintenance.',
+                ]);
+            }
+
+            if ($item->maintenances()->where('status', '!=', 'Completed')->exists()) {
+                throw ValidationException::withMessages([
+                    'asset_item_id' => 'This unit already has an active maintenance record.',
+                ]);
+            }
+
+            AssetMaintenance::create([
+                ...$validated,
+                'previous_status' => $item->status,
+            ]);
+
+            if ($validated['status'] !== 'Completed') {
+                $item->update(['status' => 'Maintenance']);
             }
         });
 
@@ -65,37 +86,44 @@ class AssetMaintenanceController extends Controller
 
     public function edit(AssetMaintenance $maintenance)
     {
-        $items = AssetItem::with('asset')->get();
-
-        return view('maintenances.edit', compact('maintenance', 'items'));
+        return view('maintenances.edit', compact('maintenance'));
     }
 
     public function update(Request $request, AssetMaintenance $maintenance)
     {
-        $request->validate([
+        $validated = $request->validate([
             'maintenance_date' => 'required|date',
-            'type' => 'required|string',
+            'type' => 'required|in:Repair,Routine,Upgrade',
             'description' => 'required|string',
             'cost' => 'required|numeric|min:0',
             'status' => 'required|in:Scheduled,In Progress,Completed',
         ]);
 
-        DB::transaction(function () use ($request, $maintenance) {
-            $maintenance->update($request->all());
+        DB::transaction(function () use ($validated, $maintenance) {
+            $item = $maintenance->item()->lockForUpdate()->firstOrFail();
+            $previousStatus = $maintenance->previous_status;
 
-            // Sync item status
-            if ($request->status == 'Completed') {
-                // Check if there are other active maintenances for this item
-                $hasOtherActive = $maintenance->item->maintenances()
+            $maintenance->update($validated);
+
+            if ($validated['status'] === 'Completed') {
+                $hasOtherActive = $item->maintenances()
                     ->where('id', '!=', $maintenance->id)
                     ->where('status', '!=', 'Completed')
                     ->exists();
 
-                if (! $hasOtherActive) {
-                    $maintenance->item->update(['status' => 'Available']);
+                if (! $hasOtherActive && $item->status === 'Maintenance') {
+                    $item->update(['status' => $this->restoreStatus($item, $previousStatus)]);
                 }
-            } else {
-                $maintenance->item->update(['status' => 'Maintenance']);
+
+                return;
+            }
+
+            if ($item->status !== 'Maintenance') {
+                if (! $maintenance->previous_status) {
+                    $maintenance->update(['previous_status' => $item->status]);
+                }
+
+                $item->update(['status' => 'Maintenance']);
             }
         });
 
@@ -105,15 +133,31 @@ class AssetMaintenanceController extends Controller
     public function destroy(AssetMaintenance $maintenance)
     {
         DB::transaction(function () use ($maintenance) {
-            $item = $maintenance->item;
+            $item = $maintenance->item()->lockForUpdate()->firstOrFail();
+            $previousStatus = $maintenance->previous_status;
+
             $maintenance->delete();
 
-            // Reset item status if no other active maintenance
-            if ($item->status == 'Maintenance' && ! $item->maintenances()->where('status', '!=', 'Completed')->exists()) {
-                $item->update(['status' => 'Available']);
+            $hasOtherActive = $item->maintenances()->where('status', '!=', 'Completed')->exists();
+
+            if (! $hasOtherActive && $item->status === 'Maintenance') {
+                $item->update(['status' => $this->restoreStatus($item, $previousStatus)]);
             }
         });
 
         return redirect()->route('maintenances.index')->with('success', 'Maintenance record deleted.');
+    }
+
+    private function restoreStatus(AssetItem $item, ?string $previousStatus): string
+    {
+        if ($previousStatus === 'Deployed') {
+            return $item->currentAssignment()->exists() ? 'Deployed' : 'Available';
+        }
+
+        if ($previousStatus === 'Available') {
+            return 'Available';
+        }
+
+        return $item->currentAssignment()->exists() ? 'Deployed' : 'Available';
     }
 }

@@ -7,7 +7,11 @@ Contact: themesdesign.in@gmail.com
 File: App.js
 */
 
+import Alpine from 'alpinejs';
+import Swal from 'sweetalert2';
 
+window.Alpine = Alpine;
+window.Swal = Swal;
 
 // App js for Sidenav Page Active and Fullscreen
 class App {
@@ -346,6 +350,7 @@ document.addEventListener('DOMContentLoaded', function (e) {
     if (window.HSStaticMethods) {
         window.HSStaticMethods.autoInit();
     }
+    Alpine.start();
     new App().init();
     new LayoutCustomizer().init();
 });

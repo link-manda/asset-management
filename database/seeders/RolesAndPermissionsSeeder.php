@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -17,13 +17,17 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $modules = ['assets', 'categories', 'locations', 'users', 'departments', 'divisions'];
+        $modules = ['assets', 'categories', 'locations', 'uoms', 'users', 'departments', 'divisions'];
         $actions = ['view', 'create', 'edit', 'delete'];
 
         foreach ($modules as $module) {
             foreach ($actions as $action) {
                 Permission::firstOrCreate(['name' => "{$action} {$module}"]);
             }
+        }
+
+        foreach (['view reports', 'view activity logs'] as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create roles and assign permissions
@@ -39,8 +43,8 @@ class RolesAndPermissionsSeeder extends Seeder
         $managerRole = Role::firstOrCreate(['name' => 'Manager']);
         // Manager gets everything EXCEPT user management and sensitive delete actions
         $managerPermissions = Permission::all()->filter(function ($permission) {
-            return !str_contains($permission->name, 'users') && 
-                   !in_array($permission->name, ['delete categories', 'delete locations']);
+            return ! str_contains($permission->name, 'users') &&
+                   ! in_array($permission->name, ['delete categories', 'delete locations']);
         });
         $managerRole->syncPermissions($managerPermissions);
 

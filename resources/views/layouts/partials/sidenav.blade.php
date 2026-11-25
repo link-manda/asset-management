@@ -133,7 +133,7 @@
                 @endcan
                 @endif
 
-                @if($canViewAssets)
+                @can('view reports')
                 <li class="menu-title">
                     <span>Reports</span>
                 </li>
@@ -158,7 +158,7 @@
                         <div class="menu-text">Asset Summary</div>
                     </a>
                 </li>
-                @endif
+                @endcan
 
                 @php
                     $canViewSystem = auth()->user()->hasAnyPermission(['view users', 'view roles', 'view activity logs']);

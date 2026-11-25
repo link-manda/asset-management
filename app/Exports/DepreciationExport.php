@@ -5,13 +5,13 @@ namespace App\Exports;
 use App\Models\AssetItem;
 use Illuminate\Database\Eloquent\Builder;
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class DepreciationExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize, WithStyles
+class DepreciationExport implements FromQuery, ShouldAutoSize, WithHeadings, WithMapping, WithStyles
 {
     protected $request;
 
@@ -25,7 +25,7 @@ class DepreciationExport implements FromQuery, WithHeadings, WithMapping, Should
         $query = AssetItem::with(['asset.category', 'location']);
 
         if ($this->request->filled('category_id')) {
-            $query->whereHas('asset', function($q) {
+            $query->whereHas('asset', function ($q) {
                 $q->where('category_id', $this->request->category_id);
             });
         }
@@ -38,12 +38,12 @@ class DepreciationExport implements FromQuery, WithHeadings, WithMapping, Should
 
         if ($this->request->filled('search')) {
             $search = $this->request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('item_code', 'like', "%{$search}%")
-                  ->orWhere('serial_number', 'like', "%{$search}%")
-                  ->orWhereHas('asset', function($sq) use ($search) {
-                      $sq->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('serial_number', 'like', "%{$search}%")
+                    ->orWhereHas('asset', function ($sq) use ($search) {
+                        $sq->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -54,20 +54,20 @@ class DepreciationExport implements FromQuery, WithHeadings, WithMapping, Should
     {
         return [
             'Item Code',
-            'Nama Aset',
+            'Asset Name',
             'Serial Number',
-            'Kategori',
-            'Lokasi',
-            'Tanggal Perolehan',
-            'Harga Perolehan',
-            'Umur Komersial (Bln)',
-            'Nilai Sisa Komersial',
-            'Nilai Buku Komersial',
-            'Kelompok Fiskal',
-            'Umur Fiskal (Bln)',
-            'Nilai Buku Fiskal',
-            'Selisih (K-F)',
-            'Status'
+            'Category',
+            'Location',
+            'Purchase Date',
+            'Acquisition Cost',
+            'Commercial Life (Mos)',
+            'Commercial Residual Value',
+            'Commercial Book Value',
+            'Fiscal Group',
+            'Fiscal Life (Mos)',
+            'Fiscal Book Value',
+            'Difference (C-F)',
+            'Status',
         ];
     }
 
@@ -92,7 +92,7 @@ class DepreciationExport implements FromQuery, WithHeadings, WithMapping, Should
             $item->fiscal_useful_life,
             round($fiscalValue, 2),
             round($diff, 2),
-            $item->status
+            $item->status,
         ];
     }
 
